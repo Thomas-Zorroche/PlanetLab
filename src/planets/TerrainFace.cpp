@@ -2,7 +2,7 @@
 #include <vector>
 
 TerrainFace::TerrainFace(int resolution, const glm::vec3& localUp)
-	: _mesh(),
+	: _mesh(std::make_shared<Mesh>()),
 	_resolution(resolution),
 	_localUp(localUp),
 	_axisA(_localUp.y, _localUp.z, _localUp.x),
@@ -43,5 +43,5 @@ void TerrainFace::constructMesh()
 		}
 	}
 
-	_mesh.UpdateGeometry(vertices, indices);
+	_mesh->UpdateGeometry(vertices, indices);
 }

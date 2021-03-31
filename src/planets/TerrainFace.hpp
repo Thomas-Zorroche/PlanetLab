@@ -2,6 +2,7 @@
 
 #include "opengl/Mesh.hpp"
 #include "glm/glm.hpp"
+#include <memory>
 
 class TerrainFace
 {
@@ -10,10 +11,10 @@ public:
 
 	void constructMesh();
 	
-	const Mesh& mesh() { return _mesh; }
+	std::shared_ptr<Mesh>& mesh() { return _mesh; }
 
 private:
-	Mesh _mesh;
+	std::shared_ptr<Mesh> _mesh;
 	int _resolution;
 	glm::vec3 _localUp;
 
