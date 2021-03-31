@@ -11,9 +11,9 @@ class Material;
 class Mesh
 {
 public:
-	Mesh(const std::vector<ShapeVertex> & vertices, 
-		 const std::shared_ptr<Material>& material,
-		 const std::vector<unsigned int>& indices  = std::vector<unsigned int>());   // Optional Argument
+	Mesh(const std::vector<ShapeVertex> & vertices = std::vector<ShapeVertex>(),
+		 const std::shared_ptr<Material>& material = std::make_shared<Material>(),
+		 const std::vector<unsigned int>& indices  = std::vector<unsigned int>());
 
 	void Free();
 
@@ -22,9 +22,13 @@ public:
 	unsigned int GetVAO() const { return VAO; }
 	const std::vector<ShapeVertex>& Vertices() const { return _vertices; }
 	std::vector<ShapeVertex>& Vertices() { return _vertices; }
-
 	const std::shared_ptr<Material>& MaterialPtr() const { return _material; }
 
+	void UpdateGeometry(const std::vector<ShapeVertex>& vertices, const std::vector<unsigned int>& indices);
+
+private:
+	void SetupMesh(bool generateBuffers = true);
+	void Clear();
 
 private:
 	std::vector<ShapeVertex>  _vertices;
@@ -34,5 +38,4 @@ private:
 
 	std::shared_ptr<Material> _material;
 
-	void SetupMesh();
 };

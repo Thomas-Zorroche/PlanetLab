@@ -9,6 +9,8 @@
 #include "lighting/PointLight.hpp"
 #include "lighting/DirectionalLight.hpp"
 
+#include "planets/Planet.hpp"
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -17,7 +19,7 @@
 
 
 Scene::Scene()
-	:  _skybox(nullptr)
+	:  _skybox(nullptr), _planet(nullptr)
 {
 	Init();
 }
@@ -33,12 +35,14 @@ void Scene::Init()
 	sun.Scale(3);
 	StaticMesh earth(m_sphere, TransformLayout(glm::vec3(10, 0, 10)), "DefaultLighting");
 
-	AddStaticMesh(std::make_shared<StaticMesh>(sun));
+	//AddStaticMesh(std::make_shared<StaticMesh>(sun));
 	AddStaticMesh(std::make_shared<StaticMesh>(earth));
 
 	// Load All Lights
 	// =================
 	LightManager::Get().LoadAllLights();
+
+	_planet = std::make_shared<Planet>();
 }
 
 void Scene::Draw()
@@ -49,6 +53,8 @@ void Scene::Draw()
 	{
 		_staticMeshes[i]->Draw();
 	}
+
+	_planet->draw();
 }
 
 void Scene::AddStaticMesh(const std::shared_ptr<StaticMesh>& mesh)

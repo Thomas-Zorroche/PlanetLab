@@ -16,8 +16,15 @@
 class Model
 {
 public:
-	// Constructor
+	// Import a 3D Model with Assimp
 	Model(const std::string& path);
+
+	// Build a Static Mesh with a vector of meshes
+	Model(const std::vector<Mesh>& meshes);
+
+	// Default
+	Model();
+
 	void Draw(std::shared_ptr<Shader>& shader, bool isParticuleInstance = false, int countParticule = 0);
 
 	// Retrieve mesh vao (when there is a single mesh in the model)

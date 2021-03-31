@@ -17,7 +17,10 @@ class CollisionManager;
 class TransformLayout
 {
 public:
-	TransformLayout(const glm::vec3& loc, const glm::vec3& rot = glm::vec3(0, 0, 0), float scale = 1.0f, float uvScale = 1.0f)
+	TransformLayout(const glm::vec3& loc = glm::vec3(0, 0, 0), 
+		const glm::vec3& rot = glm::vec3(0, 0, 0), 
+		float scale = 1.0f, 
+		float uvScale = 1.0f)
 		: _location(loc), _rotation(rot), _scale(scale), _uvScale(uvScale) {}
 
 	glm::vec3 Location() const { return _location; }
@@ -38,7 +41,9 @@ class StaticMesh
 {
 public:
 	// Constructor
-	StaticMesh(const Model& model, const TransformLayout& transLayout, const std::string& shaderName = "Default");
+	StaticMesh(const Model& model = Model(), const TransformLayout& transLayout = TransformLayout(), const std::string& shaderName = "Default");
+	
+	StaticMesh(const std::vector<Mesh>& meshes, const TransformLayout& transLayout = TransformLayout(), const std::string& shaderName = "Default");
 
 	void Draw(bool isParticuleInstance = false, int countParticule = 0);
 

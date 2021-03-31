@@ -17,6 +17,19 @@ Model::Model(const std::string& path)
 	LoadModel(path);
 }
 
+Model::Model(const std::vector<Mesh>& meshes)
+    : _meshes(meshes)
+{
+
+}
+
+Model::Model()
+    : _meshes(std::vector<Mesh>())
+{
+
+}
+
+
 // draws the model, and thus all its meshes
 void Model::Draw(std::shared_ptr<Shader>& shader, bool isParticuleInstance, int countParticule)
 {

@@ -2,6 +2,7 @@
 #include "engine/ResourceManager.hpp"
 #include "lighting/LightManager.hpp"
 #include "opengl/Shader.h"
+#include "opengl/Mesh.hpp"
 #include "engine/Renderer.hpp"
 
 #include <string>
@@ -22,6 +23,14 @@ StaticMesh::StaticMesh(const Model& model, const TransformLayout& transLayout, c
 	Rotate(_transformLayout.Rotation(), false);
 	Scale(_transformLayout.Scale(), false);
 }
+
+StaticMesh::StaticMesh(const std::vector<Mesh>& meshes, const TransformLayout& transLayout, const std::string& shaderName)
+	: _model(meshes), _transformLayout(transLayout), _shader(ResourceManager::Get().GetShader(shaderName)),
+	_modelMatrix(glm::mat4(1.0f))
+{
+
+}
+
 
 void StaticMesh::Draw(bool isParticuleInstance, int countParticule)
 {

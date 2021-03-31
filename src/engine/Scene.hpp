@@ -7,6 +7,7 @@
 
 class StaticMesh;
 class Skybox;
+class Planet;
 
 class Scene
 {
@@ -28,6 +29,7 @@ private:
 private:
 	std::vector<std::shared_ptr<StaticMesh> > _staticMeshes;
 	std::shared_ptr<Skybox> _skybox;
+	std::shared_ptr<Planet> _planet;
 
 	unsigned int _staticMeshesCount = 0;
 };

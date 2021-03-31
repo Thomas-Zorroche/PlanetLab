@@ -11,7 +11,8 @@ Mesh::Mesh(const std::vector<ShapeVertex>& vertices, const std::shared_ptr<Mater
            const std::vector<unsigned int>& indices)
     : _vertices(vertices), _indices(indices), _material(material)
 {
-    SetupMesh();
+    if (!vertices.empty())
+        SetupMesh();
 }
 
 void Mesh::Free()
@@ -21,11 +22,14 @@ void Mesh::Free()
     glDeleteBuffers(1, &EBO);
 }
 
-void Mesh::SetupMesh()
+void Mesh::SetupMesh(bool generateBuffers)
 {
     // Generate Buffers
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+    if (generateBuffers)
+    {
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+    }
 
     glBindVertexArray(VAO);
 
@@ -35,7 +39,10 @@ void Mesh::SetupMesh()
 
     if (!_indices.empty())
     {
-        glGenBuffers(1, &EBO);
+        if (generateBuffers)
+        {
+            glGenBuffers(1, &EBO);
+        }
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(unsigned int), &_indices[0], GL_STATIC_DRAW);
     }
@@ -86,4 +93,20 @@ void Mesh::Draw(std::shared_ptr<Shader>& shader, bool IsParticuleInstance, int c
     glActiveTexture(GL_TEXTURE0);
     glDisable(GL_BLEND);
 
+}
+
+void Mesh::UpdateGeometry(const std::vector<ShapeVertex>& vertices, const std::vector<unsigned int>& indices)
+{
+    bool generate = _vertices.empty();
+    Clear();
+    _vertices = vertices;
+    _indices = indices;
+    
+   SetupMesh(generate);
+}
+
+void Mesh::Clear()
+{
+    _vertices.clear();
+    _indices.clear();
 }
