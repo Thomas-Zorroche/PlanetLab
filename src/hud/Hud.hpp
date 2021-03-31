@@ -26,11 +26,13 @@ public:
 
 	/* UI Fonctions */
 	bool wireframeMode() const { return _wireframeMode; }
+	int resolution() const { return _resolution; }
 
 private:
 	Hud() = default;
 	~Hud() = default;
 
 	static bool _wireframeMode;
+	static int _resolution;
 	
 };

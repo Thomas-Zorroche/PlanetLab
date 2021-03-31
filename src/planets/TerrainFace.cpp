@@ -46,3 +46,9 @@ void TerrainFace::constructMesh()
 
 	_mesh->UpdateGeometry(vertices, indices);
 }
+
+void TerrainFace::updateResolution(int resolution)
+{
+	_resolution = resolution;
+	constructMesh();
+}

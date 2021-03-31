@@ -3,6 +3,7 @@
 #include "opengl/Mesh.hpp"
 #include <vector>
 
+
 Planet::Planet(int resolution)
 	: _resolution(resolution),
 	_terrainFaces{ 
@@ -35,5 +36,23 @@ void Planet::generateMesh()
 
 void Planet::draw()
 {
+	checkHud();
 	_staticMesh.Draw();
+}
+
+void Planet::checkHud()
+{
+	auto flags = _observer.checkHud(_resolution);
+
+	for (const auto& flag : flags)
+	{
+		switch (flag)
+		{
+		case ObsFlag::RESOLUTION:
+		{
+			for (auto& face : _terrainFaces)
+				face.updateResolution(_resolution);
+		}
+		}
+	}
 }

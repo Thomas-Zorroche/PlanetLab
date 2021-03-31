@@ -10,6 +10,7 @@ public:
 	TerrainFace(int resolution, const glm::vec3& localUp);
 
 	void constructMesh();
+	void updateResolution(int resolution);
 	
 	std::shared_ptr<Mesh>& mesh() { return _mesh; }
 

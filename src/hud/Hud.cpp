@@ -10,6 +10,7 @@
 #include "imgui/imgui_impl_opengl3.h"
 
 bool Hud::_wireframeMode = false;
+int Hud::_resolution = 64;
 
 
 void Hud::init(GLFWwindow* window)
@@ -38,6 +39,7 @@ void Hud::draw(const std::shared_ptr<Camera>& camera, const Window& windowObject
         {
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             ImGui::Checkbox("Wireframe Mode", &_wireframeMode);
+            ImGui::SliderInt("Resolution", &_resolution, 4, 128);
         }
         ImGui::End();
     }
