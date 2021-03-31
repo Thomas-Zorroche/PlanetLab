@@ -12,11 +12,11 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 
-
-
-StaticMesh::StaticMesh(const Model& model, const TransformLayout& transLayout, const std::string& shaderName)
-	: _model(model), _transformLayout(transLayout), _shader(ResourceManager::Get().GetShader(shaderName)),
-	  _modelMatrix(glm::mat4(1.0f))
+StaticMesh::StaticMesh(const std::shared_ptr<Model>& model, const TransformLayout& transLayout, const std::string& shaderName)
+	: _model(model), 
+	_transformLayout(transLayout), 
+	_shader(ResourceManager::Get().GetShader(shaderName)),
+	_modelMatrix(glm::mat4(1.0f))
 {
 	// Translate the mesh to the correct location
 	Translate(_transformLayout.Location(), false);
@@ -24,18 +24,19 @@ StaticMesh::StaticMesh(const Model& model, const TransformLayout& transLayout, c
 	Scale(_transformLayout.Scale(), false);
 }
 
-StaticMesh::StaticMesh(const std::vector<Mesh>& meshes, const TransformLayout& transLayout, const std::string& shaderName)
-	: _model(meshes), _transformLayout(transLayout), _shader(ResourceManager::Get().GetShader(shaderName)),
+StaticMesh::StaticMesh(const std::vector<std::shared_ptr<Mesh>>& meshes, const TransformLayout& transLayout, const std::string& shaderName)
+	: _model(std::make_shared<Model>(meshes)), 
+	_transformLayout(transLayout), 
+	_shader(ResourceManager::Get().GetShader(shaderName)),
 	_modelMatrix(glm::mat4(1.0f))
 {
 
 }
 
-
 void StaticMesh::Draw(bool isParticuleInstance, int countParticule)
 {
 	SendUniforms();
-	_model.Draw(_shader, isParticuleInstance, countParticule);
+	_model->Draw(_shader, isParticuleInstance, countParticule);
 }
 
 /*
@@ -84,6 +85,6 @@ void StaticMesh::SendUniforms()
 */
 void StaticMesh::Free()
 {
-	_model.Free();
+	_model->Free();
 }
 

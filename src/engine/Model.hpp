@@ -20,7 +20,7 @@ public:
 	Model(const std::string& path);
 
 	// Build a Static Mesh with a vector of meshes
-	Model(const std::vector<Mesh>& meshes);
+	Model(const std::vector<std::shared_ptr<Mesh> >& meshes);
 
 	// Default
 	Model();
@@ -29,12 +29,12 @@ public:
 
 	// Retrieve mesh vao (when there is a single mesh in the model)
 	// Useful for particule system
-	unsigned int GetVAO() const { return _meshes[0].GetVAO(); }
+	unsigned int GetVAO() const { return _meshes[0]->GetVAO(); }
 
 	void Free();
 
 private:
-	std::vector<Mesh> _meshes;
+	std::vector<std::shared_ptr<Mesh> > _meshes;
 	std::string _directory;
 
 

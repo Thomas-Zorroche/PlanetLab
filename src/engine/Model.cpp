@@ -17,14 +17,14 @@ Model::Model(const std::string& path)
 	LoadModel(path);
 }
 
-Model::Model(const std::vector<Mesh>& meshes)
+Model::Model(const std::vector<std::shared_ptr<Mesh> >& meshes)
     : _meshes(meshes)
 {
 
 }
 
 Model::Model()
-    : _meshes(std::vector<Mesh>())
+    : _meshes(std::vector<std::shared_ptr<Mesh> >())
 {
 
 }
@@ -34,7 +34,7 @@ Model::Model()
 void Model::Draw(std::shared_ptr<Shader>& shader, bool isParticuleInstance, int countParticule)
 {
     for (unsigned int i = 0; i < _meshes.size(); i++)
-        _meshes[i].Draw(shader, isParticuleInstance, countParticule);
+        _meshes[i]->Draw(shader, isParticuleInstance, countParticule);
 }
 
 void Model::LoadModel(const std::string& path)
@@ -63,7 +63,7 @@ void Model::processNode(aiNode* node, const aiScene* scene)
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         std::string nameMesh = mesh->mName.C_Str();
 
-        _meshes.push_back(processMesh(mesh, scene, false));
+        _meshes.push_back(std::make_shared<Mesh>(processMesh(mesh, scene, false)));
     }
     // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
     for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -160,7 +160,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, bool IscBox)
 void Model::Free()
 {
     for (unsigned int i = 0; i < _meshes.size(); i++)
-        _meshes[i].Free();
+        _meshes[i]->Free();
 }
 
 

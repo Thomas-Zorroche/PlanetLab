@@ -14,12 +14,12 @@ Planet::Planet(int resolution)
 		TerrainFace(resolution, glm::vec3( 0,  0,  1))  // BACK
 	},
 	_staticMesh({ 
-		_terrainFaces[0].mesh(), 
-		_terrainFaces[1].mesh(),
-		_terrainFaces[2].mesh(), 
-		_terrainFaces[3].mesh(), 
-		_terrainFaces[4].mesh(), 
-		_terrainFaces[5].mesh(), 
+		std::make_shared<Mesh>(_terrainFaces[0].mesh()), 
+		std::make_shared<Mesh>(_terrainFaces[1].mesh()),
+		std::make_shared<Mesh>(_terrainFaces[2].mesh()),
+		std::make_shared<Mesh>(_terrainFaces[3].mesh()),
+		std::make_shared<Mesh>(_terrainFaces[4].mesh()),
+		std::make_shared<Mesh>(_terrainFaces[5].mesh()),
 	})
 {
 	generateMesh();

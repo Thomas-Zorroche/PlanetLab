@@ -41,9 +41,9 @@ class StaticMesh
 {
 public:
 	// Constructor
-	StaticMesh(const Model& model = Model(), const TransformLayout& transLayout = TransformLayout(), const std::string& shaderName = "Default");
+	StaticMesh(const std::shared_ptr<Model>& model = std::make_shared<Model>(), const TransformLayout& transLayout = TransformLayout(), const std::string& shaderName = "Default");
 	
-	StaticMesh(const std::vector<Mesh>& meshes, const TransformLayout& transLayout = TransformLayout(), const std::string& shaderName = "Default");
+	StaticMesh(const std::vector<std::shared_ptr<Mesh>>& meshes, const TransformLayout& transLayout = TransformLayout(), const std::string& shaderName = "Default");
 
 	void Draw(bool isParticuleInstance = false, int countParticule = 0);
 
@@ -54,14 +54,14 @@ public:
 	void Scale(float alpha, bool dynamicCBox = true);
 	void Rotate(const glm::vec3& alpha, bool dynamicCBox = true);
 
-	unsigned int GetVAO() const { return _model.GetVAO(); }
+	unsigned int GetVAO() const { return _model->GetVAO(); }
 
 	void Free();
 
 private:
 	void SendUniforms();
 
-	Model _model;
+	std::shared_ptr<Model> _model;
 
 	TransformLayout _transformLayout;
 	std::shared_ptr<Shader> _shader;
