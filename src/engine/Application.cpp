@@ -4,14 +4,18 @@
 #include "engine/Scene.hpp"
 #include "engine/InputHandler.hpp"
 #include "engine/ResourceManager.hpp"
+#include "hud/Hud.hpp"
 
 
-void mainloop(GLFWwindow* window)
+void mainloop(Window& windowObject)
 {
+    GLFWwindow* window = windowObject.WindowPtr();
+
     // Load all the 
     ResourceManager::Get().LoadAllShaders();
 
     Scene scene;
+    Hud::get().init(window);
 
     auto camera = std::make_shared<Camera>();
     Renderer::Get().SetCamera(camera);
@@ -43,6 +47,9 @@ void mainloop(GLFWwindow* window)
 
         // Render scene here
         scene.Draw();
+
+        // Render Hud
+        Hud::get().draw(camera, windowObject);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

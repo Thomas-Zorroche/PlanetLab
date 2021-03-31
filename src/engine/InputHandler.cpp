@@ -66,18 +66,18 @@ void InputHandler::SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr)
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    CallbackPtr* callbackPtr = (CallbackPtr*)glfwGetWindowUserPointer(window);
-    auto camera = callbackPtr->_camera;
+    //CallbackPtr* callbackPtr = (CallbackPtr*)glfwGetWindowUserPointer(window);
+    //auto camera = callbackPtr->_camera;
 
-    float xoffset = xpos - camera->GetLastX();
-    float yoffset = ypos - camera->GetLastY();
-    camera->SetLastX(xpos);
-    camera->SetLastY(ypos);
+    //float xoffset = xpos - camera->GetLastX();
+    //float yoffset = ypos - camera->GetLastY();
+    //camera->SetLastX(xpos);
+    //camera->SetLastY(ypos);
 
-    xoffset *= camera->GetSensitivity();
-    yoffset *= camera->GetSensitivity();
+    //xoffset *= camera->GetSensitivity();
+    //yoffset *= camera->GetSensitivity();
 
-    camera->rotateLeft(xoffset);
-    camera->rotateUp(yoffset);
+    //camera->rotateLeft(xoffset);
+    //camera->rotateUp(yoffset);
 }
 

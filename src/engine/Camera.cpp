@@ -3,7 +3,7 @@
 
 
 Camera::Camera()
-	: _Position(0, 0, -10), _phi(M_PI), _theta(0), _CanTurn(false),
+	: _Position(-1, 0, -5), _phi(0), _theta(0), _CanTurn(false),
 	_lastX(450.0f), _lastY(320.0f), _sensitivity(8.0f)
 {
 	computeDirectionVectors();
@@ -25,9 +25,6 @@ void Camera::Move(float deltaTime, DIRCAM direction)
 	_cameraTime += abs(deltaTime);
 	float offset_factor = sin(_cameraTime * _frequenceShake) * _amplitudeShake;
 
-	// Wiggle walking effect
-	//rotateUp(offset_factor);
-	
 	computeDirectionVectors();
 }
 

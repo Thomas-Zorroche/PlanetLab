@@ -30,19 +30,12 @@ void Scene::Init()
 {
 	// Create all static meshes
 	//=======================
-	std::shared_ptr<Model> m_sphere = std::make_shared<Model>("res/models/sphere.obj");
-	StaticMesh sun(m_sphere, TransformLayout(glm::vec3(0, 0, 0)), "DefaultLighting");
-	sun.Scale(3);
-	StaticMesh earth(m_sphere, TransformLayout(glm::vec3(10, 0, 10)), "DefaultLighting");
-
-	//AddStaticMesh(std::make_shared<StaticMesh>(sun));
-	AddStaticMesh(std::make_shared<StaticMesh>(earth));
+	_planet = std::make_shared<Planet>();
 
 	// Load All Lights
 	// =================
 	LightManager::Get().LoadAllLights();
 
-	_planet = std::make_shared<Planet>();
 }
 
 void Scene::Draw()

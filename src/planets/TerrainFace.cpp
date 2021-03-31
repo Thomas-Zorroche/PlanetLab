@@ -26,7 +26,8 @@ void TerrainFace::constructMesh()
 			int i = x + y * _resolution;
 			glm::vec2 percent(x / (float)(_resolution - 1), y / (float)(_resolution - 1));
 			glm::vec3 pointOnUnitCube = _localUp + ((percent.x - 0.5f) * 2 * _axisA) + ((percent.y - 0.5f) * 2 * _axisB);
-			vertices[i].position = pointOnUnitCube;
+			glm::vec3 pointOnUnitSphere = glm::normalize(pointOnUnitCube);
+			vertices[i].position = pointOnUnitSphere;
 			vertices[i].normal = _localUp;
 			vertices[i].texCoords = glm::vec2(0, 0);
 

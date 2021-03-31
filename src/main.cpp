@@ -9,7 +9,7 @@ int main(int argc, char** argv)
         return -1;
 
     /* Main Game Loop */
-    mainloop(window.WindowPtr());
+    mainloop(window);
 
     glfwTerminate();
     return 0;

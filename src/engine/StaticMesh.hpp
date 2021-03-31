@@ -41,9 +41,9 @@ class StaticMesh
 {
 public:
 	// Constructor
-	StaticMesh(const std::shared_ptr<Model>& model = std::make_shared<Model>(), const TransformLayout& transLayout = TransformLayout(), const std::string& shaderName = "Default");
+	StaticMesh(const std::shared_ptr<Model>& model = std::make_shared<Model>(), const TransformLayout& transLayout = TransformLayout(), const std::string& shaderName = "DefaultLighting");
 	
-	StaticMesh(const std::vector<std::shared_ptr<Mesh>>& meshes, const TransformLayout& transLayout = TransformLayout(), const std::string& shaderName = "Default");
+	StaticMesh(const std::vector<std::shared_ptr<Mesh>>& meshes, const TransformLayout& transLayout = TransformLayout(), const std::string& shaderName = "DefaultLighting");
 
 	void Draw(bool isParticuleInstance = false, int countParticule = 0);
 
