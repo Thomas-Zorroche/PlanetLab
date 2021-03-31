@@ -9,6 +9,8 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+bool Hud::_wireframeMode = false;
+
 
 void Hud::init(GLFWwindow* window)
 {
@@ -33,7 +35,10 @@ void Hud::draw(const std::shared_ptr<Camera>& camera, const Window& windowObject
         ImGui::SetNextWindowPos(ImVec2(windowObject.Width() - 400, 0));
         ImGui::SetNextWindowSize(ImVec2(400, windowObject.Height()));
         ImGui::Begin("Procedural Planets Settings");
-
+        {
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::Checkbox("Wireframe Mode", &_wireframeMode);
+        }
         ImGui::End();
     }
 

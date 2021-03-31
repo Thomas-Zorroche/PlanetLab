@@ -75,7 +75,7 @@ private:
 
 	// Input Data
 	float _sensitivity;
-	float _Speed = 15.0;
+	float _Speed = 5.0;
 	float _limitNormal = 2.0f;			// Limit value normal where the player can move
 	float _responsiveness = 10.0f;       // Value use for lerp
 	float _cameraTime = 0.0f;

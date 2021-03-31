@@ -4,6 +4,7 @@
 #include "opengl/Shader.h"
 #include "opengl/Mesh.hpp"
 #include "engine/Renderer.hpp"
+#include "hud/Hud.hpp"
 
 #include <string>
 #include <vector>
@@ -37,6 +38,17 @@ void StaticMesh::Draw(bool isParticuleInstance, int countParticule)
 {
 	SendUniforms();
 	_model->Draw(_shader, isParticuleInstance, countParticule);
+	if (Hud::get().wireframeMode())
+	{
+		auto shaderWireframe = ResourceManager::Get().GetShader("Wireframe");
+		shaderWireframe->Bind();
+		Renderer::Get().SendTransMatrixUniforms(_modelMatrix, shaderWireframe);
+		shaderWireframe->Unbind();
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//glPolygonOffset(0, -1),
+		_model->Draw(shaderWireframe, isParticuleInstance, countParticule);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 }
 
 /*
@@ -67,9 +79,6 @@ void StaticMesh::SendUniforms()
 {
 	_shader->Bind();
 
-	// UV 
-	_shader->SetUniform1f("uvScale", 1.0f);
-
 	// Send Transformations Matrixes
 	Renderer::Get().SendTransMatrixUniforms(GetModelMatrix(), _shader);
 
@@ -78,6 +87,7 @@ void StaticMesh::SendUniforms()
 
 	_shader->Unbind();
 }
+
 
 
 /*

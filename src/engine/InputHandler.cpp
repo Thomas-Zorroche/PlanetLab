@@ -11,14 +11,8 @@ void InputHandler::ProcessInput(GLFWwindow* window, const std::shared_ptr<Camera
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    // Sprint 
     // ===================================================================================================
-    float boostSprint = 1.0f;
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        boostSprint = 2.0f; 
-
-    // ===================================================================================================
-    Movement(window, camera, deltaTime * boostSprint);
+    Movement(window, camera, deltaTime);
 
     // ===================================================================================================
     if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && _ActiveKey != ActiveKey::C) // C Qwerty = C Azerty
@@ -60,7 +54,7 @@ void InputHandler::SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr)
 {
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetWindowUserPointer(window, &callbackPtr);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 

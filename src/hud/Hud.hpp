@@ -24,8 +24,13 @@ public:
 	void init(GLFWwindow* window);
 	void free();
 
+	/* UI Fonctions */
+	bool wireframeMode() const { return _wireframeMode; }
+
 private:
 	Hud() = default;
 	~Hud() = default;
+
+	static bool _wireframeMode;
 	
 };
