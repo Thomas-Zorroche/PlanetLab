@@ -6,13 +6,15 @@
 
 Planet::Planet(int resolution)
 	: _resolution(resolution),
+	_shapeSettings(std::make_shared<ShapeSettings>(1.0f)),
+	_shapeGenerator(_shapeSettings),
 	_terrainFaces{ 
-		TerrainFace(resolution, glm::vec3( 0,  1,  0)), // UP
-		TerrainFace(resolution, glm::vec3( 0, -1,  0)), // DOWN
-		TerrainFace(resolution, glm::vec3(-1,  0,  0)), // LEFT
-		TerrainFace(resolution, glm::vec3( 1,  0,  0)), // RIGHT
-		TerrainFace(resolution, glm::vec3( 0,  0, -1)), // FORWARD
-		TerrainFace(resolution, glm::vec3( 0,  0,  1))  // BACK
+		TerrainFace(_shapeGenerator, resolution, glm::vec3( 0,  1,  0)), // UP
+		TerrainFace(_shapeGenerator, resolution, glm::vec3( 0, -1,  0)), // DOWN
+		TerrainFace(_shapeGenerator, resolution, glm::vec3(-1,  0,  0)), // LEFT
+		TerrainFace(_shapeGenerator, resolution, glm::vec3( 1,  0,  0)), // RIGHT
+		TerrainFace(_shapeGenerator, resolution, glm::vec3( 0,  0, -1)), // FORWARD
+		TerrainFace(_shapeGenerator, resolution, glm::vec3( 0,  0,  1))  // BACK
 	},
 	_staticMesh({ 
 		_terrainFaces[0].mesh(), 
@@ -23,15 +25,7 @@ Planet::Planet(int resolution)
 		_terrainFaces[5].mesh(),
 	})
 {
-	generateMesh();
-}
-
-void Planet::generateMesh()
-{
-	for (TerrainFace& face : _terrainFaces)
-	{
-		face.constructMesh();
-	}
+	generatePlanet();
 }
 
 void Planet::draw()
@@ -40,9 +34,33 @@ void Planet::draw()
 	_staticMesh.Draw();
 }
 
+/* Generate Fonctions */
+void Planet::generateMesh()
+{
+	for (TerrainFace& face : _terrainFaces)
+	{
+		face.constructMesh();
+	}
+}
+
+void Planet::generateColors()
+{
+	for (TerrainFace& face : _terrainFaces)
+	{
+		face.mesh()->setColor(_colorSettings.planetColor());
+	}
+}
+
+void Planet::generatePlanet()
+{
+	generateMesh();
+	generateColors();
+}
+
+
 void Planet::checkHud()
 {
-	auto flags = _observer.checkHud(_resolution, _colorSettings.planetColor());
+	auto flags = _observer.checkHud(_resolution, _colorSettings.planetColor(), _shapeSettings);
 
 	for (const auto& flag : flags)
 	{
@@ -57,15 +75,13 @@ void Planet::checkHud()
 		{
 			generateColors();
 		}
+		case ObsFlag::RADIUS:
+		{
+			generateMesh();
+		}
 		}
 	}
 }
 
-void Planet::generateColors()
-{
-	for (TerrainFace& face : _terrainFaces)
-	{
-		face.mesh()->setColor(_colorSettings.planetColor());
-	}
-}
+
 

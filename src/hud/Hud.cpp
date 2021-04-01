@@ -12,6 +12,7 @@
 bool Hud::_wireframeMode = false;
 int Hud::_resolution = 64;
 Color Hud::_planetColor;
+float Hud::_planetRadius = 1.0f;
 
 
 void Hud::init(GLFWwindow* window)
@@ -42,6 +43,7 @@ void Hud::draw(const std::shared_ptr<Camera>& camera, const Window& windowObject
             ImGui::Checkbox("Wireframe Mode", &_wireframeMode);
             ImGui::SliderInt("Resolution", &_resolution, 4, 128);
             ImGui::ColorEdit3("Planet Color", (float*)&_planetColor);
+            ImGui::SliderFloat("Size", &_planetRadius, 0.2f, 4.0f);
         }
         ImGui::End();
     }

@@ -28,7 +28,8 @@ public:
 	/* UI Fonctions */
 	bool wireframeMode() const { return _wireframeMode; }
 	int resolution() const { return _resolution; }
-	const Color& colorPlanet() const { return _planetColor; }
+	const Color& planetColor() const { return _planetColor; }
+	float planetRadius() const { return _planetRadius; }
 
 private:
 	Hud() = default;
@@ -37,5 +38,6 @@ private:
 	static bool _wireframeMode;
 	static int _resolution;
 	static Color _planetColor;
+	static float _planetRadius;
 	
 };
