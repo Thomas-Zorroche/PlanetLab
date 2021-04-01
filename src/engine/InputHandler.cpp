@@ -12,41 +12,74 @@ void InputHandler::ProcessInput(GLFWwindow* window, const std::shared_ptr<Camera
         glfwSetWindowShouldClose(window, true);
 
     // ===================================================================================================
-    Movement(window, camera, deltaTime);
-
-    // ===================================================================================================
-    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && _ActiveKey != ActiveKey::C) // C Qwerty = C Azerty
+    if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) 
     {
-        _ActiveKey = ActiveKey::C;
+        addKey(ActiveKey::ALT);
     }
-    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_RELEASE && _ActiveKey == ActiveKey::C)
+    if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_RELEASE)
     {
-        _ActiveKey = ActiveKey::NONE;
+        removeKey(ActiveKey::ALT);
     }
-
-    // ===================================================================================================
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS && _ActiveKey != ActiveKey::A) // Q Qwerty = A Azerty
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
-        _ActiveKey = ActiveKey::A;
+        addKey(ActiveKey::MOUSE_LEFT);
     }
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_RELEASE && _ActiveKey == ActiveKey::A)
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
     {
-        _ActiveKey = ActiveKey::NONE;
-
+        removeKey(ActiveKey::MOUSE_LEFT);
     }
 
 }
 
-void InputHandler::Movement(GLFWwindow* window, const std::shared_ptr<Camera>& camera, float deltaTime) {
-    // Movement Inputs
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)        // W Qwerty = Z Azerty
-        camera->Move(deltaTime, DIRCAM::FRONT);
-    else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)   // S Qwerty = S Azerty
-        camera->Move(-deltaTime, DIRCAM::FRONT);
-    else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)   // A Qwerty = Q Azerty
-        camera->Move(deltaTime, DIRCAM::LEFT);
-    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)   // D Qwerty = D Azerty
-        camera->Move(-deltaTime, DIRCAM::LEFT);
+void InputHandler::addKey(ActiveKey key)
+{
+    // Test if the key is already in the array
+    bool inside = false;
+    for (const ActiveKey& k : _activeKeys)
+    {
+        if (k == key)
+        {
+            inside = true; 
+            break;
+        }
+    }
+    
+    if (!inside)
+    {
+        _activeKeys.push_back(key);
+    }
+}
+
+void InputHandler::removeKey(ActiveKey key)
+{
+    // Test if the key is in the array
+    int index = -1, i = 0;
+    for (const ActiveKey& k : _activeKeys)
+    {
+        if (k == key)
+        {
+            index = i;
+            break;
+        }
+        i++;
+    }
+
+    if (index != -1)
+    {
+        _activeKeys.erase(_activeKeys.begin() + index);
+    }
+}
+
+bool InputHandler::canRotate() const
+{
+    // Test if ALT and MOUSE_LEFT are in the Active Keys
+    int canRotate = 0;
+    for (const ActiveKey& k : _activeKeys)
+    {
+        if (k == ActiveKey::ALT) canRotate++;
+        if (k == ActiveKey::MOUSE_LEFT) canRotate++;
+    }
+    return canRotate == 2 ? true : false;
 }
 
 
@@ -60,18 +93,23 @@ void InputHandler::SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr)
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    //CallbackPtr* callbackPtr = (CallbackPtr*)glfwGetWindowUserPointer(window);
-    //auto camera = callbackPtr->_camera;
+    CallbackPtr* callbackPtr = (CallbackPtr*)glfwGetWindowUserPointer(window);
+    auto inputHandler = callbackPtr->_inputHandler;
 
-    //float xoffset = xpos - camera->GetLastX();
-    //float yoffset = ypos - camera->GetLastY();
-    //camera->SetLastX(xpos);
-    //camera->SetLastY(ypos);
+    if (inputHandler->canRotate())
+    {
+        auto camera = callbackPtr->_camera;
 
-    //xoffset *= camera->GetSensitivity();
-    //yoffset *= camera->GetSensitivity();
+        float xoffset = xpos - camera->GetLastX();
+        float yoffset = ypos - camera->GetLastY();
+        camera->SetLastX(xpos);
+        camera->SetLastY(ypos);
 
-    //camera->rotateLeft(xoffset);
-    //camera->rotateUp(yoffset);
+        xoffset *= camera->GetSensitivity();
+        yoffset *= camera->GetSensitivity();
+
+        camera->rotateLeft(xoffset);
+        camera->rotateUp(yoffset);
+    }
 }
 

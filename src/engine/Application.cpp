@@ -21,9 +21,9 @@ void mainloop(Window& windowObject)
     Renderer::Get().SetCamera(camera);
 
     // Initialize GLFW Callbacks and Inputs
-    InputHandler inputHandler;
-    CallbackPtr callbackPtr(camera);
-    inputHandler.SetCallback(window, callbackPtr);
+    auto inputHandler = std::make_shared<InputHandler>();
+    CallbackPtr callbackPtr(camera, inputHandler);
+    inputHandler->SetCallback(window, callbackPtr);
 
     float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame
@@ -37,7 +37,7 @@ void mainloop(Window& windowObject)
         lastFrame = currentFrame;
 
         // Handle Inputs
-        inputHandler.ProcessInput(window, camera, deltaTime);
+        inputHandler->ProcessInput(window, camera, deltaTime);
 
         // View Matrix
         Renderer::Get().ComputeViewMatrix();

@@ -26,8 +26,6 @@ public:
 	~Camera() {}
 
 
-	void Move(float deltaTime, DIRCAM dir);
-
 	void rotateUp(float angle);
 	void rotateLeft(float angle);
 
@@ -37,50 +35,40 @@ public:
 	float GetHeight() const { return _heightScreen; }
 	float GetNearPlane() const { return _nearPlane; }
 	float GetFarPlane() const { return _farPlane; }
-	inline glm::mat4 getViewMatrix() const 	{ return glm::lookAt(_Position, _Position + _FrontVector, _UpVector); }
+	glm::mat4 getViewMatrix() const;
 	// Getters Camera Gameplay
-	bool GetCanTurn() const  { return _CanTurn; }
 	float GetLastX() const  { return _lastX; }
 	float GetLastY() const  { return _lastY; }
 	float GetSensitivity() const  { return _sensitivity; }
-	float GetSpeed() const { return _Speed; };
 	glm::vec3 GetPosition() const { return _Position; };
 	glm::vec3 GetFrontVector() const { return _FrontVector; };
 
-	// Getters Collision Data
-	
 	// Setters
-	void SetCanTurn(bool condition) { _CanTurn = condition; }
 	void SetLastX(float x) { _lastX = x; }
 	void SetLastY(float y) { _lastY = y; }
 
 
 private:
 	void computeDirectionVectors();
-	void MoveX(float dst, const glm::vec3& dir);
-	void MoveZ(float dst, const glm::vec3& dir);
 
+
+private:
 
 	glm::vec3 _Position;	  // Position of the camera
 	float _phi;
 	float _theta;
 
+	float _distanceFromCenter = 4.0f;
+
 	glm::vec3 _FrontVector;   // Direction
 	glm::vec3 _LeftVector;    // Left
 	glm::vec3 _UpVector;      // Up
 
-	bool _CanTurn;    // Is Able to Turn ?
 	float _lastX;     // Last Mouse coordinates
 	float _lastY;
 
 	// Input Data
 	float _sensitivity;
-	float _Speed = 5.0;
-	float _limitNormal = 2.0f;			// Limit value normal where the player can move
-	float _responsiveness = 10.0f;       // Value use for lerp
-	float _cameraTime = 0.0f;
-	float _frequenceShake = 12.0f;
-	float _amplitudeShake = 3.5f;
 
 	// Technical Data
 	float _fov = 45.0f;

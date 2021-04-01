@@ -3,6 +3,7 @@
 #include "engine/Camera.hpp"
 #include <iostream>
 #include <memory>
+#include <vector>
 #include "GLFW/glfw3.h"
 
 class Camera;
@@ -11,9 +12,8 @@ struct CallbackPtr;
 
 enum class ActiveKey {
 	NONE, 
-	C,
-	E,	
-	A	
+	ALT,
+	MOUSE_LEFT
 };
 
 class InputHandler
@@ -25,14 +25,14 @@ public:
 
 	void SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr);
 
-	ActiveKey GetActiveKey() { return _ActiveKey; };
-	
-	bool CanInteract() const { return _canInteract; }
-
-	void SetCanInteract(bool interact) { _canInteract = interact; }
+	bool canRotate() const;
 
 private:
-	ActiveKey _ActiveKey = ActiveKey::NONE;
+	void addKey(ActiveKey key);
+	void removeKey(ActiveKey key);
+
+private:
+	std::vector<ActiveKey> _activeKeys = { ActiveKey::NONE };
 
 	bool _canInteract = false;
 
@@ -49,7 +49,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 struct CallbackPtr
 {
 	std::shared_ptr<Camera> _camera;
+	std::shared_ptr<InputHandler> _inputHandler;
 
-	CallbackPtr(const std::shared_ptr<Camera>& camera)
-		: _camera(camera) {}
+	CallbackPtr(const std::shared_ptr<Camera>& camera, const std::shared_ptr<InputHandler>& inputHandler)
+		: _camera(camera), _inputHandler(inputHandler) {}
 };
