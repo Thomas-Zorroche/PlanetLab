@@ -4,6 +4,9 @@
 #include "engine/StaticMesh.hpp"
 #include "hud/ObserverHud.hpp"
 
+#include "planets/ShapeSettings.hpp"
+#include "planets/ColorSettings.hpp"
+
 class Planet
 {
 public:
@@ -14,6 +17,7 @@ public:
 private:
 	void generateMesh();
 	void checkHud();
+	void generateColors();
 
 private:
 	int _resolution;
@@ -22,4 +26,7 @@ private:
 	StaticMesh _staticMesh;
 
 	ObserverHud _observer;
+
+	ShapeSettings _shapeSettings;
+	ColorSettings _colorSettings;
 };

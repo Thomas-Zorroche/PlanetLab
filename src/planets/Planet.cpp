@@ -42,7 +42,7 @@ void Planet::draw()
 
 void Planet::checkHud()
 {
-	auto flags = _observer.checkHud(_resolution);
+	auto flags = _observer.checkHud(_resolution, _colorSettings.planetColor());
 
 	for (const auto& flag : flags)
 	{
@@ -53,6 +53,19 @@ void Planet::checkHud()
 			for (auto& face : _terrainFaces)
 				face.updateResolution(_resolution);
 		}
+		case ObsFlag::COLOR:
+		{
+			generateColors();
+		}
 		}
 	}
 }
+
+void Planet::generateColors()
+{
+	for (TerrainFace& face : _terrainFaces)
+	{
+		face.mesh()->setColor(_colorSettings.planetColor());
+	}
+}
+

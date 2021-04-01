@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include "common.hpp"
+#include "engine/Color.hpp"
 #include "opengl/Shader.h"
 #include "engine/Material.hpp"
 
@@ -25,6 +26,7 @@ public:
 	const std::shared_ptr<Material>& MaterialPtr() const { return _material; }
 
 	void UpdateGeometry(const std::vector<ShapeVertex>& vertices, const std::vector<unsigned int>& indices);
+	void setColor(const Color& color);
 
 private:
 	void SetupMesh(bool generateBuffers = true);

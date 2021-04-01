@@ -110,3 +110,9 @@ void Mesh::Clear()
     _vertices.clear();
     _indices.clear();
 }
+
+void Mesh::setColor(const Color& color)
+{
+    _material->setDiffuse(color.vector());
+}
+
