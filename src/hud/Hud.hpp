@@ -37,6 +37,7 @@ public:
 	float planetRadius() const { return _planetRadius; }
 	float noiseStrength() const { return _noiseStrength; }
 	float noiseRoughness() const { return _noiseRoughness; }
+	glm::vec3 noiseCenter() const { return _noiseCenter; }
 
 private:
 	Hud() = default;
@@ -50,6 +51,7 @@ private:
 	static float _planetRadius;
 	static float _noiseStrength;
 	static float _noiseRoughness;
+	static glm::vec3 _noiseCenter;
 
 	float _viewportWidth;
 	float _viewportHeight;

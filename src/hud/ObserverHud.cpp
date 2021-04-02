@@ -48,5 +48,12 @@ std::vector<ObsFlag> ObserverHud::checkHud(int& resolution, Color& color, std::s
 		flags.push_back(ObsFlag::NOISE);
 	}
 
+	// NOISE CENTER 
+	if (Hud::get().noiseCenter() != shapeSettings->noiseSettings()->center())
+	{
+		shapeSettings->noiseSettings()->center() = Hud::get().noiseCenter();
+		flags.push_back(ObsFlag::NOISE);
+	}
+
 	return flags;
 }

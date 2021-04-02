@@ -16,6 +16,7 @@ Color Hud::_planetColor;
 float Hud::_planetRadius = 1.0f;
 float Hud::_noiseStrength = 1.0f;
 float Hud::_noiseRoughness = 1.0f;
+glm::vec3 Hud::_noiseCenter = glm::vec3(0, 0, 0);
 
 
 Hud::~Hud()
@@ -76,6 +77,9 @@ void Hud::draw(const std::shared_ptr<Camera>& camera) const
             ImGui::SliderFloat("Size", &_planetRadius, 0.2f, 4.0f);
             ImGui::SliderFloat("Strength", &_noiseStrength, 0.0f, 2.0f);
             ImGui::SliderFloat("Roughness", &_noiseRoughness, 0.0f, 20.0f);
+
+            ImGui::SliderFloat3("Center", (float*)&_noiseCenter, -10.0f, 10.0f);
+
         }
         ImGui::End();
     }
