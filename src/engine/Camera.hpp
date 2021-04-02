@@ -25,7 +25,6 @@ public:
 	Camera();
 	~Camera() {}
 
-
 	// Getters Camera Data
 	float GetFov() const { return _fov; }
 	float GetWidth() const { return _widthScreen; }
@@ -41,34 +40,27 @@ public:
 	float GetLastY() const  { return _lastY; }
 	float GetSensitivity() const  { return _sensitivity; }
 	glm::vec3 GetPosition() const { return _Position; };
-	
 	glm::vec3 GetUpVector() const { return _UpVector; };
 	glm::vec3 GetViewDir() const { return -glm::transpose(_viewMatrix)[2]; }
 	glm::vec3 GetRightVector() const { return glm::transpose(_viewMatrix)[0]; }
 
-	// Setters
 	void SetLastX(float x) { _lastX = x; }
 	void SetLastY(float y) { _lastY = y; }
-
 	void updatePosition(glm::vec3 eye);
+	void zoom(float value);
 
 
 private:
 	glm::mat4 _viewMatrix;
-	glm::vec3 _Position;	  // Position of the camera
-
-	float _phi;
-	float _theta;
-
 	float _distanceFromCenter = 4.0f;
+	glm::vec3 _Position;
 
-	glm::vec3 _UpVector = glm::vec3(0, 1, 0);      // Up
+	glm::vec3 _UpVector = glm::vec3(0, 1, 0); 
 
 	float _lastX;     // Last Mouse coordinates
 	float _lastY;
 
-	// Input Data
-	float _sensitivity;
+	float _sensitivity = 1.0f;
 
 	// Technical Data
 	float _fov = 45.0f;

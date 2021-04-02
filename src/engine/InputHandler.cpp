@@ -86,6 +86,7 @@ bool InputHandler::canRotate() const
 void InputHandler::SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr)
 {
     glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
     glfwSetWindowUserPointer(window, &callbackPtr);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
@@ -105,8 +106,8 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos)
         glm::vec4 pivot = glm::vec4(0, 0, 0, 1);
         
         // step 1 : Calculate the amount of rotation given the mouse movement.
-        float deltaAngleX = (2 * M_PI / 1280.0f); // a movement from left to right = 2*PI = 360 deg
-        float deltaAngleY = (M_PI / 720.0f);  // a movement from top to bottom = PI = 180 deg
+        float deltaAngleX = (2 * M_PI / camera->GetWidth()); // a movement from left to right = 2*PI = 360 deg
+        float deltaAngleY = (M_PI / camera->GetHeight());  // a movement from top to bottom = PI = 180 deg
         float xAngle = (camera->GetLastX() - xPos) * deltaAngleX;
         float yAngle = (camera->GetLastY() - yPos) * deltaAngleY;
 
@@ -116,7 +117,6 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos)
         {
             yAngle = 0;
         }
-
 
         // step 2: Rotate the camera around the pivot point on the first axis.
         glm::mat4x4 rotationMatrixX(1.0f);
@@ -134,5 +134,19 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos)
         // Update the mouse position for the next rotation
         camera->SetLastX(xPos);
         camera->SetLastY(yPos);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    CallbackPtr* callbackPtr = (CallbackPtr*)glfwGetWindowUserPointer(window);
+    auto camera = callbackPtr->_camera;
+
+    if (yoffset > 0)
+        camera->zoom(0.9); // ZOOM IN
+    else
+        camera->zoom(1.1); // ZOOM OUT
+ 
+    std::cout << yoffset << std::endl;
+   
 }
 

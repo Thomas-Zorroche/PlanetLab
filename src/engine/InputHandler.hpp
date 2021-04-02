@@ -44,7 +44,7 @@ private:
 // can't be object function due to glwf api
 //
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 struct CallbackPtr
 {

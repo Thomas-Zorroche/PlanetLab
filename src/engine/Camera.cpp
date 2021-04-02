@@ -3,12 +3,9 @@
 
 
 Camera::Camera()
-	: _Position(0, 0, -4),
-	_phi(0), 
-	_theta(0),
+	: _Position(0, 0, -_distanceFromCenter),
 	_lastX(450.0f), 
-	_lastY(320.0f), 
-	_sensitivity(1.0f)
+	_lastY(320.0f)
 {
 	updateViewMatrix();
 }
@@ -23,6 +20,13 @@ void Camera::updatePosition(glm::vec3 eye)
 	_Position = std::move(eye);
 	updateViewMatrix();
 }
+
+void Camera::zoom(float value)
+{
+	_Position *= value;
+	updateViewMatrix();
+}
+
 
 
 
