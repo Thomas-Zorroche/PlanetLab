@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ShapeSettings.hpp"
+#include "noise/NoiseFilter.hpp"
 #include "glm/glm.hpp"
 
 #include <memory>
@@ -14,4 +15,5 @@ public:
 
 private:
 	std::shared_ptr<ShapeSettings> _settings;
+	NoiseFilter _noiseFilter;
 };
