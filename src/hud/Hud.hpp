@@ -21,9 +21,14 @@ public:
 	Hud(const Hud&) = delete;
 	Hud& operator=(const Hud&) = delete;
 
-	void draw(const std::shared_ptr<Camera>& camera, const Window& windowObject) const;
-	void init(GLFWwindow* window);
+	void draw(const std::shared_ptr<Camera>& camera) const;
+	void init(GLFWwindow* window, float width, float height);
 	void free();
+	void bindFbo();
+	void Hud::unbindFbo();
+
+	float viewportWidth() const { return _viewportWidth; }
+	float viewportHeight() const { return _viewportHeight; }
 
 	/* UI Fonctions */
 	bool wireframeMode() const { return _wireframeMode; }
@@ -33,11 +38,17 @@ public:
 
 private:
 	Hud() = default;
-	~Hud() = default;
+	~Hud();
+
+	GLuint _fboViewport = -1;
 
 	static bool _wireframeMode;
 	static int _resolution;
 	static Color _planetColor;
 	static float _planetRadius;
+
+	float _viewportWidth;
+	float _viewportHeight;
+	float _settingsWidth;
 	
 };

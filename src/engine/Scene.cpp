@@ -40,13 +40,6 @@ void Scene::Init()
 
 void Scene::Draw()
 {
-	// Render all the static meshes
-	// ============================
-	for (size_t i = 0; i < _staticMeshesCount; i++)
-	{
-		_staticMeshes[i]->Draw();
-	}
-
 	_planet->draw();
 }
 

@@ -27,6 +27,7 @@ Texture::Texture(const Texture& other)
 Texture::Texture(unsigned int id, TextureType type, const std::vector<unsigned char>& imageData, const std::string& path, int width, int height)
 	: _rendererID(id), _type(type), _imageData(imageData), _path(path), _width(width), _height(height)
 {
+
 }
 
 

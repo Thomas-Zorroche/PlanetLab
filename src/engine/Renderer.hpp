@@ -8,6 +8,7 @@
 #include "engine/StaticMesh.hpp"
 #include "opengl/Shader.h"
 #include "engine/ResourceManager.hpp"
+#include "hud/Hud.hpp"
 
 #include <vector>
 #include <memory>
@@ -34,7 +35,7 @@ public:
 	void ComputeProjectionMatrix()
 	{
 		float fov = _camera->GetFov();
-		float ratio = _camera->GetWidth() / _camera->GetHeight();
+		float ratio = Hud::get().viewportWidth() / Hud::get().viewportHeight();
 		float nearPlane = _camera->GetNearPlane();
 		float farPlane = _camera->GetFarPlane();
 		

@@ -15,7 +15,7 @@ void mainloop(Window& windowObject)
     ResourceManager::Get().LoadAllShaders();
 
     Scene scene;
-    Hud::get().init(window);
+    Hud::get().init(window, windowObject.Width(), windowObject.Height());
 
     auto camera = std::make_shared<Camera>();
     Renderer::Get().SetCamera(camera);
@@ -46,10 +46,13 @@ void mainloop(Window& windowObject)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Render scene here
+        Hud::get().bindFbo();
         scene.Draw();
 
         // Render Hud
-        Hud::get().draw(camera, windowObject);
+        Hud::get().unbindFbo();
+        Hud::get().draw(camera);
+
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

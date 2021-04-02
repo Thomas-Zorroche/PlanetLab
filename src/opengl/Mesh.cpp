@@ -92,7 +92,6 @@ void Mesh::Draw(std::shared_ptr<Shader>& shader, bool IsParticuleInstance, int c
     shader->Unbind();
     glActiveTexture(GL_TEXTURE0);
     glDisable(GL_BLEND);
-
 }
 
 void Mesh::UpdateGeometry(const std::vector<ShapeVertex>& vertices, const std::vector<unsigned int>& indices)
