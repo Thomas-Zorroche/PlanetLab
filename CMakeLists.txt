@@ -3,6 +3,7 @@ cmake_policy(VERSION 2.8)
 
 project (OpenGL_Template)
 
+
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
@@ -110,3 +111,5 @@ target_link_libraries(${PROJECT_NAME} ${LIBS})
 # copy shader files to build directory
 file(COPY ${CMAKE_SOURCE_DIR}/res/shaders/
   DESTINATION ${CMAKE_BINARY_DIR}/res/shaders)
+
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)

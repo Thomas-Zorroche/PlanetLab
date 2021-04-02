@@ -2,7 +2,7 @@
 
 BaseLight::BaseLight(LightType type, float intensity, const glm::vec3& color, bool electricity)
 	: _type(type), _intensity(intensity), _color(color), _electricity(electricity),
-	  _ambient(color), _diffuse(color), _specular(color)
+	  _ambient(0.3f, 0.24f, 0.14f), _diffuse(color), _specular(0.5, 0.5, 0.5)
 {
 
 }

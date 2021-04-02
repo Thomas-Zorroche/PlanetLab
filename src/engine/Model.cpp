@@ -20,13 +20,6 @@ Model::Model(const std::string& path)
 Model::Model(const std::vector<std::shared_ptr<Mesh> >& meshes)
     : _meshes(meshes)
 {
-
-}
-
-Model::Model()
-    : _meshes(std::vector<std::shared_ptr<Mesh> >())
-{
-
 }
 
 

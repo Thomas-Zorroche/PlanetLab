@@ -145,8 +145,5 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
         camera->zoom(0.9); // ZOOM IN
     else
         camera->zoom(1.1); // ZOOM OUT
- 
-    std::cout << yoffset << std::endl;
-   
 }
 

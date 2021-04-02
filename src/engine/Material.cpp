@@ -10,7 +10,7 @@
 const int Material::NumberTexturesMax = 5;
 
 Material::Material()
-	: _shininess(1.0f), _ambient(glm::vec3(0, 0, 0)), _diffuse(glm::vec3(0.8, 0.8, 0.8)), _specular(glm::vec3(0.5, 0.5, 0.5)),
+	: _shininess(16.0f), _ambient(glm::vec3(0.5, 0.5, 0.5)), _diffuse(glm::vec3(0.8, 0.8, 0.8)), _specular(glm::vec3(0.5, 0.5, 0.5)),
 	  _materialTextures { 0, 0, 0, 0, 0 } {}
 
 /*

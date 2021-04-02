@@ -245,7 +245,7 @@ void ResourceManager::LoadAllShaders()
 	ResourceManager::Get().LoadShader("res/shaders/Default.vert", "res/shaders/DefaultLighting.frag", "DefaultLighting");
 	// Red Wireframe Shader
 	ResourceManager::Get().LoadShader("res/shaders/Default.vert", "res/shaders/wireframe.frag", "Wireframe");
-	// Framebuffer shader
-	ResourceManager::Get().LoadShader("res/shaders/fbo.vert", "res/shaders/fbo.frag", "Framebuffer");
+	// Normal shader
+	ResourceManager::Get().LoadShader("res/shaders/normal.vert", "res/shaders/normal.frag", "Normal");
 }
 

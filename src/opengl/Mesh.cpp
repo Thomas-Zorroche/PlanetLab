@@ -61,6 +61,11 @@ void Mesh::SetupMesh(bool generateBuffers)
     glBindVertexArray(0);
 }
 
+void Mesh::UpdateVBO()
+{
+    glBufferSubData(GL_ARRAY_BUFFER, 0, _vertices.size() * sizeof(ShapeVertex), &_vertices[0]);
+}
+
 void Mesh::Draw(std::shared_ptr<Shader>& shader, bool IsParticuleInstance, int countParticules) const
 {
     shader->Bind();
@@ -97,11 +102,16 @@ void Mesh::Draw(std::shared_ptr<Shader>& shader, bool IsParticuleInstance, int c
 void Mesh::UpdateGeometry(const std::vector<ShapeVertex>& vertices, const std::vector<unsigned int>& indices)
 {
     bool generate = _vertices.empty();
+
+    // Clear all data and reaplace it by the parameters
     Clear();
     _vertices = vertices;
     _indices = indices;
+
+    recalculateNormals();
     
-   SetupMesh(generate);
+    // Update Buffers Data
+    SetupMesh(generate);
 }
 
 void Mesh::Clear()
@@ -113,5 +123,46 @@ void Mesh::Clear()
 void Mesh::setColor(const Color& color)
 {
     _material->setDiffuse(color.vector());
+}
+
+ShapeVertex& Mesh::Vertex(unsigned int index)
+{
+    if (index > _vertices.size())
+        throw std::string("Mesh Vertices : Out of bounds");
+    
+    return _vertices[index];
+}
+
+const ShapeVertex& Mesh::Vertex(unsigned int index) const
+{
+    if (index > _vertices.size())
+        throw std::string("Mesh Vertices : Out of bounds");
+
+    return _vertices[index];
+}
+
+void Mesh::recalculateNormals()
+{
+    for (size_t i = 0; i < _indices.size(); i += 3)
+    {
+        glm::vec3 faceNormal = calculateSurfaceNormal(
+            _vertices[_indices[i]].position,
+            _vertices[_indices[i + 1]].position,
+            _vertices[_indices[i + 2]].position
+        );
+
+        _vertices[_indices[i]].normal = faceNormal;
+        _vertices[_indices[i + 1]].normal = faceNormal;
+        _vertices[_indices[i + 2]].normal = faceNormal;
+    }
+}
+
+
+glm::vec3 Mesh::calculateSurfaceNormal(const glm::vec3& A, const glm::vec3& B, const glm::vec3& C)
+{
+    glm::vec3 u(B - A);
+    glm::vec3 v(C - A);
+
+    return glm::normalize(glm::cross(u, v));
 }
 

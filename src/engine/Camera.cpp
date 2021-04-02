@@ -3,7 +3,7 @@
 
 
 Camera::Camera()
-	: _Position(0, 0, -_distanceFromCenter),
+	: _Position(0, 0, +_distanceFromCenter),
 	_lastX(450.0f), 
 	_lastY(320.0f)
 {

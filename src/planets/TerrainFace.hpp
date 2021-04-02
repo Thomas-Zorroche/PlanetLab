@@ -15,6 +15,7 @@ public:
 	
 	std::shared_ptr<Mesh>& mesh() { return _mesh; }
 
+
 private:
 	std::shared_ptr<Mesh> _mesh;
 	int _resolution;

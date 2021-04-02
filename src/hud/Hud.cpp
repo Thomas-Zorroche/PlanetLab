@@ -17,7 +17,7 @@ float Hud::_planetRadius = 1.0f;
 
 Hud::~Hud()
 {
-    //glDeleteFramebuffers(1, &_fboViewport);
+    glDeleteFramebuffers(1, &_fboViewport);
 }
 
 void Hud::init(GLFWwindow* window, float width, float height)

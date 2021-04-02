@@ -28,9 +28,13 @@ Scene::~Scene() {}
 
 void Scene::Init()
 {
-	// Create all static meshes
+	// Procedural Planet
 	//=======================
 	_planet = std::make_shared<Planet>();
+
+	// Sphere Test
+	//=======================
+	AddStaticMesh(std::make_shared<StaticMesh>());
 
 	// Load All Lights
 	// =================
@@ -41,6 +45,9 @@ void Scene::Init()
 void Scene::Draw()
 {
 	_planet->draw();
+
+	/*for (size_t i = 0; i < _staticMeshesCount; i++)
+		_staticMeshes[i]->Draw();*/
 }
 
 void Scene::AddStaticMesh(const std::shared_ptr<StaticMesh>& mesh)

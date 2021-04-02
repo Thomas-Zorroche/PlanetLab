@@ -44,11 +44,7 @@ void LightManager::SendUniforms(const std::shared_ptr<Shader>& shader)
 		}
 		else if (_lights[i]->Type() == LightType::DIR)
 		{
-			if (_lightsOn)
-				shader->SetUniform1f("dirLight.intensity", _lights[i]->Intensity());
-			else
-				shader->SetUniform1f("dirLight.intensity", 0.0f);
-			
+			shader->SetUniform1f("dirLight.intensity", 0.0f);
 			shader->SetUniform3f("dirLight.ambient", _lights[i]->Ambient());
 			shader->SetUniform3f("dirLight.diffuse", _lights[i]->Diffuse());
 			shader->SetUniform3f("dirLight.specular", _lights[i]->Specular());
@@ -111,19 +107,9 @@ void LightManager::LoadAllLights()
 	// Directional Light
 	// =========================================================================
 	std::shared_ptr<BaseLight> dirLight = std::make_shared<DirectionalLight>(
-		1.0f,
-		glm::vec3(0.5, 0.5, 0.5),
+		0.5f,
+		glm::vec3(0.8, 0.8, 0.8),
 		glm::vec3(1, 1, 1));
 
 	AddLight(dirLight, LightType::DIR);
-
-	// Point Light
-	// =========================================================================
-	std::shared_ptr<BaseLight> pointLight = std::make_shared<PointLight>(
-		10.0f,
-		glm::vec3(1, 0.6, 0),
-		glm::vec3(0, 0, 0), 
-		100);
-
-	//AddLight(pointLight, LightType::POINT);
 }
