@@ -1,10 +1,12 @@
 #pragma once
 
-#include "ShapeSettings.hpp"
-#include "noise/NoiseFilter.hpp"
+
 #include "glm/glm.hpp"
 
 #include <memory>
+
+class NoiseFilter;
+class ShapeSettings;
 
 class ShapeGenerator
 {
@@ -15,5 +17,5 @@ public:
 
 private:
 	std::shared_ptr<ShapeSettings> _settings;
-	NoiseFilter _noiseFilter;
+	std::shared_ptr<NoiseFilter> _noiseFilter;
 };

@@ -1,12 +1,17 @@
 #include "NoiseFilter.hpp"
 
-NoiseFilter::NoiseFilter(int seed)
-	: _noise(siv::PerlinNoise())
+#include "NoiseSettings.hpp"
+
+
+NoiseFilter::NoiseFilter(const std::shared_ptr<NoiseSettings>& settings, int seed)
+	: _noise(siv::PerlinNoise()), _settings(settings)
 {
 
 }
 
 float NoiseFilter::evaluate(const glm::vec3& point) const
 {
-	return (_noise.noise3D(point.x, point.y, point.z) + 1) * 0.5;
+	glm::vec3 coordNoise = point * _settings->roughness() + _settings->center();
+	float noiseValue = (_noise.noise3D(coordNoise.x, coordNoise.y, coordNoise.z) + 1) * 0.5;
+	return noiseValue * _settings->strength();
 }

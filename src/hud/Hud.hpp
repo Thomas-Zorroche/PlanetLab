@@ -35,6 +35,8 @@ public:
 	int resolution() const { return _resolution; }
 	const Color& planetColor() const { return _planetColor; }
 	float planetRadius() const { return _planetRadius; }
+	float noiseStrength() const { return _noiseStrength; }
+	float noiseRoughness() const { return _noiseRoughness; }
 
 private:
 	Hud() = default;
@@ -46,6 +48,8 @@ private:
 	static int _resolution;
 	static Color _planetColor;
 	static float _planetRadius;
+	static float _noiseStrength;
+	static float _noiseRoughness;
 
 	float _viewportWidth;
 	float _viewportHeight;

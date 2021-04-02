@@ -79,6 +79,11 @@ void Planet::checkHud()
 		{
 			generateMesh();
 		}
+		case ObsFlag::NOISE:
+		{
+			generateMesh();
+		}
+
 		}
 	}
 }
