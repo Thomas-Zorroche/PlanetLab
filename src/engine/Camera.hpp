@@ -26,43 +26,43 @@ public:
 	~Camera() {}
 
 
-	void rotateUp(float angle);
-	void rotateLeft(float angle);
-
 	// Getters Camera Data
 	float GetFov() const { return _fov; }
 	float GetWidth() const { return _widthScreen; }
 	float GetHeight() const { return _heightScreen; }
 	float GetNearPlane() const { return _nearPlane; }
 	float GetFarPlane() const { return _farPlane; }
-	glm::mat4 getViewMatrix() const;
-	// Getters Camera Gameplay
+	
+	void updateViewMatrix();
+	glm::mat4 getViewMatrix() const { return _viewMatrix; }
+
+	// Getters Camera
 	float GetLastX() const  { return _lastX; }
 	float GetLastY() const  { return _lastY; }
 	float GetSensitivity() const  { return _sensitivity; }
 	glm::vec3 GetPosition() const { return _Position; };
-	glm::vec3 GetFrontVector() const { return _FrontVector; };
+	
+	glm::vec3 GetUpVector() const { return _UpVector; };
+	glm::vec3 GetViewDir() const { return -glm::transpose(_viewMatrix)[2]; }
+	glm::vec3 GetRightVector() const { return glm::transpose(_viewMatrix)[0]; }
 
 	// Setters
 	void SetLastX(float x) { _lastX = x; }
 	void SetLastY(float y) { _lastY = y; }
 
-
-private:
-	void computeDirectionVectors();
+	void updatePosition(glm::vec3 eye);
 
 
 private:
-
+	glm::mat4 _viewMatrix;
 	glm::vec3 _Position;	  // Position of the camera
+
 	float _phi;
 	float _theta;
 
 	float _distanceFromCenter = 4.0f;
 
-	glm::vec3 _FrontVector;   // Direction
-	glm::vec3 _LeftVector;    // Left
-	glm::vec3 _UpVector;      // Up
+	glm::vec3 _UpVector = glm::vec3(0, 1, 0);      // Up
 
 	float _lastX;     // Last Mouse coordinates
 	float _lastY;

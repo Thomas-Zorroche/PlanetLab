@@ -91,25 +91,48 @@ void InputHandler::SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr)
 }
 
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+void mouse_callback(GLFWwindow* window, double xPos, double yPos)
 {
     CallbackPtr* callbackPtr = (CallbackPtr*)glfwGetWindowUserPointer(window);
     auto inputHandler = callbackPtr->_inputHandler;
+    auto camera = callbackPtr->_camera;
 
     if (inputHandler->canRotate())
     {
-        auto camera = callbackPtr->_camera;
+        
+        // Get the homogenous position of the camera and pivot point
+        glm::vec4 position = glm::vec4(camera->GetPosition(), 1);
+        glm::vec4 pivot = glm::vec4(0, 0, 0, 1);
+        
+        // step 1 : Calculate the amount of rotation given the mouse movement.
+        float deltaAngleX = (2 * M_PI / 1280.0f); // a movement from left to right = 2*PI = 360 deg
+        float deltaAngleY = (M_PI / 720.0f);  // a movement from top to bottom = PI = 180 deg
+        float xAngle = (camera->GetLastX() - xPos) * deltaAngleX;
+        float yAngle = (camera->GetLastY() - yPos) * deltaAngleY;
 
-        float xoffset = xpos - camera->GetLastX();
-        float yoffset = ypos - camera->GetLastY();
-        camera->SetLastX(xpos);
-        camera->SetLastY(ypos);
+        // Extra step to handle the problem when the camera direction is the same as the up vector
+        float cosAngle = glm::dot(camera->GetViewDir(), glm::vec3(0, 1, 0));
+        if (cosAngle * glm::sign(yAngle) > 0.99f)
+        {
+            yAngle = 0;
+        }
 
-        xoffset *= camera->GetSensitivity();
-        yoffset *= camera->GetSensitivity();
 
-        camera->rotateLeft(xoffset);
-        camera->rotateUp(yoffset);
+        // step 2: Rotate the camera around the pivot point on the first axis.
+        glm::mat4x4 rotationMatrixX(1.0f);
+        rotationMatrixX = glm::rotate(rotationMatrixX, xAngle, glm::vec3(0, 1, 0));
+        position = (rotationMatrixX * (position - pivot)) + pivot;
+
+        // step 3: Rotate the camera around the pivot point on the second axis.
+        glm::mat4x4 rotationMatrixY(1.0f);
+        rotationMatrixY = glm::rotate(rotationMatrixY, yAngle, camera->GetRightVector());
+        glm::vec3 finalPosition = (rotationMatrixY * (position - pivot)) + pivot;
+
+        // Update the camera view (we keep the same lookat and the same up vector)
+        camera->updatePosition(finalPosition);
     }
+        // Update the mouse position for the next rotation
+        camera->SetLastX(xPos);
+        camera->SetLastY(yPos);
 }
 
