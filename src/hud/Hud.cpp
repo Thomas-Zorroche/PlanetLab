@@ -43,6 +43,8 @@ void Hud::init(GLFWwindow* window, float width, float height)
 
     // Create 3D Viewport Framebuffer
     _fboViewport = Framebuffer(_viewportWidth, _viewportHeight).id();
+
+
 }
 
 void Hud::draw(const std::shared_ptr<Camera>& camera) const
@@ -53,38 +55,40 @@ void Hud::draw(const std::shared_ptr<Camera>& camera) const
     ImGui::NewFrame();
 
     ImGuiWindowFlags window_flags = 0;
-    window_flags |= ImGuiWindowFlags_MenuBar;
     window_flags |= ImGuiWindowFlags_NoCollapse;
-    window_flags |= ImGuiWindowFlags_NoMove;
-    window_flags |= ImGuiWindowFlags_NoResize;
+    window_flags |= ImGuiWindowFlags_NoTitleBar;
+    window_flags |= ImGuiWindowFlags_MenuBar;
 
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::SetNextWindowSize(ImVec2(_WIDTH, _HEIGHT));
     // Main Window
-    //ImGui::SetNextWindowPos(ImVec2(0, 0));
-    ImGui::SetNextWindowSize(ImVec2(ImVec2(_WIDTH, _HEIGHT)));
-    if (ImGui::Begin("Main Window"))
+    if (ImGui::Begin("Procedural Planets", false, window_flags))
     {
-        // MenuBar
+        // Menu Bar
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("File"))
             {
-                if (ImGui::MenuItem("Close")) {};
+                ImGui::MenuItem("New");
+                ImGui::MenuItem("Save");
+                ImGui::MenuItem("Save As");
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Tools"))
+            {
+                ImGui::MenuItem("Noise Settings");
                 ImGui::EndMenu();
             }
             ImGui::EndMenuBar();
         }
 
-        // 3D Viewport
-        if (ImGui::BeginChild("Viewport", ImVec2(_viewportWidth, _viewportHeight)))
+
+        if (ImGui::BeginChild("Renderer", ImVec2(_viewportWidth, _HEIGHT)))
         {
-            if (ImGui::BeginChild("Renderer"))
-            {
-                ImVec2 wsize = ImGui::GetWindowSize();
-                ImGui::Image((ImTextureID)_fboViewport, wsize, ImVec2(0, 1), ImVec2(1, 0));
-            }
-            ImGui::EndChild();
+            ImVec2 wsize = ImGui::GetWindowSize();
+            ImGui::Image((ImTextureID)_fboViewport, wsize, ImVec2(0, 1), ImVec2(1, 0));
         }
-        ImGui::EndChild(); // 3D Viewport
+        ImGui::EndChild();
 
         ImGui::SameLine();
 
@@ -101,10 +105,10 @@ void Hud::draw(const std::shared_ptr<Camera>& camera) const
             ImGui::SliderFloat3("Center", (float*)&_noiseCenter, -10.0f, 10.0f);
         }
         ImGui::EndChild(); // Settings
-        
+
+
     }
     ImGui::End(); // Main Window
-
 
     // Render ImGUI
     ImGui::Render();
