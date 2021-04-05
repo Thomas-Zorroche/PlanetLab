@@ -35,6 +35,8 @@ void Hud::init(GLFWwindow* window, float width, float height)
     ImGui_ImplOpenGL3_Init((char*)glGetString(GL_NUM_SHADING_LANGUAGE_VERSIONS));
 
     // Init windows sizes
+    _WIDTH = width;
+    _HEIGHT = height;
     _viewportWidth = 0.7 * width;
     _viewportHeight = height;
     _settingsWidth = width - _viewportWidth;
@@ -50,25 +52,44 @@ void Hud::draw(const std::shared_ptr<Camera>& camera) const
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    // 3D Viewport
+    ImGuiWindowFlags window_flags = 0;
+    window_flags |= ImGuiWindowFlags_MenuBar;
+    window_flags |= ImGuiWindowFlags_NoCollapse;
+    window_flags |= ImGuiWindowFlags_NoMove;
+    window_flags |= ImGuiWindowFlags_NoResize;
+
+    // Main Window
+    //ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::SetNextWindowSize(ImVec2(ImVec2(_WIDTH, _HEIGHT)));
+    if (ImGui::Begin("Main Window"))
     {
-        ImGui::SetNextWindowPos(ImVec2(0, 0));
-        ImGui::SetNextWindowSize(ImVec2(_viewportWidth, _viewportHeight));
-        ImGui::Begin("Viewport");
+        // MenuBar
+        if (ImGui::BeginMenuBar())
         {
-            ImGui::BeginChild("Renderer");
-            ImVec2 wsize = ImGui::GetWindowSize();
-            ImGui::Image((ImTextureID)_fboViewport, wsize, ImVec2(0, 1), ImVec2(1, 0));
+            if (ImGui::BeginMenu("File"))
+            {
+                if (ImGui::MenuItem("Close")) {};
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
+        }
+
+        // 3D Viewport
+        if (ImGui::BeginChild("Viewport", ImVec2(_viewportWidth, _viewportHeight)))
+        {
+            if (ImGui::BeginChild("Renderer"))
+            {
+                ImVec2 wsize = ImGui::GetWindowSize();
+                ImGui::Image((ImTextureID)_fboViewport, wsize, ImVec2(0, 1), ImVec2(1, 0));
+            }
             ImGui::EndChild();
         }
-        ImGui::End();
-    }
+        ImGui::EndChild(); // 3D Viewport
 
-    // Settings
-    {
-        ImGui::SetNextWindowPos(ImVec2(_viewportWidth, 0));
-        ImGui::SetNextWindowSize(ImVec2(_settingsWidth, _viewportHeight));
-        ImGui::Begin("Procedural Planets Settings");
+        ImGui::SameLine();
+
+        // Settings
+        if (ImGui::BeginChild("Procedural Planets Settings"))
         {
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             ImGui::Checkbox("Wireframe Mode", &_wireframeMode);
@@ -77,12 +98,13 @@ void Hud::draw(const std::shared_ptr<Camera>& camera) const
             ImGui::SliderFloat("Size", &_planetRadius, 0.2f, 4.0f);
             ImGui::SliderFloat("Strength", &_noiseStrength, 0.0f, 2.0f);
             ImGui::SliderFloat("Roughness", &_noiseRoughness, 0.0f, 20.0f);
-
             ImGui::SliderFloat3("Center", (float*)&_noiseCenter, -10.0f, 10.0f);
-
         }
-        ImGui::End();
+        ImGui::EndChild(); // Settings
+        
     }
+    ImGui::End(); // Main Window
+
 
     // Render ImGUI
     ImGui::Render();

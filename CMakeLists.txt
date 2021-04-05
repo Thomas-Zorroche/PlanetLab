@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.8)
 cmake_policy(VERSION 2.8)
 
-project (OpenGL_Template)
+project (Procedural_Planets)
 
 
 IF(NOT CMAKE_BUILD_TYPE)
@@ -95,9 +95,6 @@ link_directories(${CMAKE_SOURCE_DIR}/lib)
 # RESOURCES
 # Add Shaders
 file(GLOB_RECURSE RES_FILES *.frag *.vert *.glsl *.shader)
-# Add Textures
-file(COPY ${CMAKE_SOURCE_DIR}/res/img/
-	DESTINATION ${CMAKE_BINARY_DIR}/res/img)
 # Add Models
 file(COPY ${CMAKE_SOURCE_DIR}/res/models/
 	DESTINATION ${CMAKE_BINARY_DIR}/res/models)

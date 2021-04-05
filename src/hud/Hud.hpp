@@ -56,5 +56,7 @@ private:
 	float _viewportWidth;
 	float _viewportHeight;
 	float _settingsWidth;
-	
+
+	float _WIDTH;
+	float _HEIGHT;
 };
