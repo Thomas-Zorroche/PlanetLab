@@ -51,7 +51,7 @@ void mainloop(Window& windowObject)
 
         // Render Hud
         Hud::get().unbindFbo();
-        Hud::get().draw(camera);
+        Hud::get().draw(window);
 
 
         /* Swap front and back buffers */

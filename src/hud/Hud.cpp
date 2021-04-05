@@ -2,7 +2,6 @@
 
 #include "opengl/Framebuffer.hpp"
 
-#include "engine/Camera.hpp"
 #include "engine/Window.hpp"
 #include "engine/Renderer.hpp"
 
@@ -21,7 +20,7 @@ glm::vec3 Hud::_noiseCenter = glm::vec3(0, 0, 0);
 
 Hud::~Hud()
 {
-    glDeleteFramebuffers(1, &_fboViewport);
+    
 }
 
 void Hud::init(GLFWwindow* window, float width, float height)
@@ -41,13 +40,11 @@ void Hud::init(GLFWwindow* window, float width, float height)
     _viewportHeight = height;
     _settingsWidth = width - _viewportWidth;
 
-    // Create 3D Viewport Framebuffer
-    _fboViewport = Framebuffer(_viewportWidth, _viewportHeight).id();
-
+    _fbo.resize(_viewportWidth, _viewportHeight);
 
 }
 
-void Hud::draw(const std::shared_ptr<Camera>& camera) const
+void Hud::draw(GLFWwindow* window)
 {
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -109,23 +106,13 @@ void Hud::draw(const std::shared_ptr<Camera>& camera) const
 
     if (ImGui::BeginMenuBar())
     {
-        if (ImGui::BeginMenu("Options"))
+        if (ImGui::BeginMenu("File"))
         {
-            // Disabling fullscreen would allow the window to be moved to the front of other windows,
-            // which we can't undo at the moment without finer window depth/z control.
-            ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-            ImGui::MenuItem("Padding", NULL, &opt_padding);
-            ImGui::Separator();
-
-            if (ImGui::MenuItem("Flag: NoSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoSplit; }
-            if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
-            if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
-            if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
-            if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
-            ImGui::Separator();
-
-            if (ImGui::MenuItem("Close", NULL, false))
+            if (ImGui::MenuItem("Exit"))
+            {
                 dockspaceOpen = false;
+                glfwSetWindowShouldClose(window, true);
+            }
             ImGui::EndMenu();
         }
 
@@ -135,12 +122,15 @@ void Hud::draw(const std::shared_ptr<Camera>& camera) const
     if (ImGui::Begin("Renderer"))
     {
         ImVec2 wsize = ImGui::GetWindowSize();
-        ImGui::Image((ImTextureID)_fboViewport, wsize, ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::Image((ImTextureID)_fbo.id(), wsize, ImVec2(0, 1), ImVec2(1, 0));
+        _viewportWidth = wsize.x;
+        _viewportHeight = wsize.y;
+        _fbo.resize(_viewportWidth, _viewportHeight);
+        Renderer::Get().ComputeProjectionMatrix();
     }
     ImGui::End();
 
     // Settings
-    ImGui::SetNextWindowSize(ImVec2(_viewportWidth, _viewportHeight), ImGuiCond_FirstUseEver);
     if (ImGui::Begin("Procedural Planets Settings"))
     {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -154,11 +144,7 @@ void Hud::draw(const std::shared_ptr<Camera>& camera) const
     }
     ImGui::End(); // Settings
 
-
     ImGui::End();
-
-
-
 
     // Render ImGUI
     ImGui::Render();
@@ -175,7 +161,7 @@ void Hud::free()
 
 void Hud::bindFbo()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, _fboViewport);
+    glBindFramebuffer(GL_FRAMEBUFFER, _fbo.id());
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.25f, 0.25f, 0.32f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -186,3 +172,4 @@ void Hud::unbindFbo()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+

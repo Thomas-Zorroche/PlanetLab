@@ -1,11 +1,12 @@
 #pragma once
 #include "engine/Application.hpp"
+#include "opengl/Framebuffer.hpp"
 #include "glm/glm.hpp"
 #include "engine/Color.hpp"
+#include <GLFW/glfw3.h>
 
 #include <memory>
 
-class Camera;
 class Window;
 class Camera;
 
@@ -21,7 +22,7 @@ public:
 	Hud(const Hud&) = delete;
 	Hud& operator=(const Hud&) = delete;
 
-	void draw(const std::shared_ptr<Camera>& camera) const;
+	void draw(GLFWwindow* window);
 	void init(GLFWwindow* window, float width, float height);
 	void free();
 	void bindFbo();
@@ -43,7 +44,7 @@ private:
 	Hud() = default;
 	~Hud();
 
-	GLuint _fboViewport = -1;
+	Framebuffer _fbo = Framebuffer();
 
 	static bool _wireframeMode;
 	static int _resolution;
