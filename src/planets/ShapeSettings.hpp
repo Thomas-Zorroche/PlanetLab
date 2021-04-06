@@ -13,9 +13,11 @@ public:
 	std::shared_ptr<NoiseSettings>& noiseSettings() { return _noiseSettings; }
 	bool enabled() const { return _enabled; }
 	bool& enabled() { return _enabled; }
+	bool useFirstLayerAsMask() const { return _useFirstLayerAsMask; }
 
 private:
 	bool _enabled;
+	bool _useFirstLayerAsMask = true;
 	std::shared_ptr<NoiseSettings> _noiseSettings;
 };
 

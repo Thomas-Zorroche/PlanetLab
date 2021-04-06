@@ -7,7 +7,7 @@
 NoiseFilter::NoiseFilter(const std::shared_ptr<NoiseSettings>& settings, int seed)
 	: _noise(siv::PerlinNoise()), _settings(settings)
 {
-
+	
 }
 
 float NoiseFilter::evaluate(const glm::vec3& point) const
