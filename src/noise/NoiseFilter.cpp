@@ -1,6 +1,7 @@
 #include "NoiseFilter.hpp"
-
 #include "NoiseSettings.hpp"
+
+#include <algorithm>    // std::max
 
 
 NoiseFilter::NoiseFilter(const std::shared_ptr<NoiseSettings>& settings, int seed)
@@ -11,9 +12,9 @@ NoiseFilter::NoiseFilter(const std::shared_ptr<NoiseSettings>& settings, int see
 
 float NoiseFilter::evaluate(const glm::vec3& point) const
 {
-	
 	//float noiseValue = (_noise.noise3D(coordNoise.x, coordNoise.y, coordNoise.z) + 1) * 0.5;
 	float noiseValue = 0;
+
 	float frequency = _settings->baseRoughness();
 	float amplitude = 1;
 
@@ -26,6 +27,12 @@ float NoiseFilter::evaluate(const glm::vec3& point) const
 		frequency *= _settings->roughness();
 		amplitude *= _settings->persistence();
 	}
-	
+
+	noiseValue = std::max(0.0f, noiseValue - _settings->minValue());
 	return noiseValue * _settings->strength();
+}
+
+void NoiseFilter::setSettings(const std::shared_ptr<NoiseSettings>& settings)
+{
+	_settings = settings;
 }

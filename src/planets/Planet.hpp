@@ -14,7 +14,8 @@ enum ObserverFlag
 	RESOLUTION = 0,
 	COLOR,
 	RADIUS,
-	NOISE
+	NOISE,
+	LAYER
 };
 
 class Planet
@@ -31,6 +32,8 @@ public:
 
 	void update(ObserverFlag flag);
 
+	void updateNoiseLayersCount(int noiseLayersCount);
+
 private:
 	void generatePlanet();
 	void generateMesh();
@@ -41,7 +44,7 @@ private:
 
 	std::shared_ptr<ShapeSettings> _shapeSettings;
 	std::shared_ptr<ColorSettings> _colorSettings;
-	ShapeGenerator _shapeGenerator;
+	std::shared_ptr<ShapeGenerator> _shapeGenerator;
 
 	TerrainFace _terrainFaces[6];
 	StaticMesh _staticMesh;

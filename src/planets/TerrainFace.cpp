@@ -3,7 +3,7 @@
 
 glm::vec3 calculateSurfaceNormal(const glm::vec3& A, const glm::vec3& B, const glm::vec3& C);
 
-TerrainFace::TerrainFace(const ShapeGenerator& shapeGenerator, int resolution, const glm::vec3& localUp)
+TerrainFace::TerrainFace(const std::shared_ptr<ShapeGenerator>& shapeGenerator, int resolution, const glm::vec3& localUp)
 	: _mesh(std::make_shared<Mesh>()),
 	_resolution(resolution),
 	_localUp(localUp),
@@ -30,7 +30,7 @@ void TerrainFace::constructMesh()
 			glm::vec2 percent(x / (float)(_resolution - 1), y / (float)(_resolution - 1));
 			glm::vec3 pointOnUnitCube = _localUp + ((percent.x - 0.5f) * 2 * _axisA) + ((percent.y - 0.5f) * 2 * _axisB);
 			glm::vec3 pointOnUnitSphere = glm::normalize(pointOnUnitCube);
-			vertices[i].position = _shapeGenerator.calculatePointOnPlanet(pointOnUnitSphere);
+			vertices[i].position = _shapeGenerator->calculatePointOnPlanet(pointOnUnitSphere);
 			vertices[i].normal = glm::abs(_localUp);
 			vertices[i].texCoords = glm::vec2(0, 0);
 

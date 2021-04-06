@@ -34,7 +34,6 @@ void Hud::init(GLFWwindow* window, const std::shared_ptr<Planet>& planet, float 
     // Init shared pointers
     _planet = planet;
     _shape = planet->shapeSettings();
-    _noise = planet->shapeSettings()->noiseSettings();
     _color = planet->colorSettings();
 
     // Init windows sizes
@@ -165,33 +164,66 @@ void Hud::draw(GLFWwindow* window)
             }
         }
 
-        if (ImGui::CollapsingHeader("Noise"))
+        if (ImGui::CollapsingHeader("Noise Layers"))
         {
-            if (ImGui::SliderFloat("Strength", &_noise->strength(), 0.0f, 2.0f))
+            static int noiseLayersCount = _shape->noiseLayers().size();
+            if (ImGui::SliderInt("Count", &noiseLayersCount, 0, 5))
             {
-                _planet->update(ObserverFlag::NOISE);
+                _planet->updateNoiseLayersCount(noiseLayersCount);
+                _planet->update(ObserverFlag::LAYER);
             }
-            if (ImGui::SliderInt("Layers Count", &_noise->layersCount(), 0, 10))
+
+            int layerCountNode = 0;
+            for (auto& layer : _shape->noiseLayers())
             {
-                _planet->update(ObserverFlag::NOISE);
-            }
-            if (ImGui::SliderFloat("Base Roughness", &_noise->baseRoughness(), 0.0f, 20.0f))
-            {
-                _planet->update(ObserverFlag::NOISE);
-            }
-            if (ImGui::SliderFloat("Roughness", &_noise->roughness(), 0.0f, 20.0f))
-            {
-                _planet->update(ObserverFlag::NOISE);
-            }
-            if (ImGui::SliderFloat("Persistence", &_noise->persistence(), 0.0f, 1.0f))
-            {
-                _planet->update(ObserverFlag::NOISE);
-            }
-            if (ImGui::SliderFloat3("Center", (float*)&_noise->center(), -10.0f, 10.0f))
-            {
-                _planet->update(ObserverFlag::NOISE);
+                std::string titleNode("Noise Layer " + std::to_string(layerCountNode));
+                if (ImGui::TreeNode(titleNode.c_str()))
+                {
+                    if (ImGui::Checkbox("Enabled", &layer->enabled()))
+                    {
+                        _planet->update(ObserverFlag::NOISE);
+                    }
+
+                    if (ImGui::TreeNode("Noise Settings"))
+                    {
+                        if (ImGui::SliderFloat("Strength", &layer->noiseSettings()->strength(), 0.0f, 2.0f))
+                        {
+                            _planet->update(ObserverFlag::NOISE);
+                        }
+                        if (ImGui::SliderInt("Layers Count", &layer->noiseSettings()->layersCount(), 0, 10))
+                        {
+                            _planet->update(ObserverFlag::NOISE);
+                        }
+                        if (ImGui::SliderFloat("Base Roughness", &layer->noiseSettings()->baseRoughness(), 0.0f, 20.0f))
+                        {
+                            _planet->update(ObserverFlag::NOISE);
+                        }
+                        if (ImGui::SliderFloat("Roughness", &layer->noiseSettings()->roughness(), 0.0f, 20.0f))
+                        {
+                            _planet->update(ObserverFlag::NOISE);
+                        }
+                        if (ImGui::SliderFloat("Persistence", &layer->noiseSettings()->persistence(), 0.0f, 1.0f))
+                        {
+                            _planet->update(ObserverFlag::NOISE);
+                        }
+                        if (ImGui::SliderFloat3("Center", (float*)&layer->noiseSettings()->center(), -10.0f, 10.0f))
+                        {
+                            _planet->update(ObserverFlag::NOISE);
+                        }
+                        if (ImGui::SliderFloat("Min Value", &layer->noiseSettings()->minValue(), 0.0f, 10.0f))
+                        {
+                            _planet->update(ObserverFlag::NOISE);
+                        }
+                        ImGui::TreePop();
+                    }
+                    ImGui::TreePop();
+                    ImGui::Separator();
+                }
+                layerCountNode++;
             }
         }
+
+
     }
     ImGui::End(); // Settings
 

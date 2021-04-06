@@ -1,9 +1,9 @@
 #pragma once
 
-
 #include "glm/glm.hpp"
 
 #include <memory>
+#include <vector>
 
 class NoiseFilter;
 class ShapeSettings;
@@ -15,7 +15,11 @@ public:
 
 	glm::vec3 calculatePointOnPlanet(const glm::vec3& pointOnUnitSphere) const;
 
+	void addFilter(const std::shared_ptr<NoiseFilter>& layer);
+	void removeLastFilter();
+	void removeFilter(unsigned int index);
+
 private:
 	std::shared_ptr<ShapeSettings> _settings;
-	std::shared_ptr<NoiseFilter> _noiseFilter;
+	std::vector<std::shared_ptr<NoiseFilter> > _noiseFilters;
 };

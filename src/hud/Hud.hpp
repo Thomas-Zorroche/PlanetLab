@@ -48,7 +48,6 @@ private:
 
 	std::shared_ptr<Planet> _planet = nullptr;
 	std::shared_ptr<ShapeSettings> _shape = nullptr;
-	std::shared_ptr<NoiseSettings> _noise = nullptr;
 	std::shared_ptr<ColorSettings> _color = nullptr;
 
 	float _viewportWidth;

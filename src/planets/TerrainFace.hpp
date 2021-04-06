@@ -8,7 +8,7 @@
 class TerrainFace
 {
 public:
-	TerrainFace(const ShapeGenerator& shapeGenerator, int resolution, const glm::vec3& localUp);
+	TerrainFace(const std::shared_ptr<ShapeGenerator>& shapeGenerator, int resolution, const glm::vec3& localUp);
 
 	void constructMesh();
 	void updateResolution(int resolution);
@@ -24,5 +24,5 @@ private:
 	glm::vec3 _axisA;
 	glm::vec3 _axisB;
 
-	ShapeGenerator _shapeGenerator;
+	std::shared_ptr<ShapeGenerator> _shapeGenerator;
 };

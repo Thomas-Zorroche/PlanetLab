@@ -10,9 +10,12 @@ class NoiseSettings;
 class NoiseFilter
 {
 public:
-	NoiseFilter(const std::shared_ptr<NoiseSettings>& settings, int seed = 1);
+	NoiseFilter(const std::shared_ptr<NoiseSettings>& settings = nullptr,
+		int seed = 1);
 
 	float evaluate(const glm::vec3& point) const;
+
+	void setSettings(const std::shared_ptr<NoiseSettings>& settings);
 
 private:
 	siv::PerlinNoise _noise;

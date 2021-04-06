@@ -1,8 +1,23 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
-class NoiseSettings;
+#include "noise/NoiseSettings.hpp"
+
+class NoiseLayer
+{
+public:
+	NoiseLayer(const std::shared_ptr<NoiseSettings>& settings = std::make_shared<NoiseSettings>());
+
+	std::shared_ptr<NoiseSettings>& noiseSettings() { return _noiseSettings; }
+	bool enabled() const { return _enabled; }
+	bool& enabled() { return _enabled; }
+
+private:
+	bool _enabled;
+	std::shared_ptr<NoiseSettings> _noiseSettings;
+};
 
 class ShapeSettings
 {
@@ -11,9 +26,17 @@ public:
 	float& planetRadius();
 	float planetRadius() const;
 
-	std::shared_ptr<NoiseSettings> noiseSettings();
+	std::vector<std::shared_ptr<NoiseLayer> > noiseLayers();
+	std::shared_ptr<NoiseLayer> noiseLayer(unsigned int index);
+
+	void updateLayers(int layersCount);
+	void addLayer(const std::shared_ptr<NoiseLayer>& layer);
+	void removeLastLayer();
+	void removeLayer(unsigned int index);
 
 private:
 	float _planetRadius;
-	std::shared_ptr<NoiseSettings> _noiseSettings;
+	std::vector<std::shared_ptr<NoiseLayer> > _noiseLayers;
 };
+
+

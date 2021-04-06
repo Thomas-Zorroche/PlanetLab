@@ -13,6 +13,7 @@ public:
 	glm::vec3 center() const { return _center; }
 	int layersCount() const { return _layersCount; }
 	float persistence() const { return _persistence; }
+	float minValue() const { return _minValue; }
 
 	float& strength() { return _strength; }
 	float& baseRoughness() { return _baseRoughness; }
@@ -20,6 +21,7 @@ public:
 	glm::vec3& center() { return _center; }
 	int& layersCount() { return _layersCount; }
 	float& persistence() { return _persistence; }
+	float& minValue() { return _minValue; }
 
 private:
 	float _strength = 1.0f;
@@ -29,4 +31,5 @@ private:
 
 	int _layersCount = 1;
 	float _persistence = 0.5f; // Amplitude will be half with each layer
+	float _minValue = 0.0f;
 };

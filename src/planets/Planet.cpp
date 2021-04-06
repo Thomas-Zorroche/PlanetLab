@@ -1,6 +1,10 @@
 #include "Planet.hpp"
 #include "glm/glm.hpp"
 #include "opengl/Mesh.hpp"
+
+#include "noise/NoiseFilter.hpp"
+#include "noise/NoiseSettings.hpp"
+
 #include <vector>
 
 
@@ -8,7 +12,7 @@ Planet::Planet(int resolution)
 	: _resolution(resolution),
 	_shapeSettings(std::make_shared<ShapeSettings>(1.0f)),
 	_colorSettings(std::make_shared<ColorSettings>()),
-	_shapeGenerator(_shapeSettings),
+	_shapeGenerator(std::make_shared<ShapeGenerator>(_shapeSettings)),
 	_terrainFaces{ 
 		TerrainFace(_shapeGenerator, resolution, glm::vec3( 0,  1,  0)), // UP
 		TerrainFace(_shapeGenerator, resolution, glm::vec3( 0, -1,  0)), // DOWN
@@ -80,8 +84,40 @@ void Planet::update(ObserverFlag flag)
 		{
 			generateMesh();
 		}
+		case ObserverFlag::LAYER:
+		{
+			generateMesh();
+		}
 	}
 }
+
+void Planet::updateNoiseLayersCount(int noiseLayersCount)
+{
+	int layersDiffCount = noiseLayersCount - _shapeSettings->noiseLayers().size();
+	// Add layers and filters
+	if (layersDiffCount > 0)
+	{
+		for (size_t i = 0; i < layersDiffCount; i++)
+		{
+			auto layer = std::make_shared<NoiseLayer>();
+			auto filter = std::make_shared<NoiseFilter>(layer->noiseSettings());
+
+			_shapeSettings->addLayer(layer);
+			_shapeGenerator->addFilter(filter);
+		}
+	}
+	// Remove layers and filters
+	else
+	{
+		for (size_t i = 0; i < abs(layersDiffCount); i++)
+		{
+			_shapeSettings->removeLastLayer();
+			_shapeGenerator->removeLastFilter();
+		}
+	}
+
+}
+
 
 
 
