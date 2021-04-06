@@ -171,7 +171,19 @@ void Hud::draw(GLFWwindow* window)
             {
                 _planet->update(ObserverFlag::NOISE);
             }
+            if (ImGui::SliderInt("Layers Count", &_noise->layersCount(), 0, 10))
+            {
+                _planet->update(ObserverFlag::NOISE);
+            }
+            if (ImGui::SliderFloat("Base Roughness", &_noise->baseRoughness(), 0.0f, 20.0f))
+            {
+                _planet->update(ObserverFlag::NOISE);
+            }
             if (ImGui::SliderFloat("Roughness", &_noise->roughness(), 0.0f, 20.0f))
+            {
+                _planet->update(ObserverFlag::NOISE);
+            }
+            if (ImGui::SliderFloat("Persistence", &_noise->persistence(), 0.0f, 1.0f))
             {
                 _planet->update(ObserverFlag::NOISE);
             }

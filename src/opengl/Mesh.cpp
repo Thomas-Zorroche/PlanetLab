@@ -35,7 +35,7 @@ void Mesh::SetupMesh(bool generateBuffers)
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(ShapeVertex), &_vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(ShapeVertex), &_vertices[0], GL_DYNAMIC_DRAW);
 
     if (!_indices.empty())
     {
@@ -44,7 +44,7 @@ void Mesh::SetupMesh(bool generateBuffers)
             glGenBuffers(1, &EBO);
         }
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(unsigned int), &_indices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(unsigned int), &_indices[0], GL_DYNAMIC_DRAW);
     }
 
     // Vertex attribute pointers
@@ -59,11 +59,6 @@ void Mesh::SetupMesh(bool generateBuffers)
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(ShapeVertex), (void*)offsetof(ShapeVertex, texCoords));
 
     glBindVertexArray(0);
-}
-
-void Mesh::UpdateVBO()
-{
-    glBufferSubData(GL_ARRAY_BUFFER, 0, _vertices.size() * sizeof(ShapeVertex), &_vertices[0]);
 }
 
 void Mesh::Draw(std::shared_ptr<Shader>& shader, bool IsParticuleInstance, int countParticules) const
@@ -101,7 +96,7 @@ void Mesh::Draw(std::shared_ptr<Shader>& shader, bool IsParticuleInstance, int c
 
 void Mesh::UpdateGeometry(const std::vector<ShapeVertex>& vertices, const std::vector<unsigned int>& indices)
 {
-    bool generate = _vertices.empty();
+    bool empty = _vertices.empty();
 
     // Clear all data and reaplace it by the parameters
     Clear();
@@ -110,8 +105,34 @@ void Mesh::UpdateGeometry(const std::vector<ShapeVertex>& vertices, const std::v
 
     recalculateNormals();
     
+    // Generate Buffers Data
+    if (empty)
+    {
+        SetupMesh(empty);
+    }
     // Update Buffers Data
-    SetupMesh(generate);
+    else
+    {
+        SetupMesh(false);
+    }
+
+}
+
+void Mesh::UpdateVBO()
+{
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    {
+        void* ptrVBO = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+        memcpy(ptrVBO, &_vertices, sizeof(_vertices));
+    }
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    {
+        void* ptrEBO = glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY);
+        memcpy(ptrEBO, &_indices, sizeof(_indices));
+    }
+    glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 }
 
 void Mesh::Clear()
