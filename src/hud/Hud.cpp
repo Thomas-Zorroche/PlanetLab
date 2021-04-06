@@ -57,7 +57,12 @@ void Hud::draw(GLFWwindow* window)
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-     
+
+    static bool demo = false;
+
+    if (demo) ImGui::ShowDemoWindow(&demo);
+    else
+    {
     static bool dockspaceOpen = true;
     static bool opt_fullscreen = true;
     static bool opt_padding = false;
@@ -138,36 +143,48 @@ void Hud::draw(GLFWwindow* window)
     if (ImGui::Begin("Procedural Planets Settings"))
     {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::Checkbox("Wireframe Mode", &_wireframeMode);
 
-        if (ImGui::SliderInt("Resolution", &_planet->resolution(), 4, 128))
+        if (ImGui::CollapsingHeader("Display"))
         {
-            _planet->update(ObserverFlag::RESOLUTION);
+            ImGui::Checkbox("Wireframe Mode", &_wireframeMode);
         }
-        if (ImGui::ColorEdit3("Planet Color", (float*)&(_color->color())))
+
+        if (ImGui::CollapsingHeader("Planet"))
         {
-            _planet->update(ObserverFlag::COLOR);
+            if (ImGui::SliderInt("Resolution", &_planet->resolution(), 4, 128))
+            {
+                _planet->update(ObserverFlag::RESOLUTION);
+            }
+            if (ImGui::ColorEdit3("Planet Color", (float*)&(_color->color())))
+            {
+                _planet->update(ObserverFlag::COLOR);
+            }
+            if (ImGui::SliderFloat("Size", &_shape->planetRadius(), 0.2f, 4.0f))
+            {
+                _planet->update(ObserverFlag::RADIUS);
+            }
         }
-        if (ImGui::SliderFloat("Size", &_shape->planetRadius(), 0.2f, 4.0f))
+
+        if (ImGui::CollapsingHeader("Noise"))
         {
-            _planet->update(ObserverFlag::RADIUS);
-        }
-        if (ImGui::SliderFloat("Strength", &_noise->strength(), 0.0f, 2.0f))
-        {
-            _planet->update(ObserverFlag::NOISE);
-        }
-        if (ImGui::SliderFloat("Roughness", &_noise->roughness(), 0.0f, 20.0f))
-        {
-            _planet->update(ObserverFlag::NOISE);
-        }
-        if (ImGui::SliderFloat3("Center", (float*)&_noise->center(), -10.0f, 10.0f))
-        {
-            _planet->update(ObserverFlag::NOISE);
+            if (ImGui::SliderFloat("Strength", &_noise->strength(), 0.0f, 2.0f))
+            {
+                _planet->update(ObserverFlag::NOISE);
+            }
+            if (ImGui::SliderFloat("Roughness", &_noise->roughness(), 0.0f, 20.0f))
+            {
+                _planet->update(ObserverFlag::NOISE);
+            }
+            if (ImGui::SliderFloat3("Center", (float*)&_noise->center(), -10.0f, 10.0f))
+            {
+                _planet->update(ObserverFlag::NOISE);
+            }
         }
     }
     ImGui::End(); // Settings
 
-    ImGui::End();
+    ImGui::End(); // Main Window
+    }
 
     // Render ImGUI
     ImGui::Render();
