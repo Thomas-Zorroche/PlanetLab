@@ -14,6 +14,8 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+#include "io/IOManager.hpp"
+
 bool Hud::_wireframeMode = false;
 
 Hud::~Hud()
@@ -57,7 +59,7 @@ void Hud::draw(GLFWwindow* window)
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    static bool demo = true;
+    static bool demo = false;
 
     if (demo) ImGui::ShowDemoWindow(&demo);
     else
@@ -117,19 +119,29 @@ void Hud::draw(GLFWwindow* window)
         if (ImGui::BeginMenu("File"))
         {
             ImGui::MenuItem("New");
-            if (ImGui::MenuItem("Exit"))
-            {
-                dockspaceOpen = false;
-                glfwSetWindowShouldClose(window, true);
-            }
-            ImGui::EndMenu();
 
-            ImGui::MenuItem("Open");
+            if (ImGui::BeginMenu("Open Recent"))
+            {
+                auto paths = IOManager::get().getAllFilesFromFolder("res/scene/");
+                for (size_t i = 0; i < paths.size(); i++)
+                {
+                    if (ImGui::MenuItem(paths[i].c_str()))
+                    {
+                        if (!IOManager::get().open(paths[i], _planet))
+                        {
+                            std::cout << "Error IO :: cannot open file " << paths[i] << std::endl;
+                        }
+                    }
+                }
+                ImGui::EndMenu();
+            }
+
             if (ImGui::MenuItem("Exit"))
             {
                 dockspaceOpen = false;
                 glfwSetWindowShouldClose(window, true);
             }
+
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();

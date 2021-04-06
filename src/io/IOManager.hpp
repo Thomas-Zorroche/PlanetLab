@@ -2,6 +2,7 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 
 #include "ini.h"
 
@@ -21,6 +22,8 @@ public:
 
 	void save(const std::string& outputFileName);
 	bool open(const std::string& inputFileName, std::shared_ptr<Planet>& planet);
+
+	std::vector<std::string> getAllFilesFromFolder(const std::string& path);
 
 private:
 	void loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet>& planet);

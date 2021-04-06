@@ -34,14 +34,6 @@ void Scene::Init()
 	//=======================
 	_planet = std::make_shared<Planet>();
 
-	// Test : Load ini files
-	// ======================
-	std::string path = "res/scene/test.ini";
-	if (!IOManager::get().open(path, _planet))
-	{
-		std::cout << "Error IO :: cannot open file " << path << std::endl;
-	}
-
 	// Load All Lights
 	// =================
 	LightManager::Get().LoadAllLights();

@@ -1,6 +1,9 @@
 #include "IOManager.hpp"
 #include "planets/Planet.hpp"
 
+#include <iostream>
+#include <filesystem>
+
 
 void IOManager::save(const std::string& outputFileName)
 {
@@ -26,6 +29,16 @@ bool IOManager::open(const std::string& inputFileName, std::shared_ptr<Planet>& 
 	loadValues(ini, planet);
 
 	return true;
+}
+
+std::vector<std::string> IOManager::getAllFilesFromFolder(const std::string& path)
+{
+	std::vector<std::string> paths;
+	for (const auto& entry : std::filesystem::directory_iterator(path))
+	{
+		paths.push_back(entry.path().string());
+	}
+	return paths;
 }
 
 void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet>& planet)
@@ -61,3 +74,5 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 
 	planet->update(ObserverFlag::NOISE);
 }
+
+
