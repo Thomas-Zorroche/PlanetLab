@@ -65,6 +65,8 @@ void Hud::draw(GLFWwindow* window)
     else
     {
     static bool dockspaceOpen = true;
+    static bool saveFileOpen = false;
+    static char bufferSaveLocation[20];
     static bool opt_fullscreen = true;
     static bool opt_padding = false;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -114,6 +116,35 @@ void Hud::draw(GLFWwindow* window)
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
     }
 
+    if (saveFileOpen)
+    {
+        ImGui::SetNextWindowPos(ImVec2((_WIDTH / 2.0) - 150, (_HEIGHT / 2.0) - 50));
+        ImGui::SetNextWindowSize(ImVec2(300, 100));
+        if (ImGui::Begin("Save File"))
+        {
+            ImGui::Text("Save as ");
+            ImGui::InputText(".ini", bufferSaveLocation, IM_ARRAYSIZE(bufferSaveLocation));
+            if (ImGui::Button("Save"))
+            {
+                if (!IOManager::get().save(bufferSaveLocation, _planet))
+                {
+                    std::cout << "Error IO :: cannot save document" << std::endl;
+                }
+                else
+                {
+                    glfwSetWindowTitle(window, std::string("Procedural Planets - " + std::string(bufferSaveLocation)).c_str());
+                }
+                saveFileOpen = false;
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Exit"))
+            {
+                saveFileOpen = false;
+            }
+        }
+        ImGui::End();
+    }
+
     if (ImGui::BeginMenuBar())
     {
         if (ImGui::BeginMenu("File"))
@@ -121,6 +152,11 @@ void Hud::draw(GLFWwindow* window)
             if (ImGui::MenuItem("New"))
             {
                 _planet->reset();
+            }
+
+            if (ImGui::MenuItem("Save", "Ctrl+S"))
+            {
+                saveFileOpen = true;
             }
 
             if (ImGui::BeginMenu("Open scene"))

@@ -20,7 +20,7 @@ public:
 	IOManager(const IOManager&) = delete;
 	IOManager& operator=(const IOManager&) = delete;
 
-	void save(const std::string& outputFileName);
+	bool save(const std::string& outputFileName, const std::shared_ptr<Planet>& planet);
 	bool open(const std::string& inputFileName, std::shared_ptr<Planet>& planet);
 
 	std::vector<std::string> getAllFilesFromFolder(const std::string& path);

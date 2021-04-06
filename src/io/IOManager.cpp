@@ -5,9 +5,38 @@
 #include <filesystem>
 
 
-void IOManager::save(const std::string& outputFileName)
+bool IOManager::save(const std::string& outputFileName, const std::shared_ptr<Planet>& planet)
 {
+	// create a file instance
+	std::string output = "res/scene/" + outputFileName + ".ini";
+	mINI::INIFile file(output);
 
+	// create a data structure
+	mINI::INIStructure ini;
+
+	// populate the structure
+	ini["layers"]["count"] = std::to_string(planet->shapeSettings()->noiseLayers().size());
+
+	int layerCount = 1;
+	for (const auto& layer : planet->shapeSettings()->noiseLayers())
+	{
+		std::string section = "noiseSettings_" + std::to_string(layerCount);
+
+		ini[section]["strength"] = std::to_string(layer->noiseSettings()->strength());
+		ini[section]["layersCount"] = std::to_string(layer->noiseSettings()->layersCount());
+		ini[section]["baseRoughness"] = std::to_string(layer->noiseSettings()->baseRoughness());
+		ini[section]["roughness"] = std::to_string(layer->noiseSettings()->roughness());
+		ini[section]["persistence"] = std::to_string(layer->noiseSettings()->persistence());
+		ini[section]["centerX"] = std::to_string(layer->noiseSettings()->center().x);
+		ini[section]["centerY"] = std::to_string(layer->noiseSettings()->center().y);
+		ini[section]["centerZ"] = std::to_string(layer->noiseSettings()->center().z);
+		ini[section]["minValue"] = std::to_string(layer->noiseSettings()->minValue());
+
+		layerCount++;
+	}
+
+	// generate an INI file (overwrites any previous file)
+	return file.generate(ini);
 }
 
 bool IOManager::open(const std::string& inputFileName, std::shared_ptr<Planet>& planet)
@@ -61,7 +90,6 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 		std::string& minValueStr      = ini.get(section).get("minValue");
 	
 		// Assign values
-
 		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->strength() = std::atof(strengthStr.c_str());
 		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->layersCount() = std::atof(layersCountStr.c_str());
 		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->baseRoughness() = std::atof(baseRoughnessStr.c_str());
