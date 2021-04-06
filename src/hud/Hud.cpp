@@ -131,6 +131,10 @@ void Hud::draw(GLFWwindow* window)
                         {
                             std::cout << "Error IO :: cannot open file " << paths[i] << std::endl;
                         }
+                        else
+                        {
+                            glfwSetWindowTitle(window, std::string("Procedural Planets - " + paths[i]).c_str());
+                        }
                     }
                 }
                 ImGui::EndMenu();
