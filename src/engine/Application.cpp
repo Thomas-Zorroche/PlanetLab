@@ -15,7 +15,7 @@ void mainloop(Window& windowObject)
     ResourceManager::Get().LoadAllShaders();
 
     Scene scene;
-    Hud::get().init(window, windowObject.Width(), windowObject.Height());
+    Hud::get().init(window, scene.planet(), windowObject.Width(), windowObject.Height());
 
     auto camera = std::make_shared<Camera>();
     Renderer::Get().SetCamera(camera);

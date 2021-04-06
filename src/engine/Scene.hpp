@@ -23,6 +23,8 @@ public:
 
 	void Free();
 
+	std::shared_ptr<Planet> planet() { return _planet; }
+
 private:
 	void AddStaticMesh(const std::shared_ptr<StaticMesh>& mesh);
 

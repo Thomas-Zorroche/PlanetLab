@@ -5,25 +5,23 @@
 #include "engine/Window.hpp"
 #include "engine/Renderer.hpp"
 
+#include "planets/Planet.hpp"
+#include "planets/ShapeSettings.hpp"
+#include "planets/ColorSettings.hpp"
+#include "noise/NoiseSettings.hpp"
+
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
 bool Hud::_wireframeMode = false;
-int Hud::_resolution = 64;
-Color Hud::_planetColor;
-float Hud::_planetRadius = 1.0f;
-float Hud::_noiseStrength = 1.0f;
-float Hud::_noiseRoughness = 1.0f;
-glm::vec3 Hud::_noiseCenter = glm::vec3(0, 0, 0);
-
 
 Hud::~Hud()
 {
     
 }
 
-void Hud::init(GLFWwindow* window, float width, float height)
+void Hud::init(GLFWwindow* window, const std::shared_ptr<Planet>& planet, float width, float height)
 {
     // Initialize ImGui
     IMGUI_CHECKVERSION();
@@ -32,6 +30,12 @@ void Hud::init(GLFWwindow* window, float width, float height)
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init((char*)glGetString(GL_NUM_SHADING_LANGUAGE_VERSIONS));
+
+    // Init shared pointers
+    _planet = planet;
+    _shape = planet->shapeSettings();
+    _noise = planet->shapeSettings()->noiseSettings();
+    _color = planet->colorSettings();
 
     // Init windows sizes
     _WIDTH = width;
@@ -108,6 +112,7 @@ void Hud::draw(GLFWwindow* window)
     {
         if (ImGui::BeginMenu("File"))
         {
+            ImGui::MenuItem("New");
             if (ImGui::MenuItem("Exit"))
             {
                 dockspaceOpen = false;
@@ -115,7 +120,6 @@ void Hud::draw(GLFWwindow* window)
             }
             ImGui::EndMenu();
         }
-
         ImGui::EndMenuBar();
     }
 
@@ -135,12 +139,31 @@ void Hud::draw(GLFWwindow* window)
     {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::Checkbox("Wireframe Mode", &_wireframeMode);
-        ImGui::SliderInt("Resolution", &_resolution, 4, 128);
-        ImGui::ColorEdit3("Planet Color", (float*)&_planetColor);
-        ImGui::SliderFloat("Size", &_planetRadius, 0.2f, 4.0f);
-        ImGui::SliderFloat("Strength", &_noiseStrength, 0.0f, 2.0f);
-        ImGui::SliderFloat("Roughness", &_noiseRoughness, 0.0f, 20.0f);
-        ImGui::SliderFloat3("Center", (float*)&_noiseCenter, -10.0f, 10.0f);
+
+        if (ImGui::SliderInt("Resolution", &_planet->resolution(), 4, 128))
+        {
+            _planet->update(ObserverFlag::RESOLUTION);
+        }
+        if (ImGui::ColorEdit3("Planet Color", (float*)&(_color->color())))
+        {
+            _planet->update(ObserverFlag::COLOR);
+        }
+        if (ImGui::SliderFloat("Size", &_shape->planetRadius(), 0.2f, 4.0f))
+        {
+            _planet->update(ObserverFlag::RADIUS);
+        }
+        if (ImGui::SliderFloat("Strength", &_noise->strength(), 0.0f, 2.0f))
+        {
+            _planet->update(ObserverFlag::NOISE);
+        }
+        if (ImGui::SliderFloat("Roughness", &_noise->roughness(), 0.0f, 20.0f))
+        {
+            _planet->update(ObserverFlag::NOISE);
+        }
+        if (ImGui::SliderFloat3("Center", (float*)&_noise->center(), -10.0f, 10.0f))
+        {
+            _planet->update(ObserverFlag::NOISE);
+        }
     }
     ImGui::End(); // Settings
 

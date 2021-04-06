@@ -3,12 +3,12 @@
 ColorSettings::ColorSettings(const Color& color)
 	: _colorPlanet(color) {}
 
-const Color& ColorSettings::planetColor() const 
+const Color& ColorSettings::color() const 
 { 
 	return _colorPlanet; 
 }
 
-Color& ColorSettings::planetColor() 
+Color& ColorSettings::color() 
 { 
 	return _colorPlanet; 
 }

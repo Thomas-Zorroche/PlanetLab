@@ -7,6 +7,7 @@
 Planet::Planet(int resolution)
 	: _resolution(resolution),
 	_shapeSettings(std::make_shared<ShapeSettings>(1.0f)),
+	_colorSettings(std::make_shared<ColorSettings>()),
 	_shapeGenerator(_shapeSettings),
 	_terrainFaces{ 
 		TerrainFace(_shapeGenerator, resolution, glm::vec3( 0,  1,  0)), // UP
@@ -30,7 +31,7 @@ Planet::Planet(int resolution)
 
 void Planet::draw()
 {
-	checkHud();
+	//checkHud();
 	_staticMesh.Draw();
 }
 
@@ -47,7 +48,7 @@ void Planet::generateColors()
 {
 	for (TerrainFace& face : _terrainFaces)
 	{
-		face.mesh()->setColor(_colorSettings.planetColor());
+		face.mesh()->setColor(_colorSettings->color());
 	}
 }
 
@@ -58,32 +59,26 @@ void Planet::generatePlanet()
 }
 
 
-void Planet::checkHud()
+void Planet::update(ObserverFlag flag)
 {
-	auto flags = _observer.checkHud(_resolution, _colorSettings.planetColor(), _shapeSettings);
-
-	for (const auto& flag : flags)
+	switch (flag)
 	{
-		switch (flag)
-		{
-		case ObsFlag::RESOLUTION:
+		case ObserverFlag::RESOLUTION:
 		{
 			for (auto& face : _terrainFaces)
 				face.updateResolution(_resolution);
 		}
-		case ObsFlag::COLOR:
+		case ObserverFlag::COLOR:
 		{
 			generateColors();
 		}
-		case ObsFlag::RADIUS:
+		case ObserverFlag::RADIUS:
 		{
 			generateMesh();
 		}
-		case ObsFlag::NOISE:
+		case ObserverFlag::NOISE:
 		{
 			generateMesh();
-		}
-
 		}
 	}
 }

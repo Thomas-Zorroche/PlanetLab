@@ -9,6 +9,10 @@
 
 class Window;
 class Camera;
+class NoiseSettings;
+class ShapeSettings;
+class ColorSettings;
+class Planet;
 
 class Hud
 {
@@ -23,7 +27,7 @@ public:
 	Hud& operator=(const Hud&) = delete;
 
 	void draw(GLFWwindow* window);
-	void init(GLFWwindow* window, float width, float height);
+	void init(GLFWwindow* window, const std::shared_ptr<Planet>& planet, float width, float height);
 	void free();
 	void bindFbo();
 	void Hud::unbindFbo();
@@ -33,12 +37,6 @@ public:
 
 	/* UI Fonctions */
 	bool wireframeMode() const { return _wireframeMode; }
-	int resolution() const { return _resolution; }
-	const Color& planetColor() const { return _planetColor; }
-	float planetRadius() const { return _planetRadius; }
-	float noiseStrength() const { return _noiseStrength; }
-	float noiseRoughness() const { return _noiseRoughness; }
-	glm::vec3 noiseCenter() const { return _noiseCenter; }
 
 private:
 	Hud() = default;
@@ -47,12 +45,11 @@ private:
 	Framebuffer _fbo = Framebuffer();
 
 	static bool _wireframeMode;
-	static int _resolution;
-	static Color _planetColor;
-	static float _planetRadius;
-	static float _noiseStrength;
-	static float _noiseRoughness;
-	static glm::vec3 _noiseCenter;
+
+	std::shared_ptr<Planet> _planet = nullptr;
+	std::shared_ptr<ShapeSettings> _shape = nullptr;
+	std::shared_ptr<NoiseSettings> _noise = nullptr;
+	std::shared_ptr<ColorSettings> _color = nullptr;
 
 	float _viewportWidth;
 	float _viewportHeight;
