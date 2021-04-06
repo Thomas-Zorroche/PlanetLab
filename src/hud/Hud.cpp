@@ -57,7 +57,7 @@ void Hud::draw(GLFWwindow* window)
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    static bool demo = false;
+    static bool demo = true;
 
     if (demo) ImGui::ShowDemoWindow(&demo);
     else
@@ -117,6 +117,14 @@ void Hud::draw(GLFWwindow* window)
         if (ImGui::BeginMenu("File"))
         {
             ImGui::MenuItem("New");
+            if (ImGui::MenuItem("Exit"))
+            {
+                dockspaceOpen = false;
+                glfwSetWindowShouldClose(window, true);
+            }
+            ImGui::EndMenu();
+
+            ImGui::MenuItem("Open");
             if (ImGui::MenuItem("Exit"))
             {
                 dockspaceOpen = false;

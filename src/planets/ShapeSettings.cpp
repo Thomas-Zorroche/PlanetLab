@@ -28,24 +28,6 @@ std::shared_ptr<NoiseLayer> ShapeSettings::noiseLayer(unsigned int index)
 	return _noiseLayers[index];
 }
 
-void ShapeSettings::updateLayers(int layersCount)
-{
-	int layersDiffCount = layersCount - _noiseLayers.size();
-	if (layersDiffCount > 0)
-	{
-		for (size_t i = 0; i < layersDiffCount; i++)
-		{
-			addLayer(std::make_shared<NoiseLayer>());
-		}
-	}
-	else
-	{
-		for (size_t i = 0; i < abs(layersDiffCount); i++)
-		{
-			removeLastLayer();
-		}
-	}
-}
 
 void ShapeSettings::addLayer(const std::shared_ptr<NoiseLayer>& layer)
 {

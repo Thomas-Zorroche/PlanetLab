@@ -11,6 +11,8 @@
 
 #include "planets/Planet.hpp"
 
+#include "io/IOManager.hpp"
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -32,9 +34,13 @@ void Scene::Init()
 	//=======================
 	_planet = std::make_shared<Planet>();
 
-	// Sphere Test
-	//=======================
-	AddStaticMesh(std::make_shared<StaticMesh>());
+	// Test : Load ini files
+	// ======================
+	std::string path = "res/scene/test.ini";
+	if (!IOManager::get().open(path, _planet))
+	{
+		std::cout << "Error IO :: cannot open file " << path << std::endl;
+	}
 
 	// Load All Lights
 	// =================

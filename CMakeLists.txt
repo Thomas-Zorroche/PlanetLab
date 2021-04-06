@@ -98,6 +98,9 @@ file(GLOB_RECURSE RES_FILES *.frag *.vert *.glsl *.shader)
 # Add Models
 file(COPY ${CMAKE_SOURCE_DIR}/res/models/
 	DESTINATION ${CMAKE_BINARY_DIR}/res/models)
+# Add Scene
+file(COPY ${CMAKE_SOURCE_DIR}/res/scene/
+	DESTINATION ${CMAKE_BINARY_DIR}/res/scene)
 
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${RES_FILES} ${SOURCE_FILES})
 
