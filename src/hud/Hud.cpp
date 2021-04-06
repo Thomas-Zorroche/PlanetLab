@@ -118,15 +118,19 @@ void Hud::draw(GLFWwindow* window)
     {
         if (ImGui::BeginMenu("File"))
         {
-            ImGui::MenuItem("New");
+            if (ImGui::MenuItem("New"))
+            {
+                _planet->reset();
+            }
 
-            if (ImGui::BeginMenu("Open Recent"))
+            if (ImGui::BeginMenu("Open scene"))
             {
                 auto paths = IOManager::get().getAllFilesFromFolder("res/scene/");
                 for (size_t i = 0; i < paths.size(); i++)
                 {
                     if (ImGui::MenuItem(paths[i].c_str()))
                     {
+                        _planet->reset();
                         if (!IOManager::get().open(paths[i], _planet))
                         {
                             std::cout << "Error IO :: cannot open file " << paths[i] << std::endl;

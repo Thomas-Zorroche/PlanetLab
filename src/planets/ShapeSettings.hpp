@@ -35,6 +35,7 @@ public:
 	void addLayer(const std::shared_ptr<NoiseLayer>& layer);
 	void removeLastLayer();
 	void removeLayer(unsigned int index);
+	void removeAllLayers();
 
 private:
 	float _planetRadius;

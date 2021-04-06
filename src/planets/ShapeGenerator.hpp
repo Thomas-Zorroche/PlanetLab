@@ -18,6 +18,7 @@ public:
 	void addFilter(const std::shared_ptr<NoiseFilter>& layer);
 	void removeLastFilter();
 	void removeFilter(unsigned int index);
+	void removeAllFilters();
 
 private:
 	std::shared_ptr<ShapeSettings> _settings;

@@ -34,6 +34,8 @@ public:
 
 	void updateNoiseLayersCount(int noiseLayersCount);
 
+	void reset();
+
 private:
 	void generatePlanet();
 	void generateMesh();

@@ -44,6 +44,15 @@ void ShapeSettings::removeLayer(unsigned int index)
 	_noiseLayers.erase(_noiseLayers.begin() + index);
 }
 
+void ShapeSettings::removeAllLayers()
+{
+	int size = _noiseLayers.size();
+	for (size_t i = 0; i < size; i++)
+	{
+		removeLastLayer();
+	}
+}
+
 
 /*
 * Noise Layer

@@ -115,7 +115,13 @@ void Planet::updateNoiseLayersCount(int noiseLayersCount)
 			_shapeGenerator->removeLastFilter();
 		}
 	}
+}
 
+void Planet::reset()
+{
+	_shapeSettings->removeAllLayers();
+	_shapeGenerator->removeAllFilters();
+	update(ObserverFlag::NOISE);
 }
 
 

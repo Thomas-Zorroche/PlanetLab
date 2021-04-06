@@ -49,3 +49,12 @@ void ShapeGenerator::removeFilter(unsigned int index)
 {
 	_noiseFilters.erase(_noiseFilters.begin() + index);
 }
+
+void ShapeGenerator::removeAllFilters()
+{
+	int size = _noiseFilters.size();
+	for (size_t i = 0; i < size; i++)
+	{
+		removeLastFilter();
+	}
+}
