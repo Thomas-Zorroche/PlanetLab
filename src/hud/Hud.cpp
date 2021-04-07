@@ -67,6 +67,7 @@ void Hud::draw(GLFWwindow* window)
     static bool dockspaceOpen = true;
     static bool saveFileOpen = false;
     static char bufferSaveLocation[20];
+    static std::string consoleBuffer = "";
     static bool opt_fullscreen = true;
     static bool opt_padding = false;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -129,11 +130,12 @@ void Hud::draw(GLFWwindow* window)
                 // Error
                 if (!IOManager::get().saveAs(std::string("res/scene/" + std::string(bufferSaveLocation) + ".ini"), _planet))
                 {
-                    std::cout << "Error IO :: cannot save document" << std::endl;
+                    consoleBuffer = "Error IO :: cannot save document";
                 }
                 // Save As Success
                 else
                 {
+                    consoleBuffer = "File has been saved";
                     IOManager::get().updateTitleWindow(window);
                 }
                 saveFileOpen = false;
@@ -156,6 +158,7 @@ void Hud::draw(GLFWwindow* window)
                 IOManager::get().newFile();
                 IOManager::get().updateTitleWindow(window);
                 _planet->reset();
+                consoleBuffer = "New scene created";
             }
 
             if (ImGui::BeginMenu("Open scene..."))
@@ -168,10 +171,11 @@ void Hud::draw(GLFWwindow* window)
                         _planet->reset();
                         if (!IOManager::get().open(paths[i], _planet))
                         {
-                            std::cout << "Error IO :: cannot open file " << paths[i] << std::endl;
+                            consoleBuffer = "Error IO :: cannot open file " + paths[i];
                         }
                         else
                         {
+                            consoleBuffer = "File has been opened";
                             IOManager::get().updateTitleWindow(window);
                         }
                     }
@@ -188,7 +192,11 @@ void Hud::draw(GLFWwindow* window)
                 {
                     if (!IOManager::get().save(_planet))
                     {
-                        std::cout << "Error IO :: cannot save file " << std::endl;
+                        consoleBuffer = "Error IO :: cannot save file ";
+                    }
+                    else
+                    {
+                        consoleBuffer = "File has been saved";
                     }
                 }
                 // If not, open save as windows
@@ -223,6 +231,15 @@ void Hud::draw(GLFWwindow* window)
         _viewportHeight = wsize.y;
         _fbo.resize(_viewportWidth, _viewportHeight);
         Renderer::Get().ComputeProjectionMatrix();
+
+
+    }
+    ImGui::End();
+
+    // Console
+    if (ImGui::Begin("Console"))
+    {
+        ImGui::Text(consoleBuffer.c_str());
     }
     ImGui::End();
 
