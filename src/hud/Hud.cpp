@@ -126,13 +126,15 @@ void Hud::draw(GLFWwindow* window)
             ImGui::InputText(".ini", bufferSaveLocation, IM_ARRAYSIZE(bufferSaveLocation));
             if (ImGui::Button("Save"))
             {
-                if (!IOManager::get().save(bufferSaveLocation, _planet))
+                // Error
+                if (!IOManager::get().saveAs(std::string("res/scene/" + std::string(bufferSaveLocation) + ".ini"), _planet))
                 {
                     std::cout << "Error IO :: cannot save document" << std::endl;
                 }
+                // Save As Success
                 else
                 {
-                    glfwSetWindowTitle(window, std::string("Procedural Planets - " + std::string(bufferSaveLocation)).c_str());
+                    IOManager::get().updateTitleWindow(window);
                 }
                 saveFileOpen = false;
             }
@@ -149,17 +151,14 @@ void Hud::draw(GLFWwindow* window)
     {
         if (ImGui::BeginMenu("File"))
         {
-            if (ImGui::MenuItem("New"))
+            if (ImGui::MenuItem("New", "Ctrl+N"))
             {
+                IOManager::get().newFile();
+                IOManager::get().updateTitleWindow(window);
                 _planet->reset();
             }
 
-            if (ImGui::MenuItem("Save", "Ctrl+S"))
-            {
-                saveFileOpen = true;
-            }
-
-            if (ImGui::BeginMenu("Open scene"))
+            if (ImGui::BeginMenu("Open scene..."))
             {
                 auto paths = IOManager::get().getAllFilesFromFolder("res/scene/");
                 for (size_t i = 0; i < paths.size(); i++)
@@ -173,12 +172,37 @@ void Hud::draw(GLFWwindow* window)
                         }
                         else
                         {
-                            glfwSetWindowTitle(window, std::string("Procedural Planets - " + paths[i]).c_str());
+                            IOManager::get().updateTitleWindow(window);
                         }
                     }
                 }
                 ImGui::EndMenu();
             }
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Save", "Ctrl+S"))
+            {
+                // Check whether the file is already save
+                if (IOManager::get().currentFileSaved())
+                {
+                    if (!IOManager::get().save(_planet))
+                    {
+                        std::cout << "Error IO :: cannot save file " << std::endl;
+                    }
+                }
+                // If not, open save as windows
+                else
+                {
+                    saveFileOpen = true;
+                }
+            }
+
+            if (ImGui::MenuItem("Save As..."))
+            {
+                saveFileOpen = true;
+            }
+
 
             if (ImGui::MenuItem("Exit"))
             {

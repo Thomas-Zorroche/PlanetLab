@@ -1,15 +1,26 @@
 #include "IOManager.hpp"
 #include "planets/Planet.hpp"
 
+#include <GLFW/glfw3.h>
 #include <iostream>
 #include <filesystem>
 
+void IOManager::newFile()
+{
+	_currentFileSaved = false;
+	_currentFileName = "New Scene";
+}
 
-bool IOManager::save(const std::string& outputFileName, const std::shared_ptr<Planet>& planet)
+
+bool IOManager::save(const std::shared_ptr<Planet>& planet)
+{
+	return _currentFileSaved ? saveAs(_currentFileName, planet) : false;
+}
+
+bool IOManager::saveAs(const std::string& outputFileName, const std::shared_ptr<Planet>& planet)
 {
 	// create a file instance
-	std::string output = "res/scene/" + outputFileName + ".ini";
-	mINI::INIFile file(output);
+	mINI::INIFile file(outputFileName);
 
 	// create a data structure
 	mINI::INIStructure ini;
@@ -36,7 +47,16 @@ bool IOManager::save(const std::string& outputFileName, const std::shared_ptr<Pl
 	}
 
 	// generate an INI file (overwrites any previous file)
-	return file.generate(ini);
+	if (file.generate(ini))
+	{
+		_currentFileSaved = true;
+		_currentFileName = outputFileName;
+	}
+	else
+	{
+		_currentFileSaved = false;
+		return false;
+	}
 }
 
 bool IOManager::open(const std::string& inputFileName, std::shared_ptr<Planet>& planet)
@@ -56,6 +76,10 @@ bool IOManager::open(const std::string& inputFileName, std::shared_ptr<Planet>& 
 
 	// then import values and assign to the planet
 	loadValues(ini, planet);
+
+	_currentFileSaved = true;
+	_currentFileName = inputFileName;
+
 
 	return true;
 }
@@ -103,4 +127,7 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 	planet->update(ObserverFlag::NOISE);
 }
 
-
+void IOManager::updateTitleWindow(GLFWwindow* window)
+{
+	glfwSetWindowTitle(window, std::string("Procedural Planets - " + _currentFileName).c_str());
+}
