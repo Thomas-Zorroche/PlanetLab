@@ -45,7 +45,6 @@ void InputHandler::ProcessInput(GLFWwindow* window, const std::shared_ptr<Camera
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        std::cout << "S" << std::endl;
         addKey(ActiveKey::S);
         if (_canSave && isKeyActive(ActiveKey::CTRL))
         {
@@ -57,6 +56,21 @@ void InputHandler::ProcessInput(GLFWwindow* window, const std::shared_ptr<Camera
     {
         removeKey(ActiveKey::S);
         _canSave = true;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
+    {
+        addKey(ActiveKey::N);
+        if (_canCreateNewFile && isKeyActive(ActiveKey::CTRL))
+        {
+            _canCreateNewFile = false;
+            Hud::get().newFile();
+        }
+    }
+    if (glfwGetKey(window, GLFW_KEY_N) == GLFW_RELEASE)
+    {
+        removeKey(ActiveKey::N);
+        _canCreateNewFile = true;
     }
 }
 

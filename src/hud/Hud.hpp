@@ -37,6 +37,7 @@ public:
 	float viewportHeight() const { return _viewportHeight; }
 
 	void Hud::saveFile();
+	void Hud::newFile();
 
 	/* UI Fonctions */
 	bool wireframeMode() const { return _wireframeMode; }
@@ -47,10 +48,11 @@ private:
 
 	Framebuffer _fbo = Framebuffer();
 
-	std::string _consoleBuffer = ">";
+	std::string _consoleBuffer = "";
 
 	static bool _wireframeMode;
 	bool _saveFileOpen = false;
+	bool _newFileOpen = false;
 
 	std::shared_ptr<Planet> _planet = nullptr;
 	std::shared_ptr<ShapeSettings> _shape = nullptr;

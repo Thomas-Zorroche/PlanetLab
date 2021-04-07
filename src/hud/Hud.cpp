@@ -109,6 +109,7 @@ void Hud::draw(GLFWwindow* window)
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
     }
 
+    // Save File Window
     if (_saveFileOpen)
     {
         ImGui::SetNextWindowPos(ImVec2((_WIDTH / 2.0) - 150, (_HEIGHT / 2.0) - 50));
@@ -140,15 +141,43 @@ void Hud::draw(GLFWwindow* window)
         ImGui::End();
     }
 
+    // New File Window
+    if (_newFileOpen)
+    {
+        ImGui::SetNextWindowPos(ImVec2((_WIDTH / 2.0) - 150, (_HEIGHT / 2.0) - 50));
+        ImGui::SetNextWindowSize(ImVec2(300, 100));
+        if (ImGui::Begin("New Scene"))
+        {
+            ImGui::Text("Save changes before closing?");
+            if (ImGui::Button("Save"))
+            {
+                _saveFileOpen = true;
+                _newFileOpen = false;
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Don't Save"))
+            {
+                _newFileOpen = false;
+                IOManager::get().newFile();
+                _planet->reset();
+                _consoleBuffer = "New scene created";
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel"))
+            {
+                _newFileOpen = false;
+            }
+        }
+        ImGui::End();
+    }
+
     if (ImGui::BeginMenuBar())
     {
         if (ImGui::BeginMenu("File"))
         {
             if (ImGui::MenuItem("New", "Ctrl+N"))
             {
-                IOManager::get().newFile();
-                _planet->reset();
-                _consoleBuffer = "New scene created";
+                _newFileOpen = true;
             }
 
             if (ImGui::BeginMenu("Open scene..."))
@@ -184,6 +213,7 @@ void Hud::draw(GLFWwindow* window)
                 _saveFileOpen = true;
             }
 
+            ImGui::Separator();
 
             if (ImGui::MenuItem("Exit"))
             {
@@ -204,23 +234,20 @@ void Hud::draw(GLFWwindow* window)
         _viewportHeight = wsize.y;
         _fbo.resize(_viewportWidth, _viewportHeight);
         Renderer::Get().ComputeProjectionMatrix();
-
-
     }
     ImGui::End();
 
     // Console
     if (ImGui::Begin("Console"))
     {
-        ImGui::Text(_consoleBuffer.c_str());
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Text(std::string("> " + _consoleBuffer).c_str());
     }
     ImGui::End();
 
     // Settings
     if (ImGui::Begin("Procedural Planets Settings"))
     {
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
         if (ImGui::CollapsingHeader("Display"))
         {
             ImGui::Checkbox("Wireframe Mode", &_wireframeMode);
@@ -333,6 +360,11 @@ void Hud::saveFile()
     {
         _saveFileOpen = true;
     }
+}
+
+void Hud::newFile()
+{
+    _newFileOpen = true;
 }
 
 void Hud::free()
