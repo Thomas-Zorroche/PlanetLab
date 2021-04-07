@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include <memory>
+#include <string>
 
 class Window;
 class Camera;
@@ -35,6 +36,8 @@ public:
 	float viewportWidth() const { return _viewportWidth; }
 	float viewportHeight() const { return _viewportHeight; }
 
+	void Hud::saveFile();
+
 	/* UI Fonctions */
 	bool wireframeMode() const { return _wireframeMode; }
 
@@ -44,7 +47,10 @@ private:
 
 	Framebuffer _fbo = Framebuffer();
 
+	std::string _consoleBuffer = ">";
+
 	static bool _wireframeMode;
+	bool _saveFileOpen = false;
 
 	std::shared_ptr<Planet> _planet = nullptr;
 	std::shared_ptr<ShapeSettings> _shape = nullptr;

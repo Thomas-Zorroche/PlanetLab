@@ -1,5 +1,6 @@
 #include "engine/InputHandler.hpp"
 #include "engine/Camera.hpp"
+#include "hud/Hud.hpp"
 
 #include <iostream>
 #include "GLFW/glfw3.h"
@@ -8,8 +9,10 @@ void InputHandler::ProcessInput(GLFWwindow* window, const std::shared_ptr<Camera
 {
     // Close Window
     // ===================================================================================================
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) // TODO : replace by Ctrl + Q
+    {
         glfwSetWindowShouldClose(window, true);
+    }
 
     // ===================================================================================================
     if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) 
@@ -20,6 +23,7 @@ void InputHandler::ProcessInput(GLFWwindow* window, const std::shared_ptr<Camera
     {
         removeKey(ActiveKey::ALT);
     }
+
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
         addKey(ActiveKey::MOUSE_LEFT);
@@ -29,6 +33,31 @@ void InputHandler::ProcessInput(GLFWwindow* window, const std::shared_ptr<Camera
         removeKey(ActiveKey::MOUSE_LEFT);
     }
 
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+    {
+        addKey(ActiveKey::CTRL);
+        std::cout << "CTRL" << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
+    {
+        removeKey(ActiveKey::CTRL);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        std::cout << "S" << std::endl;
+        addKey(ActiveKey::S);
+        if (_canSave && isKeyActive(ActiveKey::CTRL))
+        {
+            _canSave = false;
+            Hud::get().saveFile();
+        }
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE)
+    {
+        removeKey(ActiveKey::S);
+        _canSave = true;
+    }
 }
 
 void InputHandler::addKey(ActiveKey key)
@@ -68,6 +97,16 @@ void InputHandler::removeKey(ActiveKey key)
     {
         _activeKeys.erase(_activeKeys.begin() + index);
     }
+}
+
+bool InputHandler::isKeyActive(ActiveKey key)
+{
+    // Test if the key is in the array
+    for (const ActiveKey& k : _activeKeys)
+    {
+        if (k == key) return true;
+    }
+    return false;
 }
 
 bool InputHandler::canRotate() const

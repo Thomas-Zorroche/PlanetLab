@@ -9,15 +9,16 @@ void IOManager::newFile()
 {
 	_currentFileSaved = false;
 	_currentFileName = "New Scene";
+	updateTitleWindow();
 }
 
 
-bool IOManager::save(const std::shared_ptr<Planet>& planet)
+bool IOManager::save()
 {
-	return _currentFileSaved ? saveAs(_currentFileName, planet) : false;
+	return _currentFileSaved ? saveAs(_currentFileName) : false;
 }
 
-bool IOManager::saveAs(const std::string& outputFileName, const std::shared_ptr<Planet>& planet)
+bool IOManager::saveAs(const std::string& outputFileName)
 {
 	// create a file instance
 	mINI::INIFile file(outputFileName);
@@ -26,10 +27,10 @@ bool IOManager::saveAs(const std::string& outputFileName, const std::shared_ptr<
 	mINI::INIStructure ini;
 
 	// populate the structure
-	ini["layers"]["count"] = std::to_string(planet->shapeSettings()->noiseLayers().size());
+	ini["layers"]["count"] = std::to_string(_planet->shapeSettings()->noiseLayers().size());
 
 	int layerCount = 1;
-	for (const auto& layer : planet->shapeSettings()->noiseLayers())
+	for (const auto& layer : _planet->shapeSettings()->noiseLayers())
 	{
 		std::string section = "noiseSettings_" + std::to_string(layerCount);
 
@@ -51,6 +52,8 @@ bool IOManager::saveAs(const std::string& outputFileName, const std::shared_ptr<
 	{
 		_currentFileSaved = true;
 		_currentFileName = outputFileName;
+		_unsavedValues = false;
+		updateTitleWindow();
 	}
 	else
 	{
@@ -59,7 +62,7 @@ bool IOManager::saveAs(const std::string& outputFileName, const std::shared_ptr<
 	}
 }
 
-bool IOManager::open(const std::string& inputFileName, std::shared_ptr<Planet>& planet)
+bool IOManager::open(const std::string& inputFileName)
 {
 	// first, create a file instance
 	mINI::INIFile file(inputFileName);
@@ -75,11 +78,12 @@ bool IOManager::open(const std::string& inputFileName, std::shared_ptr<Planet>& 
 	}
 
 	// then import values and assign to the planet
-	loadValues(ini, planet);
+	loadValues(ini);
 
 	_currentFileSaved = true;
 	_currentFileName = inputFileName;
-
+	_unsavedValues = false;
+	updateTitleWindow();
 
 	return true;
 }
@@ -94,11 +98,11 @@ std::vector<std::string> IOManager::getAllFilesFromFolder(const std::string& pat
 	return paths;
 }
 
-void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet>& planet)
+void IOManager::loadValues(const mINI::INIStructure& ini)
 {
 	std::string& layersCountStr = ini.get("layers").get("count");
 	const int layersCount = std::atoi(layersCountStr.c_str());
-	planet->updateNoiseLayersCount(layersCount);
+	_planet->updateNoiseLayersCount(layersCount);
 
 	for (size_t i = 1; i <= layersCount; i++)
 	{
@@ -114,20 +118,37 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 		std::string& minValueStr      = ini.get(section).get("minValue");
 	
 		// Assign values
-		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->strength() = std::atof(strengthStr.c_str());
-		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->layersCount() = std::atof(layersCountStr.c_str());
-		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->baseRoughness() = std::atof(baseRoughnessStr.c_str());
-		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->roughness() = std::atof(roughnessStr.c_str());
-		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().x = std::atof(centerXStr.c_str());
-		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().y = std::atof(centerYStr.c_str());
-		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().z = std::atof(centerZStr.c_str());
-		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->minValue() = std::atof(minValueStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->strength() = std::atof(strengthStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->layersCount() = std::atof(layersCountStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->baseRoughness() = std::atof(baseRoughnessStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->roughness() = std::atof(roughnessStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().x = std::atof(centerXStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().y = std::atof(centerYStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().z = std::atof(centerZStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->minValue() = std::atof(minValueStr.c_str());
 	}
 
-	planet->update(ObserverFlag::NOISE);
+	_planet->update(ObserverFlag::NOISE);
 }
 
-void IOManager::updateTitleWindow(GLFWwindow* window)
+void IOManager::updateTitleWindow()
 {
-	glfwSetWindowTitle(window, std::string("Procedural Planets - " + _currentFileName).c_str());
+	if (_unsavedValues && _currentFileSaved)
+	{
+		glfwSetWindowTitle(_windowPtr, std::string("Procedural Planets * " + _currentFileName).c_str());
+	}
+	else
+	{
+		glfwSetWindowTitle(_windowPtr, std::string("Procedural Planets " + _currentFileName).c_str());
+	}
 }
+
+void IOManager::setUnsavedValues()
+{
+	if (!_unsavedValues && _currentFileSaved)
+	{
+		_unsavedValues = true;
+		updateTitleWindow();
+	}
+}
+

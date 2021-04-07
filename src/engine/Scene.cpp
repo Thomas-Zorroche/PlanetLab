@@ -33,6 +33,7 @@ void Scene::Init()
 	// Procedural Planet
 	//=======================
 	_planet = std::make_shared<Planet>();
+	IOManager::get().setPlanetPtr(_planet);
 
 	// Load All Lights
 	// =================

@@ -46,7 +46,8 @@ void Hud::init(GLFWwindow* window, const std::shared_ptr<Planet>& planet, float 
     _settingsWidth = width - _viewportWidth;
 
     _fbo.resize(_viewportWidth, _viewportHeight);
-
+    
+    IOManager::get().setWindowPtr(window);
 }
 
 void Hud::draw(GLFWwindow* window)
@@ -65,9 +66,7 @@ void Hud::draw(GLFWwindow* window)
     else
     {
     static bool dockspaceOpen = true;
-    static bool saveFileOpen = false;
     static char bufferSaveLocation[20];
-    static std::string consoleBuffer = "";
     static bool opt_fullscreen = true;
     static bool opt_padding = false;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -91,16 +90,9 @@ void Hud::draw(GLFWwindow* window)
         dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
     }
 
-    // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-    // and handle the pass-thru hole, so we ask Begin() to not render a background.
     if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
         window_flags |= ImGuiWindowFlags_NoBackground;
 
-    // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-    // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-    // all active windows docked into it will lose their parent and become undocked.
-    // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-    // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
     if (!opt_padding)
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
@@ -117,7 +109,7 @@ void Hud::draw(GLFWwindow* window)
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
     }
 
-    if (saveFileOpen)
+    if (_saveFileOpen)
     {
         ImGui::SetNextWindowPos(ImVec2((_WIDTH / 2.0) - 150, (_HEIGHT / 2.0) - 50));
         ImGui::SetNextWindowSize(ImVec2(300, 100));
@@ -128,22 +120,21 @@ void Hud::draw(GLFWwindow* window)
             if (ImGui::Button("Save"))
             {
                 // Error
-                if (!IOManager::get().saveAs(std::string("res/scene/" + std::string(bufferSaveLocation) + ".ini"), _planet))
+                if (!IOManager::get().saveAs(std::string("res/scene/" + std::string(bufferSaveLocation) + ".ini")))
                 {
-                    consoleBuffer = "Error IO :: cannot save document";
+                    _consoleBuffer = "Error IO :: cannot save document";
                 }
                 // Save As Success
                 else
                 {
-                    consoleBuffer = "File has been saved";
-                    IOManager::get().updateTitleWindow(window);
+                    _consoleBuffer = "File has been saved";
                 }
-                saveFileOpen = false;
+                _saveFileOpen = false;
             }
             ImGui::SameLine();
             if (ImGui::Button("Exit"))
             {
-                saveFileOpen = false;
+                _saveFileOpen = false;
             }
         }
         ImGui::End();
@@ -156,9 +147,8 @@ void Hud::draw(GLFWwindow* window)
             if (ImGui::MenuItem("New", "Ctrl+N"))
             {
                 IOManager::get().newFile();
-                IOManager::get().updateTitleWindow(window);
                 _planet->reset();
-                consoleBuffer = "New scene created";
+                _consoleBuffer = "New scene created";
             }
 
             if (ImGui::BeginMenu("Open scene..."))
@@ -169,14 +159,13 @@ void Hud::draw(GLFWwindow* window)
                     if (ImGui::MenuItem(paths[i].c_str()))
                     {
                         _planet->reset();
-                        if (!IOManager::get().open(paths[i], _planet))
+                        if (!IOManager::get().open(paths[i]))
                         {
-                            consoleBuffer = "Error IO :: cannot open file " + paths[i];
+                            _consoleBuffer = "Error IO :: cannot open file " + paths[i];
                         }
                         else
                         {
-                            consoleBuffer = "File has been opened";
-                            IOManager::get().updateTitleWindow(window);
+                            _consoleBuffer = "File has been opened";
                         }
                     }
                 }
@@ -187,28 +176,12 @@ void Hud::draw(GLFWwindow* window)
 
             if (ImGui::MenuItem("Save", "Ctrl+S"))
             {
-                // Check whether the file is already save
-                if (IOManager::get().currentFileSaved())
-                {
-                    if (!IOManager::get().save(_planet))
-                    {
-                        consoleBuffer = "Error IO :: cannot save file ";
-                    }
-                    else
-                    {
-                        consoleBuffer = "File has been saved";
-                    }
-                }
-                // If not, open save as windows
-                else
-                {
-                    saveFileOpen = true;
-                }
+                saveFile();
             }
 
             if (ImGui::MenuItem("Save As..."))
             {
-                saveFileOpen = true;
+                _saveFileOpen = true;
             }
 
 
@@ -239,7 +212,7 @@ void Hud::draw(GLFWwindow* window)
     // Console
     if (ImGui::Begin("Console"))
     {
-        ImGui::Text(consoleBuffer.c_str());
+        ImGui::Text(_consoleBuffer.c_str());
     }
     ImGui::End();
 
@@ -338,6 +311,28 @@ void Hud::draw(GLFWwindow* window)
     // Render ImGUI
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void Hud::saveFile()
+{
+    // Check whether the file is already save
+    if (IOManager::get().currentFileSaved())
+    {
+        // Check whether the save succeed
+        if (!IOManager::get().save())
+        {
+            _consoleBuffer = "Error IO :: cannot save file ";
+        }
+        else
+        {
+            _consoleBuffer = "File has been saved";
+        }
+    }
+    // If not, open save as windows
+    else
+    {
+        _saveFileOpen = true;
+    }
 }
 
 void Hud::free()

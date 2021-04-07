@@ -13,7 +13,9 @@ struct CallbackPtr;
 enum class ActiveKey {
 	NONE, 
 	ALT,
-	MOUSE_LEFT
+	MOUSE_LEFT,
+	CTRL,
+	S
 };
 
 class InputHandler
@@ -30,11 +32,13 @@ public:
 private:
 	void addKey(ActiveKey key);
 	void removeKey(ActiveKey key);
+	bool isKeyActive(ActiveKey key);
 
 private:
 	std::vector<ActiveKey> _activeKeys = { ActiveKey::NONE };
 
 	bool _canInteract = false;
+	bool _canSave = true;
 
 	void Movement(GLFWwindow* window, const std::shared_ptr<Camera>& camera, float deltaTime);
 };

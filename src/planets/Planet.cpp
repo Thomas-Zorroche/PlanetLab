@@ -5,6 +5,8 @@
 #include "noise/NoiseFilter.hpp"
 #include "noise/NoiseSettings.hpp"
 
+#include "io/IOManager.hpp"
+
 #include <vector>
 
 
@@ -65,6 +67,8 @@ void Planet::generatePlanet()
 
 void Planet::update(ObserverFlag flag)
 {
+	IOManager::get().setUnsavedValues();
+
 	switch (flag)
 	{
 		case ObserverFlag::RESOLUTION:
