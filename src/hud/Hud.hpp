@@ -27,9 +27,10 @@ public:
 	Hud(const Hud&) = delete;
 	Hud& operator=(const Hud&) = delete;
 
-	void draw(GLFWwindow* window);
 	void init(GLFWwindow* window, const std::shared_ptr<Planet>& planet, float width, float height);
+	void draw(GLFWwindow* window);
 	void free();
+
 	void bindFbo();
 	void Hud::unbindFbo();
 
@@ -39,26 +40,34 @@ public:
 	void Hud::saveFile();
 	void Hud::newFile();
 
-	/* UI Fonctions */
-	bool wireframeMode() const { return _wireframeMode; }
+	/* MOVE TO APP */ bool wireframeMode() const { return _wireframeMode; }
 
-	void generateUpdateQueue(bool onRelease = false);
+	/* MOVE TO APP */ void generateUpdateQueue(bool onRelease = false);
 private:
 	Hud() = default;
 	~Hud() = default;
 
-	void update(ObserverFlag flag);
-	void addUpdateIntoQueue(ObserverFlag flag);
+	/* MOVE TO APP */ void update(ObserverFlag flag);
+	/* MOVE TO APP */ void addUpdateIntoQueue(ObserverFlag flag);
+
+	void ShowMenuBar(GLFWwindow* window);
+	void ShowSettingsWindow();
+	void ShowViewportWindow();
+	void ShowConsoleWindow();
+	void ShowSaveAsWindow();
+	void ShowNewSceneWindow();
 	
 private:
 	Framebuffer _fbo = Framebuffer();
 
 	std::string _consoleBuffer = "";
 
-	static bool _wireframeMode;
+	bool _wireframeMode;
 	bool _saveFileOpen = false;
 	bool _newFileOpen = false;
 	int _updateMode = 0;
+	bool _dockspaceOpen = true;
+	char _bufferSaveLocation[20];
 
 	std::shared_ptr<Planet> _planet = nullptr;
 	std::shared_ptr<ShapeSettings> _shape = nullptr;

@@ -17,8 +17,6 @@
 
 #include "io/IOManager.hpp"
 
-bool Hud::_wireframeMode = false;
-
 void Hud::init(GLFWwindow* window, const std::shared_ptr<Planet>& planet, float width, float height)
 {
     // Initialize ImGui
@@ -61,8 +59,7 @@ void Hud::draw(GLFWwindow* window)
     if (demo) ImGui::ShowDemoWindow(&demo);
     else
     {
-    static bool dockspaceOpen = true;
-    static char bufferSaveLocation[20];
+
     static bool opt_fullscreen = true;
     static bool opt_padding = false;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -91,7 +88,7 @@ void Hud::draw(GLFWwindow* window)
 
     if (!opt_padding)
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-    ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
+    ImGui::Begin("DockSpace Demo", &_dockspaceOpen, window_flags);
     if (!opt_padding)
         ImGui::PopStyleVar();
 
@@ -105,68 +102,26 @@ void Hud::draw(GLFWwindow* window)
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
     }
 
-    // Save File Window
-    if (_saveFileOpen)
-    {
-        ImGui::SetNextWindowPos(ImVec2((_WIDTH / 2.0) - 150, (_HEIGHT / 2.0) - 50));
-        ImGui::SetNextWindowSize(ImVec2(300, 100));
-        if (ImGui::Begin("Save File"))
-        {
-            ImGui::Text("Save as ");
-            ImGui::InputText(".ini", bufferSaveLocation, IM_ARRAYSIZE(bufferSaveLocation));
-            if (ImGui::Button("Save"))
-            {
-                // Error
-                if (!IOManager::get().saveAs(std::string("res/scene/" + std::string(bufferSaveLocation) + ".ini")))
-                {
-                    _consoleBuffer = "Error IO :: cannot save document";
-                }
-                // Save As Success
-                else
-                {
-                    _consoleBuffer = "File has been saved";
-                }
-                _saveFileOpen = false;
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Exit"))
-            {
-                _saveFileOpen = false;
-            }
-        }
-        ImGui::End();
+    /* Pop up Windows */
+    if (_saveFileOpen) ShowSaveAsWindow();
+    if (_newFileOpen) ShowNewSceneWindow();
+
+    /* Permanent Windows */
+    ShowSettingsWindow();
+    ShowViewportWindow();
+    ShowConsoleWindow();
+    ShowMenuBar(window);
+
+    ImGui::End(); // Main Window
     }
 
-    // New File Window
-    if (_newFileOpen)
-    {
-        ImGui::SetNextWindowPos(ImVec2((_WIDTH / 2.0) - 150, (_HEIGHT / 2.0) - 50));
-        ImGui::SetNextWindowSize(ImVec2(300, 100));
-        if (ImGui::Begin("New Scene"))
-        {
-            ImGui::Text("Save changes before closing?");
-            if (ImGui::Button("Save"))
-            {
-                _saveFileOpen = true;
-                _newFileOpen = false;
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Don't Save"))
-            {
-                _newFileOpen = false;
-                IOManager::get().newFile();
-                _planet->reset();
-                _consoleBuffer = "New scene created";
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Cancel"))
-            {
-                _newFileOpen = false;
-            }
-        }
-        ImGui::End();
-    }
+    // Render ImGUI
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
 
+void  Hud::ShowMenuBar(GLFWwindow * window)
+{
     if (ImGui::BeginMenuBar())
     {
         if (ImGui::BeginMenu("File"))
@@ -213,7 +168,7 @@ void Hud::draw(GLFWwindow* window)
 
             if (ImGui::MenuItem("Exit"))
             {
-                dockspaceOpen = false;
+                _dockspaceOpen = false;
                 glfwSetWindowShouldClose(window, true);
             }
 
@@ -221,27 +176,10 @@ void Hud::draw(GLFWwindow* window)
         }
         ImGui::EndMenuBar();
     }
+}
 
-    if (ImGui::Begin("Renderer"))
-    {
-        ImVec2 wsize = ImGui::GetWindowSize();
-        ImGui::Image((ImTextureID)_fbo.id(), wsize, ImVec2(0, 1), ImVec2(1, 0));
-        _viewportWidth = wsize.x;
-        _viewportHeight = wsize.y;
-        _fbo.resize(_viewportWidth, _viewportHeight);
-        Renderer::Get().ComputeProjectionMatrix();
-    }
-    ImGui::End();
-
-    // Console
-    if (ImGui::Begin("Console"))
-    {
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::Text(std::string("> " + _consoleBuffer).c_str());
-    }
-    ImGui::End();
-
-    // Settings
+void Hud::ShowSettingsWindow()
+{
     if (ImGui::Begin("Procedural Planets Settings"))
     {
         ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
@@ -267,7 +205,7 @@ void Hud::draw(GLFWwindow* window)
             if (ImGui::SliderInt("Resolution", &_planet->resolution(), 4, 128))
             {
                 update(ObserverFlag::RESOLUTION);
-                
+
             }
             if (ImGui::ColorEdit3("Planet Color", (float*)&(_color->color())))
             {
@@ -344,14 +282,93 @@ void Hud::draw(GLFWwindow* window)
         }
     }
     ImGui::End(); // Settings
-
-    ImGui::End(); // Main Window
-    }
-
-    // Render ImGUI
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
+
+void Hud::ShowViewportWindow()
+{
+    if (ImGui::Begin("Renderer"))
+    {
+        ImVec2 wsize = ImGui::GetWindowSize();
+        ImGui::Image((ImTextureID)_fbo.id(), wsize, ImVec2(0, 1), ImVec2(1, 0));
+        _viewportWidth = wsize.x;
+        _viewportHeight = wsize.y;
+        _fbo.resize(_viewportWidth, _viewportHeight);
+        Renderer::Get().ComputeProjectionMatrix();
+    }
+    ImGui::End();
+}
+
+void Hud::ShowConsoleWindow()
+{
+    // Console
+    if (ImGui::Begin("Console"))
+    {
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Text(std::string("> " + _consoleBuffer).c_str());
+    }
+    ImGui::End();
+}
+
+void Hud::ShowSaveAsWindow()
+{
+    ImGui::SetNextWindowPos(ImVec2((_WIDTH / 2.0) - 150, (_HEIGHT / 2.0) - 50));
+    ImGui::SetNextWindowSize(ImVec2(300, 100));
+    if (ImGui::Begin("Save File"))
+    {
+        ImGui::Text("Save as ");
+        ImGui::InputText(".ini", _bufferSaveLocation, IM_ARRAYSIZE(_bufferSaveLocation));
+        if (ImGui::Button("Save"))
+        {
+            // Error
+            if (!IOManager::get().saveAs(std::string("res/scene/" + std::string(_bufferSaveLocation) + ".ini")))
+            {
+                _consoleBuffer = "Error IO :: cannot save document";
+            }
+            // Save As Success
+            else
+            {
+                _consoleBuffer = "File has been saved";
+            }
+            _saveFileOpen = false;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Exit"))
+        {
+            _saveFileOpen = false;
+        }
+    }
+    ImGui::End();
+}
+
+void Hud::ShowNewSceneWindow()
+{
+    ImGui::SetNextWindowPos(ImVec2((_WIDTH / 2.0) - 150, (_HEIGHT / 2.0) - 50));
+    ImGui::SetNextWindowSize(ImVec2(300, 100));
+    if (ImGui::Begin("New Scene"))
+    {
+        ImGui::Text("Save changes before closing?");
+        if (ImGui::Button("Save"))
+        {
+            _saveFileOpen = true;
+            _newFileOpen = false;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Don't Save"))
+        {
+            _newFileOpen = false;
+            IOManager::get().newFile();
+            _planet->reset();
+            _consoleBuffer = "New scene created";
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel"))
+        {
+            _newFileOpen = false;
+        }
+    }
+    ImGui::End();
+}
+
 
 void Hud::update(ObserverFlag flag)
 {
