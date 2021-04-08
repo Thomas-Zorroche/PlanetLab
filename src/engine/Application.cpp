@@ -53,7 +53,6 @@ void mainloop(Window& windowObject)
         Hud::get().unbindFbo();
         Hud::get().draw(window);
 
-
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
@@ -61,5 +60,6 @@ void mainloop(Window& windowObject)
         glfwPollEvents();
     }
 
+    Hud::get().free();
     scene.Free();
 }

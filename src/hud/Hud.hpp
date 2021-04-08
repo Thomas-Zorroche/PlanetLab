@@ -45,7 +45,7 @@ public:
 	void generateUpdateQueue(bool onRelease = false);
 private:
 	Hud() = default;
-	~Hud();
+	~Hud() = default;
 
 	void update(ObserverFlag flag);
 	void addUpdateIntoQueue(ObserverFlag flag);

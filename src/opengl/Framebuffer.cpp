@@ -43,3 +43,23 @@ void Framebuffer::resize(float width, float height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void Framebuffer::bind(float viewportWidth, float viewportHeight)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, _id);
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(0.25f, 0.25f, 0.32f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glViewport(0, 0, viewportWidth, viewportHeight);
+}
+
+void Framebuffer::unbind()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Framebuffer::free()
+{
+    glDeleteFramebuffers(1, &_id);
+    glDeleteTextures(1, &_textureID);
+}
+

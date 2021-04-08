@@ -19,11 +19,6 @@
 
 bool Hud::_wireframeMode = false;
 
-Hud::~Hud()
-{
-    
-}
-
 void Hud::init(GLFWwindow* window, const std::shared_ptr<Planet>& planet, float width, float height)
 {
     // Initialize ImGui
@@ -422,19 +417,18 @@ void Hud::free()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+
+    // Delete Framebuffer
+    _fbo.free();
 }
 
 void Hud::bindFbo()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, _fbo.id());
-    glEnable(GL_DEPTH_TEST);
-    glClearColor(0.25f, 0.25f, 0.32f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glViewport(0, 0, _viewportWidth, _viewportHeight);
+    _fbo.bind(_viewportWidth, _viewportHeight);
 }
 
 void Hud::unbindFbo()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    _fbo.unbind();
 }
 
