@@ -35,6 +35,18 @@ glm::vec3 ShapeGenerator::calculatePointOnPlanet(const glm::vec3& pointOnUnitSph
 	return pointOnUnitSphere * _settings->planetRadius() * (1 + elevation);
 }
 
+std::vector<std::shared_ptr<NoiseFilter> > ShapeGenerator::noiseFilters()
+{
+	return _noiseFilters;
+}
+
+std::shared_ptr<NoiseFilter> ShapeGenerator::noiseFilter(unsigned int index)
+{
+	if (index > _noiseFilters.size())
+		return nullptr;
+	return _noiseFilters[index];
+}
+
 void ShapeGenerator::addFilter(const std::shared_ptr<NoiseFilter>& layer)
 {
 	_noiseFilters.push_back(layer);

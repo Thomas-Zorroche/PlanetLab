@@ -27,6 +27,7 @@ public:
 
 	std::shared_ptr<ShapeSettings> shapeSettings() { return _shapeSettings; }
 	std::shared_ptr<ColorSettings> colorSettings() { return _colorSettings; }
+	std::shared_ptr<ShapeGenerator> shapeGenerator() { return _shapeGenerator; }
 
 	int& resolution() { return _resolution; }
 

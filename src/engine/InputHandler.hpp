@@ -41,8 +41,6 @@ private:
 	bool _canInteract = false;
 	bool _canSave = true;
 	bool _canCreateNewFile = true;
-
-	void Movement(GLFWwindow* window, const std::shared_ptr<Camera>& camera, float deltaTime);
 };
 
 //

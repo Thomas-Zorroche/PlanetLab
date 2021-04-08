@@ -4,10 +4,10 @@
 #include <algorithm>    // std::max
 
 
-NoiseFilter::NoiseFilter(const std::shared_ptr<NoiseSettings>& settings, int seed)
-	: _noise(siv::PerlinNoise()), _settings(settings)
+NoiseFilter::NoiseFilter(const std::shared_ptr<NoiseSettings>& settings, std::uint32_t seed)
+	: _seed(seed), _noise(siv::PerlinNoise(seed)), _settings(settings)
 {
-	
+
 }
 
 float NoiseFilter::evaluate(const glm::vec3& point) const
@@ -35,4 +35,14 @@ float NoiseFilter::evaluate(const glm::vec3& point) const
 void NoiseFilter::setSettings(const std::shared_ptr<NoiseSettings>& settings)
 {
 	_settings = settings;
+}
+
+void NoiseFilter::reseed(std::uint32_t seed)
+{
+	_noise.reseed(seed);
+}
+
+void NoiseFilter::reseed()
+{
+	_noise.reseed(_seed);
 }

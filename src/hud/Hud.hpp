@@ -4,6 +4,7 @@
 #include "glm/glm.hpp"
 #include "engine/Color.hpp"
 #include <GLFW/glfw3.h>
+#include "planets/Planet.hpp"
 
 #include <memory>
 #include <string>
@@ -13,7 +14,6 @@ class Camera;
 class NoiseSettings;
 class ShapeSettings;
 class ColorSettings;
-class Planet;
 
 class Hud
 {
@@ -42,10 +42,15 @@ public:
 	/* UI Fonctions */
 	bool wireframeMode() const { return _wireframeMode; }
 
+	void generateUpdateQueue(bool onRelease = false);
 private:
 	Hud() = default;
 	~Hud();
 
+	void update(ObserverFlag flag);
+	void addUpdateIntoQueue(ObserverFlag flag);
+	
+private:
 	Framebuffer _fbo = Framebuffer();
 
 	std::string _consoleBuffer = "";
@@ -53,10 +58,13 @@ private:
 	static bool _wireframeMode;
 	bool _saveFileOpen = false;
 	bool _newFileOpen = false;
+	int _updateMode = 0;
 
 	std::shared_ptr<Planet> _planet = nullptr;
 	std::shared_ptr<ShapeSettings> _shape = nullptr;
 	std::shared_ptr<ColorSettings> _color = nullptr;
+
+	std::vector<ObserverFlag> _updatesQueue;
 
 	float _viewportWidth;
 	float _viewportHeight;

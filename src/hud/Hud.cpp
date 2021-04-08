@@ -9,6 +9,7 @@
 #include "planets/ShapeSettings.hpp"
 #include "planets/ColorSettings.hpp"
 #include "noise/NoiseSettings.hpp"
+#include "noise/NoiseFilter.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -248,6 +249,19 @@ void Hud::draw(GLFWwindow* window)
     // Settings
     if (ImGui::Begin("Procedural Planets Settings"))
     {
+        ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
+        ImGui::Combo("Update Mode", &_updateMode, "Auto\0On Release\0On Generate\0\0");
+        ImGui::PopItemWidth();
+
+        if (_updateMode == 2)
+        {
+            ImGui::SameLine();
+            if (ImGui::Button("Generate"))
+            {
+                generateUpdateQueue();
+            }
+        }
+
         if (ImGui::CollapsingHeader("Display"))
         {
             ImGui::Checkbox("Wireframe Mode", &_wireframeMode);
@@ -257,15 +271,16 @@ void Hud::draw(GLFWwindow* window)
         {
             if (ImGui::SliderInt("Resolution", &_planet->resolution(), 4, 128))
             {
-                _planet->update(ObserverFlag::RESOLUTION);
+                update(ObserverFlag::RESOLUTION);
+                
             }
             if (ImGui::ColorEdit3("Planet Color", (float*)&(_color->color())))
             {
-                _planet->update(ObserverFlag::COLOR);
+                update(ObserverFlag::COLOR);
             }
             if (ImGui::SliderFloat("Size", &_shape->planetRadius(), 0.2f, 4.0f))
             {
-                _planet->update(ObserverFlag::RADIUS);
+                update(ObserverFlag::RADIUS);
             }
         }
 
@@ -275,7 +290,7 @@ void Hud::draw(GLFWwindow* window)
             if (ImGui::SliderInt("Count", &noiseLayersCount, 0, 5))
             {
                 _planet->updateNoiseLayersCount(noiseLayersCount);
-                _planet->update(ObserverFlag::LAYER);
+                update(ObserverFlag::LAYER);
             }
 
             int layerCountNode = 0;
@@ -286,38 +301,43 @@ void Hud::draw(GLFWwindow* window)
                 {
                     if (ImGui::Checkbox("Enabled", &layer->enabled()))
                     {
-                        _planet->update(ObserverFlag::NOISE);
+                        update(ObserverFlag::NOISE);
                     }
 
                     if (ImGui::TreeNode("Noise Settings"))
                     {
+                        if (ImGui::InputInt("Seed", &(int&)_planet->shapeGenerator()->noiseFilter(layerCountNode)->seed()))
+                        {
+                            _planet->shapeGenerator()->noiseFilter(layerCountNode)->reseed();
+                            update(ObserverFlag::NOISE);
+                        }
                         if (ImGui::SliderFloat("Strength", &layer->noiseSettings()->strength(), 0.0f, 2.0f))
                         {
-                            _planet->update(ObserverFlag::NOISE);
+                            update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderInt("Layers Count", &layer->noiseSettings()->layersCount(), 0, 10))
                         {
-                            _planet->update(ObserverFlag::NOISE);
+                            update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderFloat("Base Roughness", &layer->noiseSettings()->baseRoughness(), 0.0f, 20.0f))
                         {
-                            _planet->update(ObserverFlag::NOISE);
+                            update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderFloat("Roughness", &layer->noiseSettings()->roughness(), 0.0f, 20.0f))
                         {
-                            _planet->update(ObserverFlag::NOISE);
+                            update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderFloat("Persistence", &layer->noiseSettings()->persistence(), 0.0f, 1.0f))
                         {
-                            _planet->update(ObserverFlag::NOISE);
+                            update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderFloat3("Center", (float*)&layer->noiseSettings()->center(), -10.0f, 10.0f))
                         {
-                            _planet->update(ObserverFlag::NOISE);
+                            update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderFloat("Min Value", &layer->noiseSettings()->minValue(), 0.0f, 10.0f))
                         {
-                            _planet->update(ObserverFlag::NOISE);
+                            update(ObserverFlag::NOISE);
                         }
                         ImGui::TreePop();
                     }
@@ -327,8 +347,6 @@ void Hud::draw(GLFWwindow* window)
                 layerCountNode++;
             }
         }
-
-
     }
     ImGui::End(); // Settings
 
@@ -338,6 +356,37 @@ void Hud::draw(GLFWwindow* window)
     // Render ImGUI
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void Hud::update(ObserverFlag flag)
+{
+    _updateMode == 0 ? _planet->update(flag) : addUpdateIntoQueue(flag);
+}
+
+void Hud::addUpdateIntoQueue(ObserverFlag flag)
+{
+    bool alreadyIn = false;
+    for (const auto& f : _updatesQueue)
+    {
+        if (flag == f) alreadyIn = true;
+    }
+    
+    if (!alreadyIn)
+    {
+        _updatesQueue.push_back(flag);
+    }
+}
+
+void Hud::generateUpdateQueue(bool onRelease)
+{
+    if (!_updatesQueue.empty() && (onRelease && _updateMode == 1) || !onRelease)
+    {
+        for (const auto& flag : _updatesQueue)
+        {
+            _planet->update(flag);
+        }
+        _updatesQueue.clear();
+    }
 }
 
 void Hud::saveFile()
