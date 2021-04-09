@@ -8,6 +8,7 @@
 #include "engine/Log.hpp"
 #include "engine/Window.hpp"
 #include "engine/Scene.hpp"
+#include "engine/Color.hpp"
 
 void mainloop(Window& windowObject);
 
@@ -36,6 +37,8 @@ public:
 	Application(const Application&) = delete;
 	Application& operator=(const Application&) = delete;
 
+	void ClearColor() const;
+
 	// Updates Handler
 	void GenerateUpdateQueue(bool onRelease = false);
 	void Update(ObserverFlag flag);
@@ -50,6 +53,9 @@ public:
 
 	std::shared_ptr<Planet> PlanetPtr();
 
+	Color GetBackgroundColor() const { return _backgroundColor; }
+	Color& GetBackgroundColor() { return _backgroundColor; }
+
 private:
 	std::shared_ptr<Planet> _planet;
 	
@@ -57,5 +63,7 @@ private:
 	
 	UpdateMode _updateMode = UpdateMode::Auto;
 	std::vector<ObserverFlag> _updatesQueue;
+
+	Color _backgroundColor = Color(0.570, 0.598, 0.727);
 };
 

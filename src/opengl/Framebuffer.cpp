@@ -47,7 +47,7 @@ void Framebuffer::bind(float viewportWidth, float viewportHeight)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, _id);
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.25f, 0.25f, 0.32f, 1.0f);
+    glClearColor(0, 0, 0, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glViewport(0, 0, viewportWidth, viewportHeight);
 }

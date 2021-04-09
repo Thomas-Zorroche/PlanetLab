@@ -6,6 +6,7 @@
 #include "engine/ResourceManager.hpp"
 #include "hud/Hud.hpp"
 #include "planets/Planet.hpp"
+#include "io/IOManager.hpp"
 
 
 void mainloop(Window& windowObject)
@@ -18,6 +19,7 @@ void mainloop(Window& windowObject)
     Scene scene;
     std::shared_ptr<Application> application = std::make_shared<Application>(scene.planet());
     Hud::get().init(window, application, windowObject.Width(), windowObject.Height());
+    IOManager::get().setPlanetPtr(scene.planet());
 
     auto camera = std::make_shared<Camera>();
     Renderer::Get().SetCamera(camera);
@@ -44,12 +46,11 @@ void mainloop(Window& windowObject)
         // View Matrix
         Renderer::Get().ComputeViewMatrix();
 
-        glClearColor(0.25f, 0.25f, 0.32f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        application->ClearColor();
 
         // Render scene here
         Hud::get().bindFbo();
-        scene.Draw(application->IsWireframeMode());
+        scene.Draw(Hud::get().viewportHeight(), application);
 
         // Render Hud
         Hud::get().unbindFbo();
@@ -126,4 +127,11 @@ std::shared_ptr<Planet> Application::PlanetPtr()
 { 
     return _planet; 
 }
+
+void Application::ClearColor() const
+{
+    glClearColor(0, 0, 0, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
 

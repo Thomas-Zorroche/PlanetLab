@@ -18,7 +18,7 @@ struct ShapeVertex
     glm::vec2 texCoords;
 
     template<typename T>
-    ShapeVertex(T x, T y, T z)
+    ShapeVertex(T x, T y, T z = static_cast<T>(0))
         : position(glm::vec3(x, y, z)), normal(glm::vec3()), texCoords(glm::vec2()) {}
 
     ShapeVertex(glm::vec3 p) 

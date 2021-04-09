@@ -200,6 +200,7 @@ void Hud::ShowSettingsWindow()
         if (ImGui::CollapsingHeader("Display"))
         {
             ImGui::Checkbox("Wireframe Mode", &_app->GetWireframeModePtr());
+            ImGui::ColorEdit3("World Color", (float*)&(_app->GetBackgroundColor()));
         }
 
         if (ImGui::CollapsingHeader("Planet"))

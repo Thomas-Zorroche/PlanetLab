@@ -1,66 +1,40 @@
 #include "engine/Scene.hpp"
 #include "engine/ResourceManager.hpp"
-#include "engine/Renderer.hpp"
 #include "engine/Skybox.hpp"
-
-#include "opengl/Shader.h"
+#include "engine/BackgroundGradient.hpp"
+#include "engine/Application.hpp"
 
 #include "lighting/LightManager.hpp"
-#include "lighting/PointLight.hpp"
-#include "lighting/DirectionalLight.hpp"
-
 #include "planets/Planet.hpp"
 
-#include "io/IOManager.hpp"
-
 #include <memory>
-#include <string>
-#include <vector>
-#include <iostream>
-#include <unordered_map>
 
 
 Scene::Scene()
-	:  _skybox(nullptr), _planet(nullptr)
 {
 	Init();
 }
 
-Scene::~Scene() {}
-
 void Scene::Init()
 {
 	// Procedural Planet
-	//=======================
 	_planet = std::make_shared<Planet>();
-	IOManager::get().setPlanetPtr(_planet);
+
+	// Background Gradient (Simple Plane placed on camera far plane)
+	_backgroundPlane = std::make_shared<BackgroundGradient>();
 
 	// Load All Lights
-	// =================
 	LightManager::Get().LoadAllLights();
-
 }
 
-void Scene::Draw(bool wireframe)
+void Scene::Draw(float viewportHeight, const std::shared_ptr<Application>& app)
 {
-	_planet->draw(wireframe);
-}
-
-void Scene::AddStaticMesh(const std::shared_ptr<StaticMesh>& mesh)
-{
-	_staticMeshes.push_back(mesh);
-	_staticMeshesCount++;
+	_backgroundPlane->Draw(viewportHeight, app->GetBackgroundColor());
+	_planet->draw(app->IsWireframeMode());
 }
 
 void Scene::Free()
 {
-	// Free all static meshes
-	// ==========================
-	for (size_t i = 0; i < _staticMeshesCount; i++)
-		_staticMeshes[i]->Free();
-
-	// Free all textures 
-	// ==========================
 	ResourceManager::Get().DeleteAllResources();
 }
 

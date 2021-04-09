@@ -247,5 +247,7 @@ void ResourceManager::LoadAllShaders()
 	ResourceManager::Get().LoadShader("res/shaders/Default.vert", "res/shaders/wireframe.frag", "Wireframe");
 	// Normal shader
 	ResourceManager::Get().LoadShader("res/shaders/normal.vert", "res/shaders/normal.frag", "Normal");
+	// Background Gradient Shader
+	ResourceManager::Get().LoadShader("res/shaders/BackgroundGradient.vert", "res/shaders/BackgroundGradient.frag", "BackgroundGradient");
 }
 
