@@ -41,6 +41,10 @@ public:
 	void Hud::saveFile();
 	void Hud::newFile();
 
+	void setLowSliderSpeed();
+	void setDefaultSliderSpeed();
+
+
 private:
 	Hud() = default;
 	~Hud() = default;
@@ -61,6 +65,8 @@ private:
 	bool _newFileOpen = false;
 	bool _dockspaceOpen = true;
 	char _bufferSaveLocation[20];
+	int _sliderSpeed = 100;
+	float _sliderSpeedDefault = 0.00005;
 
 	std::shared_ptr<Application> _app = nullptr;
 	std::shared_ptr<Planet> _planet = nullptr;

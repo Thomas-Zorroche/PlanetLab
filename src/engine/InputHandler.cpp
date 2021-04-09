@@ -45,6 +45,17 @@ void InputHandler::ProcessInput(GLFWwindow* window, const std::shared_ptr<Applic
         removeKey(ActiveKey::CTRL);
     }
 
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    {
+        Hud::get().setLowSliderSpeed();
+        addKey(ActiveKey::SHIFT);
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
+    {
+        Hud::get().setDefaultSliderSpeed();
+        removeKey(ActiveKey::SHIFT);
+    }
+
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
         addKey(ActiveKey::S);

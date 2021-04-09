@@ -15,6 +15,7 @@ enum class ActiveKey {
 	ALT,
 	MOUSE_LEFT,
 	CTRL,
+	SHIFT,
 	S,
 	N
 };

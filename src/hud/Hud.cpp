@@ -247,7 +247,7 @@ void Hud::ShowSettingsWindow()
                             _planet->shapeGenerator()->noiseFilter(layerCountNode)->reseed();
                             _app->Update(ObserverFlag::NOISE);
                         }
-                        if (ImGui::SliderFloat("Strength", &layer->noiseSettings()->strength(), 0.0f, 2.0f))
+                        if (ImGui::DragFloat("Strength", &layer->noiseSettings()->strength(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 2.0f))
                         {
                             _app->Update(ObserverFlag::NOISE);
                         }
@@ -255,15 +255,15 @@ void Hud::ShowSettingsWindow()
                         {
                             _app->Update(ObserverFlag::NOISE);
                         }
-                        if (ImGui::SliderFloat("Base Roughness", &layer->noiseSettings()->baseRoughness(), 0.0f, 20.0f))
+                        if (ImGui::DragFloat("Base Roughness", &layer->noiseSettings()->baseRoughness(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 20.0f))
                         {
                             _app->Update(ObserverFlag::NOISE);
                         }
-                        if (ImGui::SliderFloat("Roughness", &layer->noiseSettings()->roughness(), 0.0f, 20.0f))
+                        if (ImGui::DragFloat("Roughness", &layer->noiseSettings()->roughness(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 20.0f))
                         {
                             _app->Update(ObserverFlag::NOISE);
                         }
-                        if (ImGui::SliderFloat("Persistence", &layer->noiseSettings()->persistence(), 0.0f, 1.0f))
+                        if (ImGui::DragFloat("Persistence", &layer->noiseSettings()->persistence(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 1.0f))
                         {
                             _app->Update(ObserverFlag::NOISE);
                         }
@@ -271,7 +271,7 @@ void Hud::ShowSettingsWindow()
                         {
                             _app->Update(ObserverFlag::NOISE);
                         }
-                        if (ImGui::SliderFloat("Min Value", &layer->noiseSettings()->minValue(), 0.0f, 10.0f))
+                        if (ImGui::DragFloat("Min Value", &layer->noiseSettings()->minValue(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 10.0f))
                         {
                             _app->Update(ObserverFlag::NOISE);
                         }
@@ -372,6 +372,15 @@ void Hud::ShowNewSceneWindow()
     ImGui::End();
 }
 
+void Hud::setLowSliderSpeed()
+{
+    _sliderSpeed = 1;
+}
+
+void Hud::setDefaultSliderSpeed()
+{
+    _sliderSpeed = 100;
+}
 
 void Hud::saveFile()
 {
