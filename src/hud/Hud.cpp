@@ -4,6 +4,7 @@
 
 #include "engine/Window.hpp"
 #include "engine/Renderer.hpp"
+#include "engine/Application.hpp"
 
 #include "planets/Planet.hpp"
 #include "planets/ShapeSettings.hpp"
@@ -17,7 +18,7 @@
 
 #include "io/IOManager.hpp"
 
-void Hud::init(GLFWwindow* window, const std::shared_ptr<Planet>& planet, float width, float height)
+void Hud::init(GLFWwindow* window, const std::shared_ptr<Application>& app, float width, float height)
 {
     // Initialize ImGui
     IMGUI_CHECKVERSION();
@@ -28,9 +29,10 @@ void Hud::init(GLFWwindow* window, const std::shared_ptr<Planet>& planet, float 
     ImGui_ImplOpenGL3_Init((char*)glGetString(GL_NUM_SHADING_LANGUAGE_VERSIONS));
 
     // Init shared pointers
-    _planet = planet;
-    _shape = planet->shapeSettings();
-    _color = planet->colorSettings();
+    _app = app;
+    _planet = app->PlanetPtr();
+    _shape = _planet->shapeSettings();
+    _color = _planet->colorSettings();
 
     // Init windows sizes
     _WIDTH = width;
@@ -183,37 +185,37 @@ void Hud::ShowSettingsWindow()
     if (ImGui::Begin("Procedural Planets Settings"))
     {
         ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
-        ImGui::Combo("Update Mode", &_updateMode, "Auto\0On Release\0On Generate\0\0");
+        ImGui::Combo("Update Mode", &(int&)_app->GetUpdateMode(), "Auto\0On Release\0On Generate\0\0");
         ImGui::PopItemWidth();
 
-        if (_updateMode == 2)
+        if (_app->GetUpdateMode() == UpdateMode::OnGenerate)
         {
             ImGui::SameLine();
             if (ImGui::Button("Generate"))
             {
-                generateUpdateQueue();
+                _app->GenerateUpdateQueue();
             }
         }
 
         if (ImGui::CollapsingHeader("Display"))
         {
-            ImGui::Checkbox("Wireframe Mode", &_wireframeMode);
+            ImGui::Checkbox("Wireframe Mode", &_app->GetWireframeModePtr());
         }
 
         if (ImGui::CollapsingHeader("Planet"))
         {
             if (ImGui::SliderInt("Resolution", &_planet->resolution(), 4, 128))
             {
-                update(ObserverFlag::RESOLUTION);
+                _app->Update(ObserverFlag::RESOLUTION);
 
             }
             if (ImGui::ColorEdit3("Planet Color", (float*)&(_color->color())))
             {
-                update(ObserverFlag::COLOR);
+                _app->Update(ObserverFlag::COLOR);
             }
             if (ImGui::SliderFloat("Size", &_shape->planetRadius(), 0.2f, 4.0f))
             {
-                update(ObserverFlag::RADIUS);
+                _app->Update(ObserverFlag::RADIUS);
             }
         }
 
@@ -223,7 +225,7 @@ void Hud::ShowSettingsWindow()
             if (ImGui::SliderInt("Count", &noiseLayersCount, 0, 5))
             {
                 _planet->updateNoiseLayersCount(noiseLayersCount);
-                update(ObserverFlag::LAYER);
+                _app->Update(ObserverFlag::LAYER);
             }
 
             int layerCountNode = 0;
@@ -234,7 +236,7 @@ void Hud::ShowSettingsWindow()
                 {
                     if (ImGui::Checkbox("Enabled", &layer->enabled()))
                     {
-                        update(ObserverFlag::NOISE);
+                        _app->Update(ObserverFlag::NOISE);
                     }
 
                     if (ImGui::TreeNode("Noise Settings"))
@@ -242,35 +244,35 @@ void Hud::ShowSettingsWindow()
                         if (ImGui::InputInt("Seed", &(int&)_planet->shapeGenerator()->noiseFilter(layerCountNode)->seed()))
                         {
                             _planet->shapeGenerator()->noiseFilter(layerCountNode)->reseed();
-                            update(ObserverFlag::NOISE);
+                            _app->Update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderFloat("Strength", &layer->noiseSettings()->strength(), 0.0f, 2.0f))
                         {
-                            update(ObserverFlag::NOISE);
+                            _app->Update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderInt("Layers Count", &layer->noiseSettings()->layersCount(), 0, 10))
                         {
-                            update(ObserverFlag::NOISE);
+                            _app->Update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderFloat("Base Roughness", &layer->noiseSettings()->baseRoughness(), 0.0f, 20.0f))
                         {
-                            update(ObserverFlag::NOISE);
+                            _app->Update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderFloat("Roughness", &layer->noiseSettings()->roughness(), 0.0f, 20.0f))
                         {
-                            update(ObserverFlag::NOISE);
+                            _app->Update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderFloat("Persistence", &layer->noiseSettings()->persistence(), 0.0f, 1.0f))
                         {
-                            update(ObserverFlag::NOISE);
+                            _app->Update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderFloat3("Center", (float*)&layer->noiseSettings()->center(), -10.0f, 10.0f))
                         {
-                            update(ObserverFlag::NOISE);
+                            _app->Update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderFloat("Min Value", &layer->noiseSettings()->minValue(), 0.0f, 10.0f))
                         {
-                            update(ObserverFlag::NOISE);
+                            _app->Update(ObserverFlag::NOISE);
                         }
                         ImGui::TreePop();
                     }
@@ -369,37 +371,6 @@ void Hud::ShowNewSceneWindow()
     ImGui::End();
 }
 
-
-void Hud::update(ObserverFlag flag)
-{
-    _updateMode == 0 ? _planet->update(flag) : addUpdateIntoQueue(flag);
-}
-
-void Hud::addUpdateIntoQueue(ObserverFlag flag)
-{
-    bool alreadyIn = false;
-    for (const auto& f : _updatesQueue)
-    {
-        if (flag == f) alreadyIn = true;
-    }
-    
-    if (!alreadyIn)
-    {
-        _updatesQueue.push_back(flag);
-    }
-}
-
-void Hud::generateUpdateQueue(bool onRelease)
-{
-    if (!_updatesQueue.empty() && (onRelease && _updateMode == 1) || !onRelease)
-    {
-        for (const auto& flag : _updatesQueue)
-        {
-            _planet->update(flag);
-        }
-        _updatesQueue.clear();
-    }
-}
 
 void Hud::saveFile()
 {

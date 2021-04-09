@@ -41,12 +41,9 @@ void Scene::Init()
 
 }
 
-void Scene::Draw()
+void Scene::Draw(bool wireframe)
 {
-	_planet->draw();
-
-	/*for (size_t i = 0; i < _staticMeshesCount; i++)
-		_staticMeshes[i]->Draw();*/
+	_planet->draw(wireframe);
 }
 
 void Scene::AddStaticMesh(const std::shared_ptr<StaticMesh>& mesh)

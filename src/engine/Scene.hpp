@@ -17,7 +17,7 @@ public:
 
 	void Init();
 
-	void Draw();
+	void Draw(bool wireframe = false);
 
 	std::shared_ptr<StaticMesh>& StaticMeshPtr(int index) { return _staticMeshes[index]; }
 

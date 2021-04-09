@@ -35,10 +35,10 @@ Planet::Planet(int resolution)
 	generatePlanet();
 }
 
-void Planet::draw()
+void Planet::draw(bool wireframe)
 {
 	//checkHud();
-	_staticMesh.Draw();
+	_staticMesh.Draw(wireframe);
 }
 
 /* Generate Fonctions */

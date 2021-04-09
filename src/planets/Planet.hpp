@@ -2,6 +2,7 @@
 
 #include "TerrainFace.hpp"
 #include "engine/StaticMesh.hpp"
+#include "engine/Application.hpp"
 
 #include "planets/ShapeSettings.hpp"
 #include "planets/ColorSettings.hpp"
@@ -9,21 +10,14 @@
 
 #include <memory>
 
-enum ObserverFlag
-{
-	RESOLUTION = 0,
-	COLOR,
-	RADIUS,
-	NOISE,
-	LAYER
-};
+
 
 class Planet
 {
 public:
 	Planet(int resolution = 64);
 
-	void draw();
+	void draw(bool wireframe = false);
 
 	std::shared_ptr<ShapeSettings> shapeSettings() { return _shapeSettings; }
 	std::shared_ptr<ColorSettings> colorSettings() { return _colorSettings; }

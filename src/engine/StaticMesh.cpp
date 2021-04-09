@@ -34,11 +34,11 @@ StaticMesh::StaticMesh(const std::vector<std::shared_ptr<Mesh>>& meshes, const T
 
 }
 
-void StaticMesh::Draw(bool isParticuleInstance, int countParticule)
+void StaticMesh::Draw(bool wireframe)
 {
 	SendUniforms();
-	_model->Draw(_shader, isParticuleInstance, countParticule);
-	if (Hud::get().wireframeMode())
+	_model->Draw(_shader);
+	if (wireframe)
 	{
 		auto shaderWireframe = ResourceManager::Get().GetShader("Wireframe");
 		shaderWireframe->Bind();
@@ -46,7 +46,7 @@ void StaticMesh::Draw(bool isParticuleInstance, int countParticule)
 		shaderWireframe->Unbind();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		//glPolygonOffset(0, -1),
-		_model->Draw(shaderWireframe, isParticuleInstance, countParticule);
+		_model->Draw(shaderWireframe);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }

@@ -45,7 +45,7 @@ public:
 	StaticMesh(const std::vector<std::shared_ptr<Mesh>>& meshes, const TransformLayout& transLayout = TransformLayout(), 
 		const std::string& shaderName = "DefaultLighting");
 
-	void Draw(bool isParticuleInstance = false, int countParticule = 0);
+	void Draw(bool wireframe = false);
 
 	glm::mat4 GetModelMatrix() const { return _modelMatrix; }
 	std::shared_ptr<Shader>& GetShader() { return _shader; }

@@ -23,7 +23,7 @@ public:
 	Model(const std::vector<std::shared_ptr<Mesh> >& meshes);
 
 
-	void Draw(std::shared_ptr<Shader>& shader, bool isParticuleInstance = false, int countParticule = 0);
+	void Draw(std::shared_ptr<Shader>& shader);
 
 	// Retrieve mesh vao (when there is a single mesh in the model)
 	// Useful for particule system

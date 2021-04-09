@@ -11,6 +11,7 @@
 
 class Window;
 class Camera;
+class Application;
 class NoiseSettings;
 class ShapeSettings;
 class ColorSettings;
@@ -27,7 +28,7 @@ public:
 	Hud(const Hud&) = delete;
 	Hud& operator=(const Hud&) = delete;
 
-	void init(GLFWwindow* window, const std::shared_ptr<Planet>& planet, float width, float height);
+	void init(GLFWwindow* window, const std::shared_ptr<Application>& app, float width, float height);
 	void draw(GLFWwindow* window);
 	void free();
 
@@ -40,15 +41,9 @@ public:
 	void Hud::saveFile();
 	void Hud::newFile();
 
-	/* MOVE TO APP */ bool wireframeMode() const { return _wireframeMode; }
-
-	/* MOVE TO APP */ void generateUpdateQueue(bool onRelease = false);
 private:
 	Hud() = default;
 	~Hud() = default;
-
-	/* MOVE TO APP */ void update(ObserverFlag flag);
-	/* MOVE TO APP */ void addUpdateIntoQueue(ObserverFlag flag);
 
 	void ShowMenuBar(GLFWwindow* window);
 	void ShowSettingsWindow();
@@ -62,18 +57,16 @@ private:
 
 	std::string _consoleBuffer = "";
 
-	bool _wireframeMode;
 	bool _saveFileOpen = false;
 	bool _newFileOpen = false;
-	int _updateMode = 0;
 	bool _dockspaceOpen = true;
 	char _bufferSaveLocation[20];
 
+	std::shared_ptr<Application> _app = nullptr;
 	std::shared_ptr<Planet> _planet = nullptr;
 	std::shared_ptr<ShapeSettings> _shape = nullptr;
 	std::shared_ptr<ColorSettings> _color = nullptr;
 
-	std::vector<ObserverFlag> _updatesQueue;
 
 	float _viewportWidth;
 	float _viewportHeight;

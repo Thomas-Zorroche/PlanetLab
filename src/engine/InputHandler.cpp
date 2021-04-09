@@ -1,11 +1,13 @@
 #include "engine/InputHandler.hpp"
 #include "engine/Camera.hpp"
+#include "engine/Application.hpp"
 #include "hud/Hud.hpp"
 
 #include <iostream>
 #include "GLFW/glfw3.h"
 
-void InputHandler::ProcessInput(GLFWwindow* window, const std::shared_ptr<Camera>& camera, float deltaTime)
+void InputHandler::ProcessInput(GLFWwindow* window, const std::shared_ptr<Application>& app,
+    const std::shared_ptr<Camera>& camera, float deltaTime)
 {
     // Close Window
     // ===================================================================================================
@@ -31,13 +33,12 @@ void InputHandler::ProcessInput(GLFWwindow* window, const std::shared_ptr<Camera
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
     {
         removeKey(ActiveKey::MOUSE_LEFT);
-        Hud::get().generateUpdateQueue(true);
+        app->GenerateUpdateQueue(true);
     }
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
     {
         addKey(ActiveKey::CTRL);
-        std::cout << "CTRL" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
     {

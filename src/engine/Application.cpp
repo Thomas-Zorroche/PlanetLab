@@ -5,6 +5,7 @@
 #include "engine/InputHandler.hpp"
 #include "engine/ResourceManager.hpp"
 #include "hud/Hud.hpp"
+#include "planets/Planet.hpp"
 
 
 void mainloop(Window& windowObject)
@@ -15,7 +16,8 @@ void mainloop(Window& windowObject)
     ResourceManager::Get().LoadAllShaders();
 
     Scene scene;
-    Hud::get().init(window, scene.planet(), windowObject.Width(), windowObject.Height());
+    std::shared_ptr<Application> application = std::make_shared<Application>(scene.planet());
+    Hud::get().init(window, application, windowObject.Width(), windowObject.Height());
 
     auto camera = std::make_shared<Camera>();
     Renderer::Get().SetCamera(camera);
@@ -37,7 +39,7 @@ void mainloop(Window& windowObject)
         lastFrame = currentFrame;
 
         // Handle Inputs
-        inputHandler->ProcessInput(window, camera, deltaTime);
+        inputHandler->ProcessInput(window, application, camera, deltaTime);
 
         // View Matrix
         Renderer::Get().ComputeViewMatrix();
@@ -47,7 +49,7 @@ void mainloop(Window& windowObject)
 
         // Render scene here
         Hud::get().bindFbo();
-        scene.Draw();
+        scene.Draw(application->IsWireframeMode());
 
         // Render Hud
         Hud::get().unbindFbo();
@@ -63,3 +65,65 @@ void mainloop(Window& windowObject)
     Hud::get().free();
     scene.Free();
 }
+
+/*
+* Application Class
+*/
+
+Application::Application(const std::shared_ptr<Planet>& planet)
+    : _planet(planet)
+{
+
+}
+
+bool Application::IsWireframeMode() const
+{
+    return _wireframeMode;
+}
+
+void Application::SetWireframeMode(bool mode)
+{
+    _wireframeMode = mode;
+}
+
+bool& Application::GetWireframeModePtr()
+{
+    return _wireframeMode;
+}
+
+void Application::GenerateUpdateQueue(bool onRelease)
+{
+    if (!_updatesQueue.empty() && (onRelease && _updateMode == UpdateMode::OnRelease) || !onRelease)
+    {
+        for (const auto& flag : _updatesQueue)
+        {
+            _planet->update(flag);
+        }
+        _updatesQueue.clear();
+    }
+}
+
+void Application::Update(ObserverFlag flag)
+{
+    _updateMode == UpdateMode::Auto ? _planet->update(flag) : AddUpdateIntoQueue(flag);
+}
+
+void Application::AddUpdateIntoQueue(ObserverFlag flag)
+{
+    bool alreadyIn = false;
+    for (const auto& f : _updatesQueue)
+    {
+        if (flag == f) alreadyIn = true;
+    }
+
+    if (!alreadyIn)
+    {
+        _updatesQueue.push_back(flag);
+    }
+}
+
+std::shared_ptr<Planet> Application::PlanetPtr()
+{ 
+    return _planet; 
+}
+

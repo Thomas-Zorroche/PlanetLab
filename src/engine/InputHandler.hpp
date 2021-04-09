@@ -24,7 +24,8 @@ class InputHandler
 public:
 	InputHandler() = default;
 	
-	void ProcessInput(GLFWwindow* window, const std::shared_ptr<Camera>& camera, float deltaTime);
+	void ProcessInput(GLFWwindow* window, const std::shared_ptr<Application>& app, 
+		const std::shared_ptr<Camera>& camera, float deltaTime);
 
 	void SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr);
 
