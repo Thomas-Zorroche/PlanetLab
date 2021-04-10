@@ -1,5 +1,6 @@
 #pragma once
 #include "engine/Application.hpp"
+#include "engine/Window.hpp"
 #include "opengl/Framebuffer.hpp"
 #include "glm/glm.hpp"
 #include "engine/Color.hpp"
@@ -19,7 +20,7 @@ class ColorSettings;
 class Hud
 {
 public:
-	static Hud& get()
+	static Hud& Get()
 	{
 		static Hud instance;
 		return instance;
@@ -28,7 +29,7 @@ public:
 	Hud(const Hud&) = delete;
 	Hud& operator=(const Hud&) = delete;
 
-	void init(GLFWwindow* window, const std::shared_ptr<Application>& app, float width, float height);
+	void init(Window& window);
 	void draw(GLFWwindow* window);
 	void free();
 
@@ -44,6 +45,9 @@ public:
 	void setLowSliderSpeed();
 	void setDefaultSliderSpeed();
 
+	void ShowSettings();
+	void ShowTerminal();
+
 
 private:
 	Hud() = default;
@@ -55,7 +59,7 @@ private:
 	void ShowConsoleWindow();
 	void ShowSaveAsWindow();
 	void ShowNewSceneWindow();
-	
+
 private:
 	Framebuffer _fbo = Framebuffer();
 
@@ -63,16 +67,18 @@ private:
 
 	bool _saveFileOpen = false;
 	bool _newFileOpen = false;
+	bool _settingsOpen = true;
+	bool _terminalOpen = true;
 	bool _dockspaceOpen = true;
+
+
 	char _bufferSaveLocation[20];
 	int _sliderSpeed = 100;
 	float _sliderSpeedDefault = 0.00005;
 
-	std::shared_ptr<Application> _app = nullptr;
 	std::shared_ptr<Planet> _planet = nullptr;
 	std::shared_ptr<ShapeSettings> _shape = nullptr;
 	std::shared_ptr<ColorSettings> _color = nullptr;
-
 
 	float _viewportWidth;
 	float _viewportHeight;

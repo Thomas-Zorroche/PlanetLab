@@ -33,10 +33,14 @@ enum class ObserverFlag
 class Application
 {
 public:
-	Application(const std::shared_ptr<Planet>& planet);
+	Application(int argc, char** argv);
+	~Application() {};
+
 	Application(const Application&) = delete;
 	Application& operator=(const Application&) = delete;
 
+	static Application& Get() { return *s_instance; }
+public:
 	void ClearColor() const;
 
 	// Updates Handler
@@ -51,13 +55,23 @@ public:
 	void SetWireframeMode(bool mode);
 	bool& GetWireframeModePtr();
 
-	std::shared_ptr<Planet> PlanetPtr();
+	Window& GetWindow() { return *_window; }
+	std::shared_ptr<Planet> GetPlanet() { return _planet; }
+
+	void AppendPlanet(const std::shared_ptr<Planet>& planet)
+	{
+		_planet = planet;
+	}
 
 	Color GetBackgroundColor() const { return _backgroundColor; }
 	Color& GetBackgroundColor() { return _backgroundColor; }
 
 private:
-	std::shared_ptr<Planet> _planet;
+	static Application* s_instance;
+
+private:
+	std::unique_ptr<Window> _window = nullptr;
+	std::shared_ptr<Planet> _planet = nullptr;
 	
 	bool _wireframeMode = false;
 	
@@ -65,5 +79,6 @@ private:
 	std::vector<ObserverFlag> _updatesQueue;
 
 	Color _backgroundColor = Color(0.570, 0.598, 0.727);
+
 };
 

@@ -35,7 +35,7 @@ public:
 	void ComputeProjectionMatrix()
 	{
 		float fov = _camera->GetFov();
-		float ratio = Hud::get().viewportWidth() / Hud::get().viewportHeight();
+		float ratio = Hud::Get().viewportWidth() / Hud::Get().viewportHeight();
 		float nearPlane = _camera->GetNearPlane();
 		float farPlane = _camera->GetFarPlane();
 		

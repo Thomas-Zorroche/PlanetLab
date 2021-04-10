@@ -17,7 +17,7 @@ class Planet
 public:
 	Planet(int resolution = 64);
 
-	void draw(bool wireframe = false);
+	void draw();
 
 	std::shared_ptr<ShapeSettings> shapeSettings() { return _shapeSettings; }
 	std::shared_ptr<ColorSettings> colorSettings() { return _colorSettings; }

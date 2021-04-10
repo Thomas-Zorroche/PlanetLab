@@ -17,7 +17,7 @@ public:
     float Width() const { return _width; }
     float Height() const { return _height; }
 
-    GLFWwindow* WindowPtr() { return _glfw_Window; }
+    GLFWwindow* GetNativeWindow() { return _glfw_Window; }
 
     int Init();
 
@@ -25,10 +25,11 @@ private:
     void HandleArgs(int argc, char** argv);
     void InitScreenSize(char* size);
 
+private:
+    GLFWwindow* _glfw_Window = nullptr;
+
     float _width = 1280.0f;
     float _height = 720.0f;
-
-    GLFWwindow* _glfw_Window = nullptr;
 };
 
 

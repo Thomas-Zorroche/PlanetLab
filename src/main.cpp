@@ -3,13 +3,12 @@
 
 int main(int argc, char** argv)
 {
-    Window window(argc, argv);
+    Application& app = Application(argc, argv);
 
-    if (!window.Init())
+    if (!app.GetWindow().Init())
         return -1;
 
-    /* Main Game Loop */
-    mainloop(window);
+    mainloop(app.GetWindow());
 
     glfwTerminate();
     return 0;

@@ -1,6 +1,7 @@
 ﻿#include "BackgroundGradient.hpp"
 #include "opengl/Mesh.hpp"
 #include "engine/ResourceManager.hpp"
+#include "engine/Application.hpp"
 
 #include <vector>
 
@@ -22,13 +23,14 @@ BackgroundGradient::BackgroundGradient()
 	_mesh.UpdateGeometry(vertices, indices);
 }
 
-void BackgroundGradient::Draw(float viewportHeight, const Color& backgroundColor)
+void BackgroundGradient::Draw(float viewportHeight)
 {
 	_shader->Bind();
 	glDisable(GL_DEPTH_TEST);
 
-	// Color Background
-	_shader->SetUniform3f("u_color", backgroundColor.r, backgroundColor.g, backgroundColor.b);
+	// Color 
+	const glm::vec3& color = (glm::vec3&)Application::Get().GetBackgroundColor();
+	_shader->SetUniform3f("u_color", color);
 	_shader->SetUniform1f("u_viewportHeight", viewportHeight);
 
 	_mesh.Draw(_shader);

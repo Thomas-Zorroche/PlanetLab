@@ -1,4 +1,5 @@
 #include "engine/InputHandler.hpp"
+#include "engine/Input.hpp"
 #include "engine/Camera.hpp"
 #include "engine/Application.hpp"
 #include "hud/Hud.hpp"
@@ -6,153 +7,19 @@
 #include <iostream>
 #include "GLFW/glfw3.h"
 
-void InputHandler::ProcessInput(GLFWwindow* window, const std::shared_ptr<Application>& app,
-    const std::shared_ptr<Camera>& camera, float deltaTime)
+void InputHandler::ClickMouseButton()
 {
-    // Close Window
-    // ===================================================================================================
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) // TODO : replace by Ctrl + Q
-    {
-        glfwSetWindowShouldClose(window, true);
-    }
-
-    // ===================================================================================================
-    if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) 
-    {
-        addKey(ActiveKey::ALT);
-    }
-    if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_RELEASE)
-    {
-        removeKey(ActiveKey::ALT);
-    }
-
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-    {
-        addKey(ActiveKey::MOUSE_LEFT);
-    }
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
-    {
-        removeKey(ActiveKey::MOUSE_LEFT);
-        app->GenerateUpdateQueue(true);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-    {
-        addKey(ActiveKey::CTRL);
-    }
-    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
-    {
-        removeKey(ActiveKey::CTRL);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-    {
-        Hud::get().setLowSliderSpeed();
-        addKey(ActiveKey::SHIFT);
-    }
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
-    {
-        Hud::get().setDefaultSliderSpeed();
-        removeKey(ActiveKey::SHIFT);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    {
-        addKey(ActiveKey::S);
-        if (_canSave && isKeyActive(ActiveKey::CTRL))
-        {
-            _canSave = false;
-            Hud::get().saveFile();
-        }
-    }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE)
-    {
-        removeKey(ActiveKey::S);
-        _canSave = true;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
-    {
-        addKey(ActiveKey::N);
-        if (_canCreateNewFile && isKeyActive(ActiveKey::CTRL))
-        {
-            _canCreateNewFile = false;
-            Hud::get().newFile();
-        }
-    }
-    if (glfwGetKey(window, GLFW_KEY_N) == GLFW_RELEASE)
-    {
-        removeKey(ActiveKey::N);
-        _canCreateNewFile = true;
-    }
+    _mouseButtonPressed = _mouseButtonPressed ? false : true;
 }
-
-void InputHandler::addKey(ActiveKey key)
-{
-    // Test if the key is already in the array
-    bool inside = false;
-    for (const ActiveKey& k : _activeKeys)
-    {
-        if (k == key)
-        {
-            inside = true; 
-            break;
-        }
-    }
-    
-    if (!inside)
-    {
-        _activeKeys.push_back(key);
-    }
-}
-
-void InputHandler::removeKey(ActiveKey key)
-{
-    // Test if the key is in the array
-    int index = -1, i = 0;
-    for (const ActiveKey& k : _activeKeys)
-    {
-        if (k == key)
-        {
-            index = i;
-            break;
-        }
-        i++;
-    }
-
-    if (index != -1)
-    {
-        _activeKeys.erase(_activeKeys.begin() + index);
-    }
-}
-
-bool InputHandler::isKeyActive(ActiveKey key)
-{
-    // Test if the key is in the array
-    for (const ActiveKey& k : _activeKeys)
-    {
-        if (k == key) return true;
-    }
-    return false;
-}
-
-bool InputHandler::canRotate() const
-{
-    // Test if ALT and MOUSE_LEFT are in the Active Keys
-    int canRotate = 0;
-    for (const ActiveKey& k : _activeKeys)
-    {
-        if (k == ActiveKey::ALT) canRotate++;
-        if (k == ActiveKey::MOUSE_LEFT) canRotate++;
-    }
-    return canRotate == 2 ? true : false;
-}
-
 
 void InputHandler::SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr)
 {
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+
+    glfwSetKeyCallback(window, key_callback);
+    glfwSetMouseButtonCallback(window, mouseButton_callback);
+
     glfwSetWindowUserPointer(window, &callbackPtr);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
@@ -161,12 +28,10 @@ void InputHandler::SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr)
 void mouse_callback(GLFWwindow* window, double xPos, double yPos)
 {
     CallbackPtr* callbackPtr = (CallbackPtr*)glfwGetWindowUserPointer(window);
-    auto inputHandler = callbackPtr->_inputHandler;
     auto camera = callbackPtr->_camera;
 
-    if (inputHandler->canRotate())
+    if (camera->CanRotate())
     {
-        
         // Get the homogenous position of the camera and pivot point
         glm::vec4 position = glm::vec4(camera->GetPosition(), 1);
         glm::vec4 pivot = glm::vec4(0, 0, 0, 1);
@@ -211,5 +76,75 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
         camera->zoom(0.9); // ZOOM IN
     else
         camera->zoom(1.1); // ZOOM OUT
+}
+
+/*
+* Just when we want to handle boolean events (key pressed once)
+* This Function triggers only ONE ACTION
+*/
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == (int)KeyCode::S && action == GLFW_PRESS)
+    {
+        if (Input::IsKeyPressed(KeyCode::CTRL))
+        {
+            Hud::Get().saveFile();
+        }
+        else
+        {
+            Hud::Get().ShowSettings();
+        }
+    }
+
+    else if (key == (int)KeyCode::T && action == GLFW_PRESS)
+    {
+        Hud::Get().ShowTerminal();
+    }
+
+    else if (key == (int)KeyCode::N && action == GLFW_PRESS)
+    {
+        if (Input::IsKeyPressed(KeyCode::CTRL))
+        {
+            Hud::Get().newFile();
+        }
+    }
+
+    else if (key == (int)KeyCode::SHIFT && action == GLFW_PRESS)
+    {
+        Hud::Get().setLowSliderSpeed();
+    }
+    else if (key == (int)KeyCode::SHIFT && action == GLFW_RELEASE)
+    {
+        Hud::Get().setDefaultSliderSpeed();
+    }
+
+    // Close Window
+    // ===================================================================================================
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) // TODO : replace by Ctrl + Q
+    {
+        glfwSetWindowShouldClose(window, true);
+    }
+}
+
+void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    CallbackPtr* callbackPtr = (CallbackPtr*)glfwGetWindowUserPointer(window);
+    auto camera = callbackPtr->_camera;
+
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    {
+        if (Input::IsKeyPressed(KeyCode::ALT))
+        {
+            camera->SetCanRotate(true);
+        }
+    }
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+    {
+        if (Input::IsKeyPressed(KeyCode::ALT))
+        {
+            camera->SetCanRotate(false);
+        }
+        Application::Get().GenerateUpdateQueue(true);
+    }
 }
 

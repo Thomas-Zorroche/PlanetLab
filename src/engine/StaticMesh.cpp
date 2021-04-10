@@ -4,6 +4,7 @@
 #include "opengl/Shader.h"
 #include "opengl/Mesh.hpp"
 #include "engine/Renderer.hpp"
+#include "engine/Application.hpp"
 #include "hud/Hud.hpp"
 
 #include <string>
@@ -38,7 +39,7 @@ void StaticMesh::Draw(bool wireframe)
 {
 	SendUniforms();
 	_model->Draw(_shader);
-	if (wireframe)
+	if (Application::Get().IsWireframeMode())
 	{
 		auto shaderWireframe = ResourceManager::Get().GetShader("Wireframe");
 		shaderWireframe->Bind();

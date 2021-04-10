@@ -11,14 +11,13 @@
 
 void mainloop(Window& windowObject)
 {
-    GLFWwindow* window = windowObject.WindowPtr();
+    GLFWwindow* window = windowObject.GetNativeWindow();
 
     // Load all the 
     ResourceManager::Get().LoadAllShaders();
 
     Scene scene;
-    std::shared_ptr<Application> application = std::make_shared<Application>(scene.planet());
-    Hud::get().init(window, application, windowObject.Width(), windowObject.Height());
+    Hud::Get().init(windowObject);
     IOManager::get().setPlanetPtr(scene.planet());
 
     auto camera = std::make_shared<Camera>();
@@ -26,7 +25,7 @@ void mainloop(Window& windowObject)
 
     // Initialize GLFW Callbacks and Inputs
     auto inputHandler = std::make_shared<InputHandler>();
-    CallbackPtr callbackPtr(camera, inputHandler);
+    CallbackPtr callbackPtr(camera);
     inputHandler->SetCallback(window, callbackPtr);
 
     float deltaTime = 0.0f;	// Time between current frame and last frame
@@ -40,21 +39,18 @@ void mainloop(Window& windowObject)
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        // Handle Inputs
-        inputHandler->ProcessInput(window, application, camera, deltaTime);
-
         // View Matrix
         Renderer::Get().ComputeViewMatrix();
 
-        application->ClearColor();
+        Application::Get().ClearColor();
 
         // Render scene here
-        Hud::get().bindFbo();
-        scene.Draw(Hud::get().viewportHeight(), application);
+        Hud::Get().bindFbo();
+        scene.Draw(Hud::Get().viewportHeight());
 
         // Render Hud
-        Hud::get().unbindFbo();
-        Hud::get().draw(window);
+        Hud::Get().unbindFbo();
+        Hud::Get().draw(window);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -63,7 +59,7 @@ void mainloop(Window& windowObject)
         glfwPollEvents();
     }
 
-    Hud::get().free();
+    Hud::Get().free();
     scene.Free();
 }
 
@@ -71,11 +67,14 @@ void mainloop(Window& windowObject)
 * Application Class
 */
 
-Application::Application(const std::shared_ptr<Planet>& planet)
-    : _planet(planet)
-{
+Application* Application::s_instance = nullptr;
 
+Application::Application(int argc, char** argv)
+{
+    s_instance = this;
+    _window = std::make_unique<Window>(argc, argv);
 }
+
 
 bool Application::IsWireframeMode() const
 {
@@ -121,11 +120,6 @@ void Application::AddUpdateIntoQueue(ObserverFlag flag)
     {
         _updatesQueue.push_back(flag);
     }
-}
-
-std::shared_ptr<Planet> Application::PlanetPtr()
-{ 
-    return _planet; 
 }
 
 void Application::ClearColor() const

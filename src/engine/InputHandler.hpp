@@ -7,11 +7,9 @@
 #include "GLFW/glfw3.h"
 
 class Camera;
-class Game;
 struct CallbackPtr;
 
 enum class ActiveKey {
-	NONE, 
 	ALT,
 	MOUSE_LEFT,
 	CTRL,
@@ -25,38 +23,26 @@ class InputHandler
 public:
 	InputHandler() = default;
 	
-	void ProcessInput(GLFWwindow* window, const std::shared_ptr<Application>& app, 
-		const std::shared_ptr<Camera>& camera, float deltaTime);
-
 	void SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr);
+	
+	void ClickMouseButton();
 
-	bool canRotate() const;
-
-private:
-	void addKey(ActiveKey key);
-	void removeKey(ActiveKey key);
-	bool isKeyActive(ActiveKey key);
+	bool IsMouseButtonPressed() const { return _mouseButtonPressed; }
 
 private:
-	std::vector<ActiveKey> _activeKeys = { ActiveKey::NONE };
-
-	bool _canInteract = false;
-	bool _canSave = true;
-	bool _canCreateNewFile = true;
+	bool _mouseButtonPressed = false;
 };
 
-//
-// callbacks functions
-// can't be object function due to glwf api
-//
+
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void mouseButton_callback(GLFWwindow* window, int button, int action, int mods);
 
 struct CallbackPtr
 {
 	std::shared_ptr<Camera> _camera;
-	std::shared_ptr<InputHandler> _inputHandler;
 
-	CallbackPtr(const std::shared_ptr<Camera>& camera, const std::shared_ptr<InputHandler>& inputHandler)
-		: _camera(camera), _inputHandler(inputHandler) {}
+	CallbackPtr(const std::shared_ptr<Camera>& camera)
+		: _camera(camera) {}
 };

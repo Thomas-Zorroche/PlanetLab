@@ -49,6 +49,9 @@ public:
 	void updatePosition(glm::vec3 eye);
 	void zoom(float value);
 
+	void SetCanRotate(bool rotate) { _canRotate = rotate; }
+	bool CanRotate() const { return _canRotate; }
+
 
 private:
 	glm::mat4 _viewMatrix;
@@ -68,4 +71,6 @@ private:
 	float _heightScreen = 720.0;
 	float _nearPlane = 0.1f;
 	float _farPlane = 5000.0f;
+
+	bool _canRotate = false;
 };

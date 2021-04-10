@@ -16,9 +16,7 @@ public:
 	Scene(const Scene&) = delete;
 	Scene& operator=(const Scene&) = delete;
 
-	void Init();
-
-	void Draw(float viewportHeight, const std::shared_ptr<Application>& app);
+	void Draw(float viewportHeight);
 
 	void Free();
 

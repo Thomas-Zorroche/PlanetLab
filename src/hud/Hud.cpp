@@ -5,6 +5,7 @@
 #include "engine/Window.hpp"
 #include "engine/Renderer.hpp"
 #include "engine/Application.hpp"
+#include "engine/Input.hpp"
 
 #include "planets/Planet.hpp"
 #include "planets/ShapeSettings.hpp"
@@ -18,32 +19,31 @@
 
 #include "io/IOManager.hpp"
 
-void Hud::init(GLFWwindow* window, const std::shared_ptr<Application>& app, float width, float height)
+void Hud::init(Window& window)
 {
     // Initialize ImGui
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(window.GetNativeWindow(), true);
     ImGui_ImplOpenGL3_Init((char*)glGetString(GL_NUM_SHADING_LANGUAGE_VERSIONS));
 
     // Init shared pointers
-    _app = app;
-    _planet = app->PlanetPtr();
+    _planet = Application::Get().GetPlanet();
     _shape = _planet->shapeSettings();
     _color = _planet->colorSettings();
 
     // Init windows sizes
-    _WIDTH = width;
-    _HEIGHT = height;
-    _viewportWidth = 0.7 * width;
-    _viewportHeight = height;
-    _settingsWidth = width - _viewportWidth;
+    _WIDTH = window.Width();
+    _HEIGHT = window.Height();
+    _viewportWidth = 0.7 * _WIDTH;
+    _viewportHeight = _HEIGHT;
+    _settingsWidth = _WIDTH - _viewportWidth;
 
     _fbo.resize(_viewportWidth, _viewportHeight);
     
-    IOManager::get().setWindowPtr(window);
+    IOManager::get().setWindowPtr(window.GetNativeWindow());
 }
 
 void Hud::draw(GLFWwindow* window)
@@ -109,9 +109,9 @@ void Hud::draw(GLFWwindow* window)
     if (_newFileOpen) ShowNewSceneWindow();
 
     /* Permanent Windows */
-    ShowSettingsWindow();
+    if (_settingsOpen) ShowSettingsWindow();
     ShowViewportWindow();
-    ShowConsoleWindow();
+    if (_terminalOpen) ShowConsoleWindow();
     ShowMenuBar(window);
 
     ImGui::End(); // Main Window
@@ -185,38 +185,38 @@ void Hud::ShowSettingsWindow()
     if (ImGui::Begin("Procedural Planets Settings"))
     {
         ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
-        ImGui::Combo("Update Mode", &(int&)_app->GetUpdateMode(), "Auto\0On Release\0On Generate\0\0");
+        ImGui::Combo("Update Mode", &(int&)Application::Get().GetUpdateMode(), "Auto\0On Release\0On Generate\0\0");
         ImGui::PopItemWidth();
 
-        if (_app->GetUpdateMode() == UpdateMode::OnGenerate)
+        if (Application::Get().GetUpdateMode() == UpdateMode::OnGenerate)
         {
             ImGui::SameLine();
             if (ImGui::Button("Generate"))
             {
-                _app->GenerateUpdateQueue();
+                Application::Get().GenerateUpdateQueue();
             }
         }
 
         if (ImGui::CollapsingHeader("Display"))
         {
-            ImGui::Checkbox("Wireframe Mode", &_app->GetWireframeModePtr());
-            ImGui::ColorEdit3("World Color", (float*)&(_app->GetBackgroundColor()));
+            ImGui::Checkbox("Wireframe Mode", &Application::Get().GetWireframeModePtr());
+            ImGui::ColorEdit3("World Color", (float*)&(Application::Get().GetBackgroundColor()));
         }
 
         if (ImGui::CollapsingHeader("Planet"))
         {
             if (ImGui::SliderInt("Resolution", &_planet->resolution(), 4, 128))
             {
-                _app->Update(ObserverFlag::RESOLUTION);
+                Application::Get().Update(ObserverFlag::RESOLUTION);
 
             }
             if (ImGui::ColorEdit3("Planet Color", (float*)&(_color->color())))
             {
-                _app->Update(ObserverFlag::COLOR);
+                Application::Get().Update(ObserverFlag::COLOR);
             }
             if (ImGui::SliderFloat("Size", &_shape->planetRadius(), 0.2f, 4.0f))
             {
-                _app->Update(ObserverFlag::RADIUS);
+                Application::Get().Update(ObserverFlag::RADIUS);
             }
         }
 
@@ -226,7 +226,7 @@ void Hud::ShowSettingsWindow()
             if (ImGui::SliderInt("Count", &noiseLayersCount, 0, 5))
             {
                 _planet->updateNoiseLayersCount(noiseLayersCount);
-                _app->Update(ObserverFlag::LAYER);
+                Application::Get().Update(ObserverFlag::LAYER);
             }
 
             int layerCountNode = 0;
@@ -237,7 +237,7 @@ void Hud::ShowSettingsWindow()
                 {
                     if (ImGui::Checkbox("Enabled", &layer->enabled()))
                     {
-                        _app->Update(ObserverFlag::NOISE);
+                        Application::Get().Update(ObserverFlag::NOISE);
                     }
 
                     if (ImGui::TreeNode("Noise Settings"))
@@ -245,35 +245,35 @@ void Hud::ShowSettingsWindow()
                         if (ImGui::InputInt("Seed", &(int&)_planet->shapeGenerator()->noiseFilter(layerCountNode)->seed()))
                         {
                             _planet->shapeGenerator()->noiseFilter(layerCountNode)->reseed();
-                            _app->Update(ObserverFlag::NOISE);
+                            Application::Get().Update(ObserverFlag::NOISE);
                         }
                         if (ImGui::DragFloat("Strength", &layer->noiseSettings()->strength(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 2.0f))
                         {
-                            _app->Update(ObserverFlag::NOISE);
+                            Application::Get().Update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderInt("Layers Count", &layer->noiseSettings()->layersCount(), 0, 10))
                         {
-                            _app->Update(ObserverFlag::NOISE);
+                            Application::Get().Update(ObserverFlag::NOISE);
                         }
                         if (ImGui::DragFloat("Base Roughness", &layer->noiseSettings()->baseRoughness(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 20.0f))
                         {
-                            _app->Update(ObserverFlag::NOISE);
+                            Application::Get().Update(ObserverFlag::NOISE);
                         }
                         if (ImGui::DragFloat("Roughness", &layer->noiseSettings()->roughness(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 20.0f))
                         {
-                            _app->Update(ObserverFlag::NOISE);
+                            Application::Get().Update(ObserverFlag::NOISE);
                         }
                         if (ImGui::DragFloat("Persistence", &layer->noiseSettings()->persistence(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 1.0f))
                         {
-                            _app->Update(ObserverFlag::NOISE);
+                            Application::Get().Update(ObserverFlag::NOISE);
                         }
                         if (ImGui::SliderFloat3("Center", (float*)&layer->noiseSettings()->center(), -10.0f, 10.0f))
                         {
-                            _app->Update(ObserverFlag::NOISE);
+                            Application::Get().Update(ObserverFlag::NOISE);
                         }
                         if (ImGui::DragFloat("Min Value", &layer->noiseSettings()->minValue(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 10.0f))
                         {
-                            _app->Update(ObserverFlag::NOISE);
+                            Application::Get().Update(ObserverFlag::NOISE);
                         }
                         ImGui::TreePop();
                     }
@@ -372,6 +372,7 @@ void Hud::ShowNewSceneWindow()
     ImGui::End();
 }
 
+
 void Hud::setLowSliderSpeed()
 {
     _sliderSpeed = 1;
@@ -380,6 +381,16 @@ void Hud::setLowSliderSpeed()
 void Hud::setDefaultSliderSpeed()
 {
     _sliderSpeed = 100;
+}
+
+void Hud::ShowSettings()
+{
+    _settingsOpen = _settingsOpen ? false : true;
+}
+
+void Hud::ShowTerminal()
+{
+    _terminalOpen = _terminalOpen ? false : true;
 }
 
 void Hud::saveFile()

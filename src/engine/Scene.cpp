@@ -12,13 +12,9 @@
 
 Scene::Scene()
 {
-	Init();
-}
-
-void Scene::Init()
-{
 	// Procedural Planet
 	_planet = std::make_shared<Planet>();
+	Application::Get().AppendPlanet(_planet);
 
 	// Background Gradient (Simple Plane placed on camera far plane)
 	_backgroundPlane = std::make_shared<BackgroundGradient>();
@@ -27,10 +23,11 @@ void Scene::Init()
 	LightManager::Get().LoadAllLights();
 }
 
-void Scene::Draw(float viewportHeight, const std::shared_ptr<Application>& app)
+
+void Scene::Draw(float viewportHeight)
 {
-	_backgroundPlane->Draw(viewportHeight, app->GetBackgroundColor());
-	_planet->draw(app->IsWireframeMode());
+	_backgroundPlane->Draw(viewportHeight);
+	_planet->draw();
 }
 
 void Scene::Free()
