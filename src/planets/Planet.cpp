@@ -127,6 +127,12 @@ void Planet::reset()
 	update(ObserverFlag::NOISE);
 }
 
+void Planet::Rotate(const glm::vec3& angles)
+{
+	_staticMesh.Rotate(angles);
+}
+
+
 
 
 

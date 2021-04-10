@@ -220,7 +220,6 @@ void Hud::ShowSettingsWindow()
             if (ImGui::SliderInt("Resolution", &_planet->resolution(), 4, 128))
             {
                 Application::Get().Update(ObserverFlag::RESOLUTION);
-
             }
             if (ImGui::ColorEdit3("Planet Color", (float*)&(_color->color())))
             {
@@ -229,6 +228,11 @@ void Hud::ShowSettingsWindow()
             if (ImGui::SliderFloat("Size", &_shape->planetRadius(), 0.2f, 4.0f))
             {
                 Application::Get().Update(ObserverFlag::RADIUS);
+            }
+            static glm::vec3 globalRot;
+            if (ImGui::SliderFloat3("Euler Rotation", (float*)&globalRot, 0.0f, 360.0f))
+            {
+                _planet->Rotate(globalRot);
             }
         }
 

@@ -31,6 +31,8 @@ public:
 
 	void reset();
 
+	void Rotate(const glm::vec3& angles);
+
 private:
 	void generatePlanet();
 	void generateMesh();

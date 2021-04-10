@@ -68,9 +68,9 @@ void StaticMesh::Translate(const glm::vec3& delta, bool dynamic)
 
 void StaticMesh::Rotate(const glm::vec3& alpha, bool dynamic)
 {
-	_modelMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(alpha.x), glm::vec3(1, 0, 0));
-	_modelMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(alpha.y), glm::vec3(0, 1, 0));
-	_modelMatrix *= glm::rotate(glm::mat4(1.0f), glm::radians(alpha.z), glm::vec3(0, 0, 1));
+	_modelMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(alpha.x), glm::vec3(1, 0, 0));
+	_modelMatrix = glm::rotate(_modelMatrix, glm::radians(alpha.y), glm::vec3(0, 1, 0));
+	_modelMatrix = glm::rotate(_modelMatrix, glm::radians(alpha.z), glm::vec3(0, 0, 1));
 }
 
 /*
