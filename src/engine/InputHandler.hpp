@@ -24,15 +24,7 @@ public:
 	InputHandler() = default;
 	
 	void SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr);
-	
-	void ClickMouseButton();
-
-	bool IsMouseButtonPressed() const { return _mouseButtonPressed; }
-
-private:
-	bool _mouseButtonPressed = false;
 };
-
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);

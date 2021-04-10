@@ -21,17 +21,11 @@ public:
 	LightManager(const LightManager&) = delete;
 	LightManager& operator=(const LightManager&) = delete;
 
-	void AddLight(const BaseLightPtr& light, LightType type);
-	void AddPointLight(const BaseLightPtr& light);
-	void AddDirLight(const BaseLightPtr& light);
-
 	void LoadAllLights();
 
 	void SendUniforms(const std::shared_ptr<Shader>& shader);
-
-	// Interactions
-	void SwitchLights();
-
+	
+	BaseLightPtr GetLight() { return _light; }
 
 private:
 	LightManager() = default;
@@ -39,11 +33,10 @@ private:
 
 	const static int POINT_LIGHTS_COUNT;
 
-	std::vector<BaseLightPtr> _lights;
+	BaseLightPtr _light;
 
 	unsigned int _pointLightsCount = 0;
 	unsigned int _dirLightsCount = 0;
 
-	bool _lightsOn = false;
 };
 

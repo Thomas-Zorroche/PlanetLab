@@ -7,10 +7,6 @@
 #include <iostream>
 #include "GLFW/glfw3.h"
 
-void InputHandler::ClickMouseButton()
-{
-    _mouseButtonPressed = _mouseButtonPressed ? false : true;
-}
 
 void InputHandler::SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr)
 {
@@ -79,7 +75,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 }
 
 /*
-* Just when we want to handle boolean events (key pressed once)
 * This Function triggers only ONE ACTION
 */
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)

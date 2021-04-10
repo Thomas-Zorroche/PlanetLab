@@ -20,10 +20,12 @@ public:
 	virtual ~BaseLight() {}
 
 	float Intensity() const;
+	float& Intensity();
 	void SetIntensity(float intensity);
 
 	const glm::vec3& Ambient() const;
 	void SetAmbient(const glm::vec3& ambient);
+	void SetAmbient(float ambient);
 
 	const glm::vec3& Diffuse() const;
 	void SetDiffuse(const glm::vec3& diffuse);
@@ -31,13 +33,7 @@ public:
 	const glm::vec3& Specular() const;
 	void SetSpecular(const glm::vec3& specular);
 
-	bool Electricity() const;
-
 	LightType Type() const { return _type; }
-
-	void Translate(const glm::vec3& delta);
-	void Scale(float alpha);
-	void Rotate(float alpha, const glm::vec3& axis);
 
 	virtual std::vector<glm::vec3> GetSpecialData() = 0;
 
@@ -46,8 +42,6 @@ private:
 	LightType _type;
 	float _intensity;
 	glm::vec3 _color;
-	bool _electricity;
-
 	glm::vec3 _ambient;
 	glm::vec3 _diffuse;
 	glm::vec3 _specular;

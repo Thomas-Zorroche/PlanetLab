@@ -64,6 +64,6 @@ vec3 ComputeDirLight(Material material, DirLight light, vec3 normal, vec3 viewDi
     vec3 diffuse = light.diffuse * material.diffuse * diffuseStrength;
     vec3 specular = light.specular * material.specular * specularStrength;
 
-    return vec3(ambient + diffuse + specular);
+    return vec3(ambient + diffuse + specular) * light.intensity;
 }
 

@@ -7,6 +7,8 @@
 #include "engine/Application.hpp"
 #include "engine/Input.hpp"
 
+#include "lighting/LightManager.hpp"
+
 #include "planets/Planet.hpp"
 #include "planets/ShapeSettings.hpp"
 #include "planets/ColorSettings.hpp"
@@ -200,7 +202,17 @@ void Hud::ShowSettingsWindow()
         if (ImGui::CollapsingHeader("Display"))
         {
             ImGui::Checkbox("Wireframe Mode", &Application::Get().GetWireframeModePtr());
+        }
+
+        if (ImGui::CollapsingHeader("World"))
+        {
             ImGui::ColorEdit3("World Color", (float*)&(Application::Get().GetBackgroundColor()));
+            ImGui::SliderFloat("Sun", &LightManager::Get().GetLight()->Intensity(), 0.0f, 1.0f);
+            static float ambientGlobal = 0.2f;
+            if (ImGui::SliderFloat("Ambient Light", &ambientGlobal, 0.0f, 1.0f))
+            {
+                LightManager::Get().GetLight()->SetAmbient(ambientGlobal);
+            }
         }
 
         if (ImGui::CollapsingHeader("Planet"))
