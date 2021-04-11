@@ -218,7 +218,7 @@ void Hud::ShowSettingsWindow()
 
         if (ImGui::CollapsingHeader("Planet"))
         {
-            if (ImGui::SliderInt("Resolution", &_planet->resolution(), 4, 128))
+            if (ImGui::SliderInt("Resolution", &_planet->resolution(), 4, 256))
             {
                 Application::Get().Update(ObserverFlag::RESOLUTION);
             }
