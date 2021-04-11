@@ -23,16 +23,11 @@ out vec4 fFragColor;
 in vec3 vNormal_vs;
 in vec3 vFragPos_vs;
 in vec2 vVertexTexcoords;
-in vec3 vFragPos_os;
-in vec3 vNormal_os;
 
 uniform Material material;
 uniform DirLight dirLight;
 
 uniform vec3 cameraPos;
-
-uniform sampler2D texture_diffuse;
-uniform float uvScale;
 
 vec3 ComputeDirLight(Material material, DirLight dirLight, vec3 normal, vec3 viewDir);
 
