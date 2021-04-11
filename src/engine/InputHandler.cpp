@@ -91,6 +91,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         }
     }
 
+    else if (key == (int)KeyCode::ALT && action == GLFW_RELEASE)
+    {
+        auto camera = ((CallbackPtr*)glfwGetWindowUserPointer(window))->_camera;
+        camera->SetCanRotate(false);
+    }
+
     else if (key == (int)KeyCode::T && action == GLFW_PRESS)
     {
         Hud::Get().ShowTerminal();
@@ -135,10 +141,7 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
     }
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
     {
-        if (Input::IsKeyPressed(KeyCode::ALT))
-        {
-            camera->SetCanRotate(false);
-        }
+        camera->SetCanRotate(false);
         Application::Get().GenerateUpdateQueue(true);
     }
 }
