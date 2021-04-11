@@ -6,6 +6,7 @@
 #include "engine/Color.hpp"
 #include <GLFW/glfw3.h>
 #include "planets/Planet.hpp"
+#include "engine/SpriteSheet.hpp"
 
 #include <memory>
 #include <string>
@@ -79,6 +80,8 @@ private:
 	std::shared_ptr<Planet> _planet = nullptr;
 	std::shared_ptr<ShapeSettings> _shape = nullptr;
 	std::shared_ptr<ColorSettings> _color = nullptr;
+
+	SpriteSheet _loadingWheel = SpriteSheet("res/img/LoadingSheet.png", 31);
 
 	float _viewportWidth;
 	float _viewportHeight;

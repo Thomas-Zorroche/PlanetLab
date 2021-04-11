@@ -142,7 +142,8 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
     {
         camera->SetCanRotate(false);
-        Application::Get().GenerateUpdateQueue(true);
+        if (Application::Get().GetUpdateMode() == UpdateMode::OnRelease)
+            Application::Get().SetReadyToGenerate(true);
     }
 }
 

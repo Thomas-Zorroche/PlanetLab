@@ -61,6 +61,14 @@ public:
 	Color GetBackgroundColor() const { return _backgroundColor; }
 	Color& GetBackgroundColor() { return _backgroundColor; }
 
+	float GetLastFrameDuration() const { return _lastFrameDuration; }
+	void SetLastFrameDuration(float time) { _lastFrameDuration = time; }
+
+	bool GetLoading() const { return _loading; }
+
+	bool IsReadyToGenerate() const { return _readyToGenerate; }
+	void SetReadyToGenerate(bool ready) { _readyToGenerate = ready; }
+
 private:
 	static Application* s_instance;
 
@@ -73,6 +81,11 @@ private:
 	std::vector<ObserverFlag> _updatesQueue;
 
 	Color _backgroundColor = Color(0.570, 0.598, 0.727);
+
+	float _lastFrameDuration = 0.0f;
+
+	bool _loading = false;
+	bool _readyToGenerate = false; // TODO : remove this
 
 };
 

@@ -24,7 +24,7 @@ public:
 	void DeleteAllResources();
 
 	// Loads an image (if not cached) and generates an OpenGL texture.
-	Texture LoadTexture(const std::string& path, TextureType type);
+	Texture LoadTexture(const std::string& path, TextureType type = TextureType::DIFFUSE);
 	std::vector<unsigned short> LoadHeightmap(const std::string& path, TextureType type);
 	
 	unsigned int LoadCubemap(const std::vector<std::string>& faces) const;

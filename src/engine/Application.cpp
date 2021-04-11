@@ -37,8 +37,8 @@ void mainloop(Window& windowObject)
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        deltaTime = currentFrame - Application::Get().GetLastFrameDuration();
+        Application::Get().SetLastFrameDuration(currentFrame);
 
         // View Matrix
         Renderer::Get().ComputeViewMatrix();
@@ -79,7 +79,7 @@ Application::Application(int argc, char** argv)
 
 void Application::GenerateUpdateQueue(bool onRelease)
 {
-    if (!_updatesQueue.empty() && (onRelease && _updateMode == UpdateMode::OnRelease) || !onRelease)
+    if (!_updatesQueue.empty()/* && (onRelease && _updateMode == UpdateMode::OnRelease) || !onRelease*/)
     {
         for (const auto& flag : _updatesQueue)
         {
@@ -87,11 +87,15 @@ void Application::GenerateUpdateQueue(bool onRelease)
         }
         _updatesQueue.clear();
     }
+    _loading = false;
+    _readyToGenerate = false;
 }
 
 void Application::Update(ObserverFlag flag)
 {
-    _updateMode == UpdateMode::Auto ? _planet->update(flag) : AddUpdateIntoQueue(flag);
+    //_updateMode == UpdateMode::Auto ? _planet->update(flag) : AddUpdateIntoQueue(flag);
+    _loading = true;
+    AddUpdateIntoQueue(flag);
 }
 
 void Application::AddUpdateIntoQueue(ObserverFlag flag)

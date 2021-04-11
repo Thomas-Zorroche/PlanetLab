@@ -92,6 +92,7 @@ void Planet::update(ObserverFlag flag)
 			generateMesh();
 		}
 	}
+	
 }
 
 void Planet::updateNoiseLayersCount(int noiseLayersCount)

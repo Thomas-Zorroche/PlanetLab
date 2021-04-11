@@ -106,6 +106,12 @@ void Hud::draw(GLFWwindow* window)
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
     }
 
+
+    if (Application::Get().GetUpdateMode() == UpdateMode::Auto || Application::Get().IsReadyToGenerate())
+    {
+        Application::Get().GenerateUpdateQueue();
+    }
+
     /* Pop up Windows */
     if (_saveFileOpen) ShowSaveAsWindow();
     if (_newFileOpen) ShowNewSceneWindow();
@@ -195,7 +201,7 @@ void Hud::ShowSettingsWindow()
             ImGui::SameLine();
             if (ImGui::Button("Generate"))
             {
-                Application::Get().GenerateUpdateQueue();
+                Application::Get().SetReadyToGenerate(true);
             }
         }
 
@@ -314,6 +320,27 @@ void Hud::ShowViewportWindow()
         _viewportHeight = wsize.y;
         _fbo.resize(_viewportWidth, _viewportHeight);
         Renderer::Get().ComputeProjectionMatrix();
+
+
+        // Loading Wheel
+        if (Application::Get().GetLoading())
+        {
+            ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBackground
+                | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
+            ImGui::SetNextWindowPos(ImVec2(25, _viewportHeight - 50));
+            ImGui::SetNextWindowSize(ImVec2(50, 50));
+            if (ImGui::Begin("Loading", false, window_flags))
+            {
+                float frame = Application::Get().GetLastFrameDuration();
+                ImGui::Image((ImTextureID)_loadingWheel.GetId(), ImVec2(40, 40), 
+                    ImVec2(_loadingWheel.GetUV1().x, _loadingWheel.GetUV1().y), 
+                    ImVec2(_loadingWheel.GetUV2().x, _loadingWheel.GetUV2().y)
+                );
+                _loadingWheel.NextSprite();
+            }
+            ImGui::End();
+        }
+
     }
     ImGui::End();
 }
