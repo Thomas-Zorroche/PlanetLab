@@ -249,5 +249,7 @@ void ResourceManager::LoadAllShaders()
 	ResourceManager::Get().LoadShader("res/shaders/normal.vert", "res/shaders/normal.frag", "Normal");
 	// Background Gradient Shader
 	ResourceManager::Get().LoadShader("res/shaders/BackgroundGradient.vert", "res/shaders/BackgroundGradient.frag", "BackgroundGradient");
+	// Gizmo Shader
+	ResourceManager::Get().LoadShader("res/shaders/Gizmo.vert", "res/shaders/Gizmo.frag", "Gizmo");
 }
 

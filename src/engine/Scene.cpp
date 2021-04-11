@@ -11,6 +11,7 @@
 
 
 Scene::Scene()
+	: _gizmo(2, 0.005)
 {
 	// Procedural Planet
 	_planet = std::make_shared<Planet>();
@@ -28,6 +29,8 @@ void Scene::Draw(float viewportHeight)
 {
 	_backgroundPlane->Draw(viewportHeight);
 	_planet->draw();
+	if (Application::Get().GetEditor().IsAxisVisible())
+		_gizmo.Draw();
 }
 
 void Scene::Free()

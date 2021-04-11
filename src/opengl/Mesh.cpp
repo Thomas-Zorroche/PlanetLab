@@ -139,7 +139,7 @@ void Mesh::Clear()
 
 void Mesh::setColor(const Color& color)
 {
-    _material->setDiffuse(color.vector());
+    _material->SetDiffuse(color.vector());
 }
 
 ShapeVertex& Mesh::Vertex(unsigned int index)

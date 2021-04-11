@@ -199,9 +199,10 @@ void Hud::ShowSettingsWindow()
             }
         }
 
-        if (ImGui::CollapsingHeader("Display"))
+        if (ImGui::CollapsingHeader("Overlays"))
         {
-            ImGui::Checkbox("Wireframe Mode", &Application::Get().GetWireframeModePtr());
+            ImGui::Checkbox("Wireframe Mode", &Application::Get().GetEditor().GetWireframePtr());
+            ImGui::Checkbox("Show Axis", &Application::Get().GetEditor().GetAxisPtr());
         }
 
         if (ImGui::CollapsingHeader("World"))

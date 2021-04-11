@@ -17,6 +17,11 @@ Model::Model(const std::string& path)
 	LoadModel(path);
 }
 
+Model::Model(const std::shared_ptr<Mesh>& mesh)
+    : _meshes { mesh }
+{
+}
+
 Model::Model(const std::vector<std::shared_ptr<Mesh> >& meshes)
     : _meshes(meshes)
 {

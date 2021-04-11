@@ -19,6 +19,9 @@ public:
 	// Import a 3D Model with Assimp
 	Model(const std::string& path = "res/models/sphere.obj");
 
+	// Build a Static Mesh with a meshe
+	Model(const std::shared_ptr<Mesh>& mesh);
+
 	// Build a Static Mesh with a vector of meshes
 	Model(const std::vector<std::shared_ptr<Mesh> >& meshes);
 

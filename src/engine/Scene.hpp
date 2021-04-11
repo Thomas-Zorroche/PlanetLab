@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include "gizmo/Gizmo.hpp"
+
 class Skybox;
 class Planet;
 class BackgroundGradient;
@@ -26,5 +28,7 @@ private:
 	std::shared_ptr<Skybox> _skybox = nullptr;
 	std::shared_ptr<Planet> _planet = nullptr;
 	std::shared_ptr<BackgroundGradient> _backgroundPlane = nullptr;
+
+	Gizmo _gizmo;
 };
 

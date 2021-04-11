@@ -38,21 +38,27 @@ private:
 class StaticMesh
 {
 public:
-	// Constructor
+	// Default Constructor
 	StaticMesh(const std::shared_ptr<Model>& model = std::make_shared<Model>(), const TransformLayout& transLayout = TransformLayout(), 
 		const std::string& shaderName = "DefaultLighting");
+
+	// Constructor with one mesh
+	StaticMesh(const std::shared_ptr<Mesh>& mesh, const TransformLayout& transLayout = TransformLayout(),
+		const std::string& shaderName = "DefaultLighting");
 	
+	// Constructor with multiples meshes
 	StaticMesh(const std::vector<std::shared_ptr<Mesh>>& meshes, const TransformLayout& transLayout = TransformLayout(), 
 		const std::string& shaderName = "DefaultLighting");
 
-	void Draw(bool wireframe = false);
+	void Draw(bool hasWireframe = true);
 
 	glm::mat4 GetModelMatrix() const { return _modelMatrix; }
 	std::shared_ptr<Shader>& GetShader() { return _shader; }
 
-	void Translate(const glm::vec3& delta, bool dynamicCBox = true);
-	void Scale(float alpha, bool dynamicCBox = true);
-	void Rotate(const glm::vec3& alpha, bool dynamicCBox = true);
+	void Translate(const glm::vec3& delta);
+	void Scale(float alpha);
+	void Scale(const glm::vec3& vector);
+	void Rotate(const glm::vec3& alpha);
 
 	unsigned int GetVAO() const { return _model->GetVAO(); }
 

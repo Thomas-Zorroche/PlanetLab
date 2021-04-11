@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 
+#include "engine/ProceduralEditor.hpp"
 #include "engine/Log.hpp"
 #include "engine/Window.hpp"
 #include "engine/Scene.hpp"
@@ -30,6 +31,7 @@ enum class ObserverFlag
 	LAYER
 };
 
+
 class Application
 {
 public:
@@ -50,18 +52,11 @@ public:
 	UpdateMode& GetUpdateMode() { return _updateMode; }
 	UpdateMode GetUpdateMode() const { return _updateMode; }
 
-	// Wireframe Mode
-	bool IsWireframeMode() const;
-	void SetWireframeMode(bool mode);
-	bool& GetWireframeModePtr();
-
 	Window& GetWindow() { return *_window; }
+	ProceduralEditor& GetEditor() { return *_editor; }
 	std::shared_ptr<Planet> GetPlanet() { return _planet; }
 
-	void AppendPlanet(const std::shared_ptr<Planet>& planet)
-	{
-		_planet = planet;
-	}
+	void AppendPlanet(const std::shared_ptr<Planet>& planet) { _planet = planet; }
 
 	Color GetBackgroundColor() const { return _backgroundColor; }
 	Color& GetBackgroundColor() { return _backgroundColor; }
@@ -71,9 +66,8 @@ private:
 
 private:
 	std::unique_ptr<Window> _window = nullptr;
+	std::unique_ptr<ProceduralEditor> _editor = nullptr;
 	std::shared_ptr<Planet> _planet = nullptr;
-	
-	bool _wireframeMode = false;
 	
 	UpdateMode _updateMode = UpdateMode::Auto;
 	std::vector<ObserverFlag> _updatesQueue;

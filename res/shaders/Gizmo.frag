@@ -1,4 +1,4 @@
-#version 330 core
+﻿#version 330 core
 
 
 out vec4 fFragColor;
@@ -9,12 +9,11 @@ in vec2 vVertexTexcoords;
 in vec3 vFragPos_os;
 in vec3 vNormal_os;
 
-uniform vec3 color;
+uniform vec3 u_color;
 
 void main()
 {
-    vec3 finalColor = vec3(0.0, 1.0, 0.0);
-    fFragColor = vec4(finalColor, 1.0f);
+    fFragColor = vec4(u_color, 1.0f);
 }
 
 

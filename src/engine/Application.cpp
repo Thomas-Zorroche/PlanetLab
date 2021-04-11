@@ -7,6 +7,7 @@
 #include "hud/Hud.hpp"
 #include "planets/Planet.hpp"
 #include "io/IOManager.hpp"
+#include "engine/ProceduralEditor.hpp"
 
 
 void mainloop(Window& windowObject)
@@ -73,22 +74,7 @@ Application::Application(int argc, char** argv)
 {
     s_instance = this;
     _window = std::make_unique<Window>(argc, argv);
-}
-
-
-bool Application::IsWireframeMode() const
-{
-    return _wireframeMode;
-}
-
-void Application::SetWireframeMode(bool mode)
-{
-    _wireframeMode = mode;
-}
-
-bool& Application::GetWireframeModePtr()
-{
-    return _wireframeMode;
+    _editor = std::make_unique<ProceduralEditor>();
 }
 
 void Application::GenerateUpdateQueue(bool onRelease)
