@@ -17,7 +17,7 @@ glm::vec3 ShapeGenerator::calculatePointOnPlanet(const glm::vec3& pointOnUnitSph
 
 	if (_noiseFilters.size() > 0)
 	{
-		firstLayerValue = _noiseFilters[0]->evaluate(pointOnUnitSphere);
+		firstLayerValue = _noiseFilters[0]->Evaluate(pointOnUnitSphere);
 		if (_settings->noiseLayer(0)->enabled())
 		{
 			elevation = firstLayerValue;
@@ -29,7 +29,7 @@ glm::vec3 ShapeGenerator::calculatePointOnPlanet(const glm::vec3& pointOnUnitSph
 		if (_settings->noiseLayer(i)->enabled())
 		{
 			float mask = (_settings->noiseLayer(i)->useFirstLayerAsMask()) ? firstLayerValue : 1;
-			elevation += _noiseFilters[i]->evaluate(pointOnUnitSphere) * mask;
+			elevation += _noiseFilters[i]->Evaluate(pointOnUnitSphere) * mask;
 		}
 	}
 	return pointOnUnitSphere * _settings->planetRadius() * (1 + elevation);
@@ -40,10 +40,17 @@ std::vector<std::shared_ptr<NoiseFilter> > ShapeGenerator::noiseFilters()
 	return _noiseFilters;
 }
 
-std::shared_ptr<NoiseFilter> ShapeGenerator::noiseFilter(unsigned int index)
+std::shared_ptr<NoiseFilter> ShapeGenerator::noiseFilter(unsigned int index) const
 {
-	if (index > _noiseFilters.size())
+	if (index >= _noiseFilters.size())
 		return nullptr;
+	return _noiseFilters[index];
+}
+
+std::shared_ptr<NoiseFilter>& ShapeGenerator::noiseFilter(unsigned int index)
+{
+	//if (index >= _noiseFilters.size()) // TODO
+	//	return nullptr;
 	return _noiseFilters[index];
 }
 

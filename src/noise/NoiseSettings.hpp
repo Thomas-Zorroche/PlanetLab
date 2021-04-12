@@ -2,8 +2,16 @@
 
 #include "glm/glm.hpp"
 
+
 class NoiseSettings
 {
+public:
+	enum FilterType
+	{
+		Simple =0,
+		Rigid
+	};
+
 public:
 	NoiseSettings() {};
 
@@ -14,6 +22,7 @@ public:
 	int layersCount() const { return _layersCount; }
 	float persistence() const { return _persistence; }
 	float minValue() const { return _minValue; }
+	FilterType filterType() const { return _filterType; }
 
 	float& strength() { return _strength; }
 	float& baseRoughness() { return _baseRoughness; }
@@ -22,8 +31,10 @@ public:
 	int& layersCount() { return _layersCount; }
 	float& persistence() { return _persistence; }
 	float& minValue() { return _minValue; }
+	FilterType& filterType() { return _filterType; }
 
 private:
+	enum FilterType _filterType;
 	float _strength = 1.0f;
 	float _baseRoughness = 1.0f;
 	float _roughness = 2.0f;

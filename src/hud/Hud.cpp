@@ -14,6 +14,7 @@
 #include "planets/ColorSettings.hpp"
 #include "noise/NoiseSettings.hpp"
 #include "noise/NoiseFilter.hpp"
+#include "noise/RigidNoiseFilter.hpp" // TODO : remove this
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -265,10 +266,17 @@ void Hud::ShowSettingsWindow()
 
                     if (ImGui::TreeNode("Noise Settings"))
                     {
-                        if (ImGui::InputInt("Seed", &(int&)_planet->shapeGenerator()->noiseFilter(layerCountNode)->seed()))
+                        ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
+                        if (ImGui::Combo("Filter Type", &(int&)layer->noiseSettings()->filterType(), "Simple\0Rigid\0\0"))
                         {
-                            _planet->shapeGenerator()->noiseFilter(layerCountNode)->reseed();
+                            _planet->shapeGenerator()->noiseFilter(0) = std::make_shared<RigidNoiseFilter>(layer->noiseSettings(), 0);
                             Application::Get().Update(ObserverFlag::NOISE);
+                        }
+                        ImGui::PopItemWidth();
+
+                        if (ImGui::InputInt("Seed", &(int&)_planet->shapeGenerator()->noiseFilter(layerCountNode)->Seed()))
+                        {
+                            _planet->shapeGenerator()->noiseFilter(layerCountNode)->Reseed();
                         }
                         if (ImGui::DragFloat("Strength", &layer->noiseSettings()->strength(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 2.0f))
                         {

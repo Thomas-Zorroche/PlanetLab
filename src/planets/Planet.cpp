@@ -3,6 +3,7 @@
 #include "opengl/Mesh.hpp"
 
 #include "noise/NoiseFilter.hpp"
+#include "noise/SimpleNoiseFilter.hpp"
 #include "noise/NoiseSettings.hpp"
 
 #include "io/IOManager.hpp"
@@ -104,7 +105,7 @@ void Planet::updateNoiseLayersCount(int noiseLayersCount)
 		for (size_t i = 0; i < layersDiffCount; i++)
 		{
 			auto layer = std::make_shared<NoiseLayer>();
-			auto filter = std::make_shared<NoiseFilter>(layer->noiseSettings());
+			std::shared_ptr<NoiseFilter> filter = std::make_shared<SimpleNoiseFilter>(layer->noiseSettings());
 
 			_shapeSettings->addLayer(layer);
 			_shapeGenerator->addFilter(filter);
