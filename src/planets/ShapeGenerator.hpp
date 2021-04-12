@@ -17,12 +17,13 @@ public:
 
 	std::vector<std::shared_ptr<NoiseFilter> > noiseFilters();
 	std::shared_ptr<NoiseFilter> noiseFilter(unsigned int index) const;
-	std::shared_ptr<NoiseFilter>& noiseFilter(unsigned int index);
 
 	void addFilter(const std::shared_ptr<NoiseFilter>& layer);
 	void removeLastFilter();
 	void removeFilter(unsigned int index);
 	void removeAllFilters();
+
+	void updateFilterType(std::uint32_t index);
 
 private:
 	std::shared_ptr<ShapeSettings> _settings;

@@ -1,7 +1,10 @@
 #include "ShapeGenerator.hpp"
 
+#include <iostream>
+
 #include "ShapeSettings.hpp"
 #include "noise/NoiseFilter.hpp"
+#include "noise/NoiseFilterFactory.hpp"
 
 ShapeGenerator::ShapeGenerator(const std::shared_ptr<ShapeSettings>& shapeSettings)
 	: _settings(shapeSettings), 
@@ -47,13 +50,6 @@ std::shared_ptr<NoiseFilter> ShapeGenerator::noiseFilter(unsigned int index) con
 	return _noiseFilters[index];
 }
 
-std::shared_ptr<NoiseFilter>& ShapeGenerator::noiseFilter(unsigned int index)
-{
-	//if (index >= _noiseFilters.size()) // TODO
-	//	return nullptr;
-	return _noiseFilters[index];
-}
-
 void ShapeGenerator::addFilter(const std::shared_ptr<NoiseFilter>& layer)
 {
 	_noiseFilters.push_back(layer);
@@ -75,5 +71,15 @@ void ShapeGenerator::removeAllFilters()
 	for (size_t i = 0; i < size; i++)
 	{
 		removeLastFilter();
+	}
+}
+
+void ShapeGenerator::updateFilterType(std::uint32_t index)
+{
+	if (index >= _noiseFilters.size())
+		std::cout << "Error: index out of bounds\n";
+	else {
+		NoiseSettings::FilterType type = _settings->noiseLayer(index)->noiseSettings()->filterType();
+		_noiseFilters[index] = NoiseFilterFactory::CreateNoiseFilter(_settings->noiseLayer(index)->noiseSettings());
 	}
 }

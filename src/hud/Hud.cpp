@@ -269,7 +269,7 @@ void Hud::ShowSettingsWindow()
                         ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
                         if (ImGui::Combo("Filter Type", &(int&)layer->noiseSettings()->filterType(), "Simple\0Rigid\0\0"))
                         {
-                            _planet->shapeGenerator()->noiseFilter(0) = std::make_shared<RigidNoiseFilter>(layer->noiseSettings(), 0);
+                            _planet->shapeGenerator()->updateFilterType(layerCountNode);
                             Application::Get().Update(ObserverFlag::NOISE);
                         }
                         ImGui::PopItemWidth();

@@ -34,7 +34,7 @@ public:
 	FilterType& filterType() { return _filterType; }
 
 private:
-	enum FilterType _filterType;
+	enum FilterType _filterType = FilterType::Simple;
 	float _strength = 1.0f;
 	float _baseRoughness = 1.0f;
 	float _roughness = 2.0f;

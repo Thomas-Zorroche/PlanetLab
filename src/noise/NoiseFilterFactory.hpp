@@ -1,26 +1,27 @@
 ﻿#pragma once
 
-#include "INoiseFilter.hpp"
+#include "NoiseFilter.hpp"
 #include "NoiseSettings.hpp"
 
 #include "NoiseFilter.hpp"
 #include "RigidNoiseFilter.hpp"
+#include "SimpleNoiseFilter.hpp"
 
 #include <memory>
 
 class NoiseFilterFactory
 {
 public:
-	static INoiseFilter CreateNoiseFilter(const std::shared_ptr<NoiseSettings>& settings)
+	static std::shared_ptr<NoiseFilter> CreateNoiseFilter(const std::shared_ptr<NoiseSettings>& settings)
 	{
 		switch (settings->filterType())
 		{
 		case NoiseSettings::Simple:
-			return SimpleNoiseFilter(settings);
+			return std::make_shared<SimpleNoiseFilter>(settings);
 			break;
 
 		case NoiseSettings::Rigid:
-			return RigidNoiseFilter(settings);
+			return std::make_shared<RigidNoiseFilter>(settings);
 			break;
 		}
 	}
