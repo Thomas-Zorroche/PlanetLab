@@ -24,7 +24,7 @@ float RigidNoiseFilter::Evaluate(const glm::vec3& point) const
 		float v = 1 - abs(_noise.noise3D(coordNoise.x, coordNoise.y, coordNoise.z));
 		v *= v;
 		v *= weight;
-		weight = v;
+		weight = std::clamp(v * _settings->weightMultiplier(), 0.0f, 1.0f);
 		noiseValue += v * amplitude;
 
 		frequency *= _settings->roughness();

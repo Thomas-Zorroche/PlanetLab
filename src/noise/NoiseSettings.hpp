@@ -23,6 +23,7 @@ public:
 	float persistence() const { return _persistence; }
 	float minValue() const { return _minValue; }
 	FilterType filterType() const { return _filterType; }
+	float weightMultiplier() const { return _weightMultiplier; }
 
 	float& strength() { return _strength; }
 	float& baseRoughness() { return _baseRoughness; }
@@ -32,6 +33,7 @@ public:
 	float& persistence() { return _persistence; }
 	float& minValue() { return _minValue; }
 	FilterType& filterType() { return _filterType; }
+	float& weightMultiplier() { return _weightMultiplier; }
 
 private:
 	enum FilterType _filterType = FilterType::Simple;
@@ -43,4 +45,6 @@ private:
 	int _layersCount = 1;
 	float _persistence = 0.5f; // Amplitude will be half with each layer
 	float _minValue = 0.0f;
+
+	float _weightMultiplier = 0.8f;
 };

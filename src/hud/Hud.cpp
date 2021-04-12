@@ -306,6 +306,10 @@ void Hud::ShowSettingsWindow()
                         {
                             Application::Get().Update(ObserverFlag::NOISE);
                         }
+                        if (ImGui::DragFloat("Weight Multiplier", &layer->noiseSettings()->weightMultiplier(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 5.0f))
+                        {
+                            Application::Get().Update(ObserverFlag::NOISE);
+                        }
                         ImGui::TreePop();
                     }
                     ImGui::TreePop();
