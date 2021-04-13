@@ -8,10 +8,10 @@ NoiseSettings::NoiseSettings()
 		{ ParameterFactory::Float("Base Roughness", FilterType::Simple, ObserverFlag::NOISE, 1.0f, 0.0f, 10.0f) },
 		{ ParameterFactory::Float("Roughness", FilterType::Simple, ObserverFlag::NOISE, 1.0f, 0.0f, 10.0f) },
 		{ ParameterFactory::Vec3("Center", FilterType::Simple, ObserverFlag::NOISE, glm::vec3(0), 0.0f, 10.0f) },
-		{ ParameterFactory::Int("Layers Count", FilterType::Simple, ObserverFlag::NOISE, 0, 0, 10) },
+		{ ParameterFactory::Int("Layers Count", FilterType::Simple, ObserverFlag::NOISE, 1, 0, 10) },
 		{ ParameterFactory::Float("Persistence", FilterType::Simple, ObserverFlag::NOISE, .5f, 0.0f, 10.0f) },
 		{ ParameterFactory::Float("Min Value", FilterType::Simple, ObserverFlag::NOISE, 0.0f, 0.0f, 10.0f) },
-		{ ParameterFactory::Float("Weight Multiplier", FilterType::Simple, ObserverFlag::NOISE, 0.5f, 0.0f, 10.0f) },
+		{ ParameterFactory::Float("Weight Multiplier", FilterType::Rigid, ObserverFlag::NOISE, 0.5f, 0.0f, 10.0f) },
 	},
 	_parametersNames{
 		"SSStrength",
@@ -28,10 +28,11 @@ NoiseSettings::NoiseSettings()
 
 void NoiseSettings::Display()
 {
-	for (auto const& parameter : _parameters)
+	for (const auto& name : _parametersNames)
 	{
-		if (parameter.second->GetType() == _filterType)
-			parameter.second->Display();
+		auto parameter = GetParameterByName(_parameters, name);
+		if (parameter->GetType() == _filterType || parameter->GetType() == FilterType::Simple)
+			parameter->Display();
 	}
 }
 
@@ -46,8 +47,8 @@ float& NoiseSettings::strength() { return FloatPtr(_parameters, "SSStrength"); }
 float NoiseSettings::baseRoughness() const { return Float(_parameters, "Base Roughness"); }
 float& NoiseSettings::baseRoughness() { return FloatPtr(_parameters, "Base Roughness"); }
 
-float NoiseSettings::roughness() const { return Float(_parameters, "roughness"); }
-float& NoiseSettings::roughness() { return FloatPtr(_parameters, "roughness"); }
+float NoiseSettings::roughness() const { return Float(_parameters, "Roughness"); }
+float& NoiseSettings::roughness() { return FloatPtr(_parameters, "Roughness"); }
 
 glm::vec3 NoiseSettings::center() const { return Vec3(_parameters, "Center"); }
 glm::vec3& NoiseSettings::center() { return Vec3Ptr(_parameters, "Center"); }
@@ -72,13 +73,20 @@ const std::shared_ptr<ParameterBase>& GetParameterByName(const ParametersMap& pa
 {
 	auto it = parameters.find(name);
 	if (it == parameters.end())
+	{
+		std::cout << "ERROR: cannot find parameter name " << name << std::endl;
 		return nullptr;
+	}
 	else
 		return it->second;
 }
 std::shared_ptr<ParameterBase>& GetParameterPtrByName(ParametersMap& parameters, const std::string& name)
 {
 	auto it = parameters.find(name);
+	if (it == parameters.end())
+	{
+		std::cout << "ERROR: cannot find parameter ptr name " << name << std::endl;
+	}	
 	return it->second;
 }
 
