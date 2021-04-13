@@ -44,9 +44,19 @@ void Planet::draw()
 /* Generate Fonctions */
 void Planet::generateMesh()
 {
+	std::size_t i = 0;
 	for (TerrainFace& face : _terrainFaces)
 	{
-		face.constructMesh();
+		if (_faceRenderMask == FaceRenderMask::All || (int)_faceRenderMask - 1 == i)
+		{
+			face.setVisibility(true);
+			face.constructMesh();
+		}
+		else
+		{
+			face.setVisibility(false);
+		}
+		i++;
 	}
 }
 

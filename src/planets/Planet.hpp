@@ -10,7 +10,16 @@
 
 #include <memory>
 
-
+enum class FaceRenderMask
+{
+	All = 0,
+	Top,
+	Bottom,
+	Left,
+	Right,
+	Front,
+	Back
+};
 
 class Planet
 {
@@ -33,6 +42,8 @@ public:
 
 	void Rotate(const glm::vec3& angles);
 
+	FaceRenderMask& getFaceRenderMask() { return _faceRenderMask; }
+
 private:
 	void generatePlanet();
 	void generateMesh();
@@ -47,4 +58,6 @@ private:
 
 	TerrainFace _terrainFaces[6];
 	StaticMesh _staticMesh;
+
+	FaceRenderMask _faceRenderMask = FaceRenderMask::All;
 };

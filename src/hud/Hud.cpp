@@ -228,6 +228,12 @@ void Hud::ShowSettingsWindow()
             {
                 Application::Get().Update(ObserverFlag::RESOLUTION);
             }
+            ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
+            if (ImGui::Combo("FaceRenderMask", &(int&)_planet->getFaceRenderMask(), "All\0Top\0Bottom\0Left\0Right\0Front\0Back\0\0"))
+            {
+                Application::Get().Update(ObserverFlag::MESH);
+            }
+            ImGui::PopItemWidth();
             if (ImGui::ColorEdit3("Planet Color", (float*)&(_color->color())))
             {
                 Application::Get().Update(ObserverFlag::COLOR);

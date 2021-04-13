@@ -31,6 +31,9 @@ public:
 	void UpdateGeometry(const std::vector<ShapeVertex>& vertices, const std::vector<unsigned int>& indices);
 	void setColor(const Color& color);
 
+	void setVisibility(bool visibility) { _visibility = visibility;	}
+
+
 private:
 	void UpdateVBO();
 	void SetupMesh(bool generateBuffers = true);
@@ -46,5 +49,7 @@ private:
 	unsigned int VAO, VBO, EBO;
 
 	std::shared_ptr<Material> _material;
+
+	bool _visibility = true;
 
 };

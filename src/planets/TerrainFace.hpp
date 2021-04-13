@@ -15,6 +15,10 @@ public:
 	
 	std::shared_ptr<Mesh>& mesh() { return _mesh; }
 
+	void setVisibility(bool visibility) 
+	{ 
+		_mesh->setVisibility(visibility);
+	}
 
 private:
 	std::shared_ptr<Mesh> _mesh;
