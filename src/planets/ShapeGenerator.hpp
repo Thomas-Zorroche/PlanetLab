@@ -25,6 +25,8 @@ public:
 
 	void updateFilterType(std::uint32_t index);
 
+	
+
 private:
 	std::shared_ptr<ShapeSettings> _settings;
 	std::vector<std::shared_ptr<NoiseFilter> > _noiseFilters;
