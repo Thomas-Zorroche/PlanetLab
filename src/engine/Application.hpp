@@ -28,7 +28,8 @@ enum class ObserverFlag
 	COLOR,
 	RADIUS,
 	NOISE,
-	LAYER
+	LAYER,
+	NONE
 };
 
 

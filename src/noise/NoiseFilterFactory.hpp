@@ -14,13 +14,13 @@ class NoiseFilterFactory
 public:
 	static std::shared_ptr<NoiseFilter> CreateNoiseFilter(const std::shared_ptr<NoiseSettings>& settings)
 	{
-		switch (settings->filterType())
+		switch (settings->GetFilterType())
 		{
-		case NoiseSettings::Simple:
+		case FilterType::Simple:
 			return std::make_shared<SimpleNoiseFilter>(settings);
 			break;
 
-		case NoiseSettings::Rigid:
+		case FilterType::Rigid:
 			return std::make_shared<RigidNoiseFilter>(settings);
 			break;
 		}

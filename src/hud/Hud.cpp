@@ -267,18 +267,22 @@ void Hud::ShowSettingsWindow()
                     if (ImGui::TreeNode("Noise Settings"))
                     {
                         ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
-                        if (ImGui::Combo("Filter Type", &(int&)layer->noiseSettings()->filterType(), "Simple\0Rigid\0\0"))
+                        if (ImGui::Combo("Filter Type", &(int&)layer->noiseSettings()->GetFilterType(), "Simple\0Rigid\0\0"))
                         {
                             _planet->shapeGenerator()->updateFilterType(layerCountNode);
                             Application::Get().Update(ObserverFlag::NOISE);
                         }
                         ImGui::PopItemWidth();
 
+
                         if (ImGui::InputInt("Seed", &(int&)_planet->shapeGenerator()->noiseFilter(layerCountNode)->Seed()))
                         {
                             _planet->shapeGenerator()->noiseFilter(layerCountNode)->Reseed();
                         }
-                        if (ImGui::DragFloat("Strength", &layer->noiseSettings()->strength(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 2.0f))
+                        
+                        layer->noiseSettings()->Display();
+                        
+                        /*if (ImGui::DragFloat("Strength", &layer->noiseSettings()->strength(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 2.0f))
                         {
                             Application::Get().Update(ObserverFlag::NOISE);
                         }
@@ -309,7 +313,7 @@ void Hud::ShowSettingsWindow()
                         if (ImGui::DragFloat("Weight Multiplier", &layer->noiseSettings()->weightMultiplier(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 5.0f))
                         {
                             Application::Get().Update(ObserverFlag::NOISE);
-                        }
+                        }*/
                         ImGui::TreePop();
                     }
                     ImGui::TreePop();

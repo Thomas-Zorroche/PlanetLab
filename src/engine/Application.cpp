@@ -93,9 +93,11 @@ void Application::GenerateUpdateQueue(bool onRelease)
 
 void Application::Update(ObserverFlag flag)
 {
-    //_updateMode == UpdateMode::Auto ? _planet->update(flag) : AddUpdateIntoQueue(flag);
-    _loading = true;
-    AddUpdateIntoQueue(flag);
+    if (flag != ObserverFlag::NONE)
+    {
+        _loading = true;
+        AddUpdateIntoQueue(flag);
+    }
 }
 
 void Application::AddUpdateIntoQueue(ObserverFlag flag)
