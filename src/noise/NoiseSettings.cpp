@@ -4,17 +4,17 @@
 
 NoiseSettings::NoiseSettings()
 	: _parameters {
-		{ ParameterFactory::Float("SSStrength", FilterType::Simple, ObserverFlag::NOISE, 1.0f, 0.0f, 10.0f) },
-		{ ParameterFactory::Float("Base Roughness", FilterType::Simple, ObserverFlag::NOISE, 1.0f, 0.0f, 10.0f) },
-		{ ParameterFactory::Float("Roughness", FilterType::Simple, ObserverFlag::NOISE, 1.0f, 0.0f, 10.0f) },
-		{ ParameterFactory::Vec3("Center", FilterType::Simple, ObserverFlag::NOISE, glm::vec3(0), 0.0f, 10.0f) },
-		{ ParameterFactory::Int("Layers Count", FilterType::Simple, ObserverFlag::NOISE, 1, 0, 10) },
-		{ ParameterFactory::Float("Persistence", FilterType::Simple, ObserverFlag::NOISE, .5f, 0.0f, 10.0f) },
-		{ ParameterFactory::Float("Min Value", FilterType::Simple, ObserverFlag::NOISE, 0.0f, 0.0f, 10.0f) },
-		{ ParameterFactory::Float("Weight Multiplier", FilterType::Rigid, ObserverFlag::NOISE, 0.5f, 0.0f, 10.0f) },
+		{ ParameterFactory::Float("Strength", FilterType::Simple, ObserverFlag::MESH, 1.0f, 0.0f, 10.0f) },
+		{ ParameterFactory::Float("Base Roughness", FilterType::Simple, ObserverFlag::MESH, 1.0f, 0.0f, 10.0f) },
+		{ ParameterFactory::Float("Roughness", FilterType::Simple, ObserverFlag::MESH, 1.0f, 0.0f, 10.0f) },
+		{ ParameterFactory::Vec3("Center", FilterType::Simple, ObserverFlag::MESH, glm::vec3(0), 0.0f, 10.0f) },
+		{ ParameterFactory::Int("Layers Count", FilterType::Simple, ObserverFlag::MESH, 1, 0, 10) },
+		{ ParameterFactory::Float("Persistence", FilterType::Simple, ObserverFlag::MESH, .5f, 0.0f, 10.0f) },
+		{ ParameterFactory::Float("Min Value", FilterType::Simple, ObserverFlag::MESH, 0.0f, 0.0f, 10.0f) },
+		{ ParameterFactory::Float("Weight Multiplier", FilterType::Rigid, ObserverFlag::MESH, 0.5f, 0.0f, 10.0f) },
 	},
 	_parametersNames{
-		"SSStrength",
+		"Strength",
 		"Base Roughness",
 		"Roughness",
 		"Center",
@@ -41,8 +41,8 @@ FilterType& NoiseSettings::GetFilterType()
 	return _filterType; 
 }
 
-float NoiseSettings::strength() const { return Float(_parameters, "SSStrength"); }
-float& NoiseSettings::strength() { return FloatPtr(_parameters, "SSStrength"); }
+float NoiseSettings::strength() const { return Float(_parameters, "Strength"); }
+float& NoiseSettings::strength() { return FloatPtr(_parameters, "Strength"); }
 
 float NoiseSettings::baseRoughness() const { return Float(_parameters, "Base Roughness"); }
 float& NoiseSettings::baseRoughness() { return FloatPtr(_parameters, "Base Roughness"); }
@@ -93,39 +93,34 @@ std::shared_ptr<ParameterBase>& GetParameterPtrByName(ParametersMap& parameters,
 float Float(const ParametersMap& parameters, const std::string& name)
 {
 	auto parameterBase = GetParameterByName(parameters, name);
-	if (auto parameter = std::dynamic_pointer_cast<ParameterFloat>(parameterBase))
-		return parameter->GetValue();
+	return std::get<float>(parameterBase->GetValue());
 }
 float& FloatPtr(ParametersMap& parameters, const std::string& name)
 {
 	auto parameterBase = GetParameterPtrByName(parameters, name);
-	if (auto parameter = std::dynamic_pointer_cast<ParameterFloat>(parameterBase))
-		return parameter->GetValue();
+	return std::get<float>(parameterBase->GetValue());
+
 }
 
 int Int(const ParametersMap& parameters, const std::string& name)
 {
 	auto parameterBase = GetParameterByName(parameters, name);
-	if (auto parameter = std::dynamic_pointer_cast<ParameterInt>(parameterBase))
-		return parameter->GetValue();
+	return std::get<int>(parameterBase->GetValue());
 }
 int& IntPtr(ParametersMap& parameters, const std::string& name)
 {
 	auto parameterBase = GetParameterPtrByName(parameters, name);
-	if (auto parameter = std::dynamic_pointer_cast<ParameterInt>(parameterBase))
-		return parameter->GetValue();
+	return std::get<int>(parameterBase->GetValue());
 }
 
 glm::vec3 Vec3(const ParametersMap& parameters, const std::string& name)
 {
 	auto parameterBase = GetParameterByName(parameters, name);
-	if (auto parameter = std::dynamic_pointer_cast<ParameterVec3>(parameterBase))
-		return parameter->GetValue();
+	return std::get<glm::vec3>(parameterBase->GetValue());
 }
 glm::vec3& Vec3Ptr(ParametersMap& parameters, const std::string& name)
 {
 	auto parameterBase = GetParameterPtrByName(parameters, name);
-	if (auto parameter = std::dynamic_pointer_cast<ParameterVec3>(parameterBase))
-		return parameter->GetValue();
+	return std::get<glm::vec3>(parameterBase->GetValue());
 }
 

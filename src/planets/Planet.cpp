@@ -80,20 +80,11 @@ void Planet::update(ObserverFlag flag)
 		{
 			generateColors();
 		}
-		case ObserverFlag::RADIUS:
-		{
-			generateMesh();
-		}
-		case ObserverFlag::NOISE:
-		{
-			generateMesh();
-		}
-		case ObserverFlag::LAYER:
+		case ObserverFlag::MESH:
 		{
 			generateMesh();
 		}
 	}
-	
 }
 
 void Planet::updateNoiseLayersCount(int noiseLayersCount)
@@ -126,7 +117,7 @@ void Planet::reset()
 {
 	_shapeSettings->removeAllLayers();
 	_shapeGenerator->removeAllFilters();
-	update(ObserverFlag::NOISE);
+	update(ObserverFlag::MESH);
 }
 
 void Planet::Rotate(const glm::vec3& angles)

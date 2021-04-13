@@ -29,9 +29,9 @@ public:
 		return { name, std::make_shared<ParameterVec3>(name, type, flag, value, min, max) };
 	}
 
-	static std::pair <std::string, std::shared_ptr<ParameterBase> >
-		Color3(const std::string& name, FilterType type, ObserverFlag flag, const Color& color)
-	{
-		return { name, std::make_shared<ParameterColor>(name, type, flag, color) };
-	}
+	//static std::pair <std::string, std::shared_ptr<ParameterBase> >
+	//	Color3(const std::string& name, FilterType type, ObserverFlag flag, const Color& color)
+	//{
+	//	return { name, std::make_shared<ParameterColor>(name, type, flag, color) };
+	//}
 };

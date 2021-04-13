@@ -93,11 +93,8 @@ void Application::GenerateUpdateQueue(bool onRelease)
 
 void Application::Update(ObserverFlag flag)
 {
-    if (flag != ObserverFlag::NONE)
-    {
-        _loading = true;
-        AddUpdateIntoQueue(flag);
-    }
+    _loading = true;
+    AddUpdateIntoQueue(flag);
 }
 
 void Application::AddUpdateIntoQueue(ObserverFlag flag)
@@ -105,7 +102,11 @@ void Application::AddUpdateIntoQueue(ObserverFlag flag)
     bool alreadyIn = false;
     for (const auto& f : _updatesQueue)
     {
-        if (flag == f) alreadyIn = true;
+        if (flag == f)
+        {
+            alreadyIn = true;
+            break;
+        }
     }
 
     if (!alreadyIn)

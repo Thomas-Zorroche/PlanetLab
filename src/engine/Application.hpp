@@ -26,10 +26,7 @@ enum class ObserverFlag
 {
 	RESOLUTION = 0,
 	COLOR,
-	RADIUS,
-	NOISE,
-	LAYER,
-	NONE
+	MESH
 };
 
 

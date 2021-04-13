@@ -234,7 +234,7 @@ void Hud::ShowSettingsWindow()
             }
             if (ImGui::SliderFloat("Size", &_shape->planetRadius(), 0.2f, 4.0f))
             {
-                Application::Get().Update(ObserverFlag::RADIUS);
+                Application::Get().Update(ObserverFlag::MESH);
             }
             static glm::vec3 globalRot;
             if (ImGui::SliderFloat3("Euler Rotation", (float*)&globalRot, 0.0f, 360.0f))
@@ -249,7 +249,7 @@ void Hud::ShowSettingsWindow()
             if (ImGui::SliderInt("Count", &noiseLayersCount, 0, 5))
             {
                 _planet->updateNoiseLayersCount(noiseLayersCount);
-                Application::Get().Update(ObserverFlag::LAYER);
+                Application::Get().Update(ObserverFlag::MESH);
             }
 
             int layerCountNode = 0;
@@ -260,7 +260,7 @@ void Hud::ShowSettingsWindow()
                 {
                     if (ImGui::Checkbox("Enabled", &layer->enabled()))
                     {
-                        Application::Get().Update(ObserverFlag::NOISE);
+                        Application::Get().Update(ObserverFlag::MESH);
                     }
 
                     if (ImGui::TreeNode("Noise Settings"))
@@ -269,7 +269,7 @@ void Hud::ShowSettingsWindow()
                         if (ImGui::Combo("Filter Type", &(int&)layer->noiseSettings()->GetFilterType(), "Simple\0Rigid\0\0"))
                         {
                             _planet->shapeGenerator()->updateFilterType(layerCountNode);
-                            Application::Get().Update(ObserverFlag::NOISE);
+                            Application::Get().Update(ObserverFlag::MESH);
                         }
                         ImGui::PopItemWidth();
 
@@ -277,12 +277,14 @@ void Hud::ShowSettingsWindow()
                         if (ImGui::InputInt("Seed", &(int&)_planet->shapeGenerator()->noiseFilter(layerCountNode)->Seed()))
                         {
                             _planet->shapeGenerator()->noiseFilter(layerCountNode)->Reseed();
+                            Application::Get().Update(ObserverFlag::MESH);
                         }
                         
                         /*
                         * Display All the Noise Settings
                         */
                         layer->noiseSettings()->Display();
+
 
                         ImGui::TreePop();
                     }
