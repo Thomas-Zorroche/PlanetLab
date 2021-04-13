@@ -3,6 +3,7 @@
 //  imgui extension
 //
 //  Created by David Gallardo on 11/06/16.
+//  Modified by Thomas Zorroche on 14/04/21.
 
 /*
  
@@ -48,6 +49,7 @@
 #pragma once
 
 #include "imgui/imgui.h"
+#include "glm/glm.hpp"
 
 #include <list>
 
@@ -55,6 +57,24 @@ struct ImGradientMark
 {
     float color[4];
     float position; //0 to 1
+
+    ImGradientMark(const glm::vec3& markColor = glm::vec3(0), float markPostiton = 0.0)
+    {
+        std::copy(&markColor[0], &markColor[0] + 3, &color[0]);
+        position = markPostiton;
+    }
+
+    glm::vec3 colorVector() { return glm::vec3(color[0], color[1], color[2]); }
+
+    ImGradientMark& operator=(const ImGradientMark& mark)
+    {
+        if (this != &mark)
+        {
+            std::copy(&mark.color[0], &mark.color[0] + 4, &color[0]);
+            position = mark.position;
+        }
+        return *this;
+    }
 };
 
 class ImGradient

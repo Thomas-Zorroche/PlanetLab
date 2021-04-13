@@ -245,7 +245,10 @@ void Hud::ShowSettingsWindow()
             static ImGradient gradient;
             static ImGradientMark* draggingMark = nullptr;
             static ImGradientMark* selectedMark = nullptr;
-            ImGui::GradientEditor(&gradient, draggingMark, selectedMark);
+            if (ImGui::GradientEditor(&gradient, draggingMark, selectedMark))
+            {
+                _planet->updateColors(gradient.getMarks());
+            }
             //GET A COLOR::
             static float color[3];
             gradient.getColorAt(0.3f, color); //position from 0 to 1

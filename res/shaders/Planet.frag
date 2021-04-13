@@ -27,7 +27,9 @@ in float elevation;
 
 uniform Material material;
 uniform DirLight dirLight;
+
 uniform vec3[2] u_colors;
+uniform float[2] u_steps;
 
 vec3 ComputeDirLight(Material material, DirLight dirLight, vec3 normal, vec3 viewDir);
 
@@ -42,7 +44,8 @@ void main()
     finalColor += ComputeDirLight(material, dirLight, Normal_vs, viewDir_vs);
 
     // Color
-    fFragColor = vec4(mix(u_colors[0], u_colors[1], elevation), 1.0);
+    vec3 color = mix(u_colors[0], u_colors[1], smoothstep(u_steps[1], u_steps[0], elevation));
+    fFragColor = vec4(color, 1.0);
     //fFragColor = vec4(finalColor, 1.0f);
 }
 

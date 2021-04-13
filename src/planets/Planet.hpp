@@ -8,7 +8,10 @@
 #include "planets/ColorSettings.hpp"
 #include "planets/ShapeGenerator.hpp"
 
+#include "editor/imgui_color_gradient.h"
+
 #include <memory>
+#include <list>
 
 enum class FaceRenderMask
 {
@@ -44,6 +47,8 @@ public:
 
 	FaceRenderMask& getFaceRenderMask() { return _faceRenderMask; }
 
+	void updateColors(const std::list<ImGradientMark*>& marks);
+
 private:
 	void generatePlanet();
 	void generateMesh();
@@ -63,5 +68,8 @@ private:
 
 	FaceRenderMask _faceRenderMask = FaceRenderMask::All;
 
-	std::vector<Color> _colors = { Color(0, 0, 1), Color(0, 1, 0) };
+	std::vector<ImGradientMark> _marks = {
+		ImGradientMark(glm::vec3(0, 0, 0), 0),
+		ImGradientMark(glm::vec3(1, 1, 1), 1)
+	};
 };

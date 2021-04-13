@@ -46,8 +46,11 @@ void Planet::sendUniforms()
 {
 	auto shader = _staticMesh.GetShader();
 	shader->Bind();
-	shader->SetUniform3f("u_colors[0]", _colors[0].vector());
-	shader->SetUniform3f("u_colors[1]", _colors[1].vector());
+	shader->SetUniform3f("u_colors[0]", _marks[0].colorVector());
+	shader->SetUniform3f("u_colors[1]", _marks[1].colorVector());
+
+	shader->SetUniform1f("u_steps[0]", _marks[0].position);
+	shader->SetUniform1f("u_steps[1]", _marks[1].position);
 	shader->Unbind();
 }
 
@@ -105,6 +108,23 @@ void Planet::update(ObserverFlag flag)
 		{
 			generateMesh();
 		}
+	}
+}
+
+void Planet::updateColors(const std::list<ImGradientMark*>& marks)
+{
+	std::size_t index = 0;
+	for (const auto& mark : marks)
+	{
+		if (index < _marks.size())
+		{
+			_marks[index] = *mark;
+		}
+		else
+		{
+			_marks.push_back(*mark);
+		}
+		index++;
 	}
 }
 
