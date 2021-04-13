@@ -21,6 +21,8 @@
 
 #include "io/IOManager.hpp"
 
+#include "editor/imgui_color_gradient.h"
+
 void Hud::init(Window& window)
 {
     // Initialize ImGui
@@ -238,6 +240,16 @@ void Hud::ShowSettingsWindow()
             {
                 Application::Get().Update(ObserverFlag::COLOR);
             }
+
+            // GRADIENT DATA::
+            static ImGradient gradient;
+            static ImGradientMark* draggingMark = nullptr;
+            static ImGradientMark* selectedMark = nullptr;
+            ImGui::GradientEditor(&gradient, draggingMark, selectedMark);
+            //GET A COLOR::
+            static float color[3];
+            gradient.getColorAt(0.3f, color); //position from 0 to 1
+
             if (ImGui::SliderFloat("Size", &_shape->planetRadius(), 0.2f, 4.0f))
             {
                 Application::Get().Update(ObserverFlag::MESH);

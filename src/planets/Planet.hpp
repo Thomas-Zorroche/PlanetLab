@@ -49,6 +49,8 @@ private:
 	void generateMesh();
 	void generateColors();
 
+	void sendUniforms();
+
 private:
 	int _resolution;
 
@@ -60,4 +62,6 @@ private:
 	StaticMesh _staticMesh;
 
 	FaceRenderMask _faceRenderMask = FaceRenderMask::All;
+
+	std::vector<Color> _colors = { Color(0, 0, 1), Color(0, 1, 0) };
 };

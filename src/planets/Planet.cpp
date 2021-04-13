@@ -31,15 +31,26 @@ Planet::Planet(int resolution)
 		_terrainFaces[3].mesh(),
 		_terrainFaces[4].mesh(),
 		_terrainFaces[5].mesh(),
-	})
+	}, TransformLayout(glm::vec3(0)), "Planet")
 {
 	generatePlanet();
 }
 
 void Planet::draw()
 {
+	sendUniforms();
 	_staticMesh.Draw();
 }
+
+void Planet::sendUniforms()
+{
+	auto shader = _staticMesh.GetShader();
+	shader->Bind();
+	shader->SetUniform3f("u_colors[0]", _colors[0].vector());
+	shader->SetUniform3f("u_colors[1]", _colors[1].vector());
+	shader->Unbind();
+}
+
 
 /* Generate Fonctions */
 void Planet::generateMesh()
