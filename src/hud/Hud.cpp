@@ -14,7 +14,6 @@
 #include "planets/ColorSettings.hpp"
 #include "noise/NoiseSettings.hpp"
 #include "noise/NoiseFilter.hpp"
-#include "noise/RigidNoiseFilter.hpp" // TODO : remove this
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -280,40 +279,11 @@ void Hud::ShowSettingsWindow()
                             _planet->shapeGenerator()->noiseFilter(layerCountNode)->Reseed();
                         }
                         
+                        /*
+                        * Display All the Noise Settings
+                        */
                         layer->noiseSettings()->Display();
-                        
-                        /*if (ImGui::DragFloat("Strength", &layer->noiseSettings()->strength(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 2.0f))
-                        {
-                            Application::Get().Update(ObserverFlag::NOISE);
-                        }
-                        if (ImGui::SliderInt("Layers Count", &layer->noiseSettings()->layersCount(), 0, 10))
-                        {
-                            Application::Get().Update(ObserverFlag::NOISE);
-                        }
-                        if (ImGui::DragFloat("Base Roughness", &layer->noiseSettings()->baseRoughness(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 20.0f))
-                        {
-                            Application::Get().Update(ObserverFlag::NOISE);
-                        }
-                        if (ImGui::DragFloat("Roughness", &layer->noiseSettings()->roughness(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 20.0f))
-                        {
-                            Application::Get().Update(ObserverFlag::NOISE);
-                        }
-                        if (ImGui::DragFloat("Persistence", &layer->noiseSettings()->persistence(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 1.0f))
-                        {
-                            Application::Get().Update(ObserverFlag::NOISE);
-                        }
-                        if (ImGui::SliderFloat3("Center", (float*)&layer->noiseSettings()->center(), -10.0f, 10.0f))
-                        {
-                            Application::Get().Update(ObserverFlag::NOISE);
-                        }
-                        if (ImGui::DragFloat("Min Value", &layer->noiseSettings()->minValue(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 10.0f))
-                        {
-                            Application::Get().Update(ObserverFlag::NOISE);
-                        }
-                        if (ImGui::DragFloat("Weight Multiplier", &layer->noiseSettings()->weightMultiplier(), _sliderSpeedDefault * _sliderSpeed, 0.0f, 5.0f))
-                        {
-                            Application::Get().Update(ObserverFlag::NOISE);
-                        }*/
+
                         ImGui::TreePop();
                     }
                     ImGui::TreePop();
