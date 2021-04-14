@@ -13,7 +13,8 @@ class ShapeGenerator
 public:
 	ShapeGenerator(const std::shared_ptr<ShapeSettings>& shapeSettings);
 
-	glm::vec3 calculatePointOnPlanet(const glm::vec3& pointOnUnitSphere) const;
+	float calculateUnscaledElevation(const glm::vec3& pointOnUnitSphere) const;
+	float ShapeGenerator::getScaledElevation(float unscaledElevation) const;
 
 	std::vector<std::shared_ptr<NoiseFilter> > noiseFilters();
 	std::shared_ptr<NoiseFilter> noiseFilter(unsigned int index) const;

@@ -22,6 +22,7 @@ void TerrainFace::constructMesh()
 	int triIndex = 0;
 	_maxElevation = 0;
 
+
 	// fill vertices and indices arrays
 	for (size_t y = 0; y < _resolution; y++)
 	{
@@ -31,14 +32,22 @@ void TerrainFace::constructMesh()
 			glm::vec2 percent(x / (float)(_resolution - 1), y / (float)(_resolution - 1));
 			glm::vec3 pointOnUnitCube = _localUp + ((percent.x - 0.5f) * 2 * _axisA) + ((percent.y - 0.5f) * 2 * _axisB);
 			glm::vec3 pointOnUnitSphere = glm::normalize(pointOnUnitCube);
-			vertices[i].position = _shapeGenerator->calculatePointOnPlanet(pointOnUnitSphere);
+			
+			float unscaledElevation = _shapeGenerator->calculateUnscaledElevation(pointOnUnitSphere);
+			vertices[i].position = pointOnUnitSphere * _shapeGenerator->getScaledElevation(unscaledElevation);
 			vertices[i].normal = glm::abs(_localUp);
-			vertices[i].texCoords = glm::vec2(0, 0);
-
+			
+			/*
+			* U : ocean depths
+			* V : 0
+			*/
+			vertices[i].texCoords = glm::vec2(unscaledElevation, 0);
+			
 			// Max elevation
 			float elevation = glm::length(vertices[i].position);
 			if (elevation > _maxElevation) _maxElevation = elevation;
 
+			// Indices
 			if (x != (_resolution - 1) && y != (_resolution - 1))
 			{
 				indices[triIndex++] = i;

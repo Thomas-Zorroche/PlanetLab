@@ -13,6 +13,7 @@ out vec2 vVertexTexcoords;
 out vec3 vNormal_vs;
 out vec3 vFragPos_vs;
 out float elevation;
+out float depth;
 
 void main() 
 {
@@ -26,6 +27,7 @@ void main()
     vVertexTexcoords = aVertexTexcoords;
 
     elevation = clamp((length(aVertexPosition) - 1) / (u_maxElevation - 1), 0, 1);
+    depth = aVertexTexcoords.x;
 
     gl_Position = uMVPMatrix * vertexPosition;
 }

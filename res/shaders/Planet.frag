@@ -26,6 +26,7 @@ in vec3 vNormal_vs;
 in vec3 vFragPos_vs;
 in vec2 vVertexTexcoords;
 in float elevation;
+in float depth;
 
 uniform Material material;
 uniform DirLight dirLight;
@@ -42,11 +43,19 @@ void main()
     vec3 Normal_vs = normalize(vNormal_vs);
     vec3 viewDir_vs = normalize(-vFragPos_vs);
 
-    // Color Ramp
-    vec3 diffuseColorRamp = mix(u_colors[0], u_colors[1], smoothstep(u_steps[0], u_steps[1], elevation));
-    for (int i = 2; i <= u_colorStepCount; i++)
+    vec3 diffuseColorRamp;
+    // Ocean
+    if (depth < 0)
     {
-        diffuseColorRamp = mix(diffuseColorRamp, u_colors[i], smoothstep(u_steps[i - 1], u_steps[i], elevation));
+        float inverseDepth = clamp(1 - abs(2 * depth), 0, 1);
+        diffuseColorRamp = vec3(0, 0, inverseDepth);
+    }
+    // Land
+    else
+    {
+        diffuseColorRamp = mix(u_colors[0], u_colors[1], smoothstep(u_steps[0], u_steps[1], elevation));
+        for (int i = 2; i <= u_colorStepCount; i++)
+            diffuseColorRamp = mix(diffuseColorRamp, u_colors[i], smoothstep(u_steps[i - 1], u_steps[i], elevation));
     }
 
     // Lighting
