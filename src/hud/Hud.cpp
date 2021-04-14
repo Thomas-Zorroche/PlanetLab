@@ -249,9 +249,6 @@ void Hud::ShowSettingsWindow()
             {
                 _planet->updateColors(gradient.getMarks());
             }
-            //GET A COLOR::
-            static float color[3];
-            gradient.getColorAt(0.3f, color); //position from 0 to 1
 
             if (ImGui::SliderFloat("Size", &_shape->planetRadius(), 0.2f, 4.0f))
             {

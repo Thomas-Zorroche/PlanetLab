@@ -46,13 +46,16 @@ void Planet::sendUniforms()
 {
 	auto shader = _staticMesh.GetShader();
 	shader->Bind();
-	shader->SetUniform3f("u_colors[0]", _marks[0].colorVector());
-	shader->SetUniform3f("u_colors[1]", _marks[1].colorVector());
 
-	shader->SetUniform1f("u_steps[0]", _marks[0].position);
-	shader->SetUniform1f("u_steps[1]", _marks[1].position);
-
+	for (size_t i = 0; i < _marks.size() && i < _MAX_STEPS_COLOR; i++)
+	{
+		std::string nameColor = "u_colors[" + std::to_string(i) + "]";
+		std::string nameStep = "u_steps[" + std::to_string(i) + "]";
+		shader->SetUniform3f(nameColor, _marks[i].colorVector());
+		shader->SetUniform1f(nameStep, _marks[i].position);
+	}
 	shader->SetUniform1f("u_maxElevation", _maxElevation);
+	shader->SetUniform1i("u_colorStepCount", _marks.size() - 1);
 
 	shader->Unbind();
 }
@@ -80,7 +83,6 @@ void Planet::generateMesh()
 		}
 		i++;
 	}
-	std::cout << _maxElevation << std::endl;
 }
 
 
@@ -124,13 +126,10 @@ void Planet::update(ObserverFlag flag)
 void Planet::updateColors(const std::list<ImGradientMark*>& marks)
 {
 	std::size_t index = 0;
+	_marks.clear();
 	for (const auto& mark : marks)
 	{
-		if (index < _marks.size())
-		{
-			_marks[index] = *mark;
-		}
-		else
+		if (index < _MAX_STEPS_COLOR)
 		{
 			_marks.push_back(*mark);
 		}

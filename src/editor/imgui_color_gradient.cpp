@@ -28,16 +28,19 @@ ImGradient::~ImGradient()
 
 void ImGradient::addMark(float position, ImColor const color)
 {
-    position = ImClamp(position, 0.0f, 1.0f);
-	ImGradientMark* newMark = new ImGradientMark();
-    newMark->position = position;
-    newMark->color[0] = color.Value.x;
-    newMark->color[1] = color.Value.y;
-    newMark->color[2] = color.Value.z;
+    if (m_marks.size() < 5)
+    {
+        position = ImClamp(position, 0.0f, 1.0f);
+	    ImGradientMark* newMark = new ImGradientMark();
+        newMark->position = position;
+        newMark->color[0] = color.Value.x;
+        newMark->color[1] = color.Value.y;
+        newMark->color[2] = color.Value.z;
     
-    m_marks.push_back(newMark);
+        m_marks.push_back(newMark);
     
-    refreshCache();
+        refreshCache();
+    }
 }
 
 void ImGradient::removeMark(ImGradientMark* mark)
@@ -332,7 +335,6 @@ namespace ImGui
             
             float newMarkCol[4];
             gradient->getColorAt(pos, newMarkCol);
-            
 
             gradient->addMark(pos, ImColor(newMarkCol[0], newMarkCol[1], newMarkCol[2]));
         }

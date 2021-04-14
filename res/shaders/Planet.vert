@@ -14,7 +14,8 @@ out vec3 vNormal_vs;
 out vec3 vFragPos_vs;
 out float elevation;
 
-void main() {
+void main() 
+{
     vec4 vertexPosition = vec4(aVertexPosition, 1);
     vec4 vertexNormal = vec4(aVertexNormal, 0);
 

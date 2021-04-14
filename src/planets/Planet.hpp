@@ -73,5 +73,7 @@ private:
 		ImGradientMark(glm::vec3(1, 1, 1), 1)
 	};
 
+	const int _MAX_STEPS_COLOR = 5;
+
 	float _maxElevation = 0.0f;
 };
