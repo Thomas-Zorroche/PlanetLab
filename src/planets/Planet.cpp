@@ -51,6 +51,9 @@ void Planet::sendUniforms()
 
 	shader->SetUniform1f("u_steps[0]", _marks[0].position);
 	shader->SetUniform1f("u_steps[1]", _marks[1].position);
+
+	shader->SetUniform1f("u_maxElevation", _maxElevation);
+
 	shader->Unbind();
 }
 
@@ -59,12 +62,17 @@ void Planet::sendUniforms()
 void Planet::generateMesh()
 {
 	std::size_t i = 0;
+	_maxElevation = 0;
 	for (TerrainFace& face : _terrainFaces)
 	{
 		if (_faceRenderMask == FaceRenderMask::All || (int)_faceRenderMask - 1 == i)
 		{
 			face.setVisibility(true);
 			face.constructMesh();
+			if (face.maxElevation() > _maxElevation)
+			{
+				_maxElevation = face.maxElevation();
+			}
 		}
 		else
 		{
@@ -72,7 +80,9 @@ void Planet::generateMesh()
 		}
 		i++;
 	}
+	std::cout << _maxElevation << std::endl;
 }
+
 
 void Planet::generateColors()
 {

@@ -44,14 +44,14 @@ void main()
     finalColor += ComputeDirLight(material, dirLight, Normal_vs, viewDir_vs);
 
     // Color
-    vec3 color = mix(u_colors[0], u_colors[1], smoothstep(u_steps[1], u_steps[0], elevation));
-    fFragColor = vec4(color, 1.0);
-    //fFragColor = vec4(finalColor, 1.0f);
+    fFragColor = vec4(finalColor, 1.0f);
 }
 
 
 vec3 ComputeDirLight(Material material, DirLight light, vec3 normal, vec3 viewDir)
 {
+    vec3 diffuseColorRamp = mix(u_colors[0], u_colors[1], smoothstep(u_steps[0], u_steps[1], elevation));
+    
     vec3 lightDir = normalize(light.direction);
     float diffuseStrength = max(dot(normal, lightDir), 0.0);
 
@@ -60,7 +60,7 @@ vec3 ComputeDirLight(Material material, DirLight light, vec3 normal, vec3 viewDi
     float specularStrength = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
     vec3 ambient = light.ambient * material.ambient;
-    vec3 diffuse = light.diffuse * material.diffuse * diffuseStrength;
+    vec3 diffuse = light.diffuse * diffuseColorRamp * diffuseStrength;
     vec3 specular = light.specular * material.specular * specularStrength;
 
     return vec3(ambient + diffuse + specular) * light.intensity;

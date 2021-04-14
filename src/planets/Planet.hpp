@@ -72,4 +72,6 @@ private:
 		ImGradientMark(glm::vec3(0, 0, 0), 0),
 		ImGradientMark(glm::vec3(1, 1, 1), 1)
 	};
+
+	float _maxElevation = 0.0f;
 };

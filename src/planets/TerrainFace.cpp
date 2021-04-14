@@ -20,6 +20,7 @@ void TerrainFace::constructMesh()
 	std::vector<ShapeVertex> vertices(_resolution * _resolution);
 	std::vector<unsigned int> indices((_resolution - 1) * (_resolution - 1) * 6); 
 	int triIndex = 0;
+	_maxElevation = 0;
 
 	// fill vertices and indices arrays
 	for (size_t y = 0; y < _resolution; y++)
@@ -33,6 +34,10 @@ void TerrainFace::constructMesh()
 			vertices[i].position = _shapeGenerator->calculatePointOnPlanet(pointOnUnitSphere);
 			vertices[i].normal = glm::abs(_localUp);
 			vertices[i].texCoords = glm::vec2(0, 0);
+
+			// Max elevation
+			float elevation = glm::length(vertices[i].position);
+			if (elevation > _maxElevation) _maxElevation = elevation;
 
 			if (x != (_resolution - 1) && y != (_resolution - 1))
 			{

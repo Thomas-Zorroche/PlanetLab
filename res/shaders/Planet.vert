@@ -7,6 +7,7 @@ layout(location = 2) in vec2 aVertexTexcoords;
 uniform mat4 uMVPMatrix;
 uniform mat4 uMVMatrix;
 uniform mat4 uNormalMatrix;
+uniform float u_maxElevation;
 
 out vec2 vVertexTexcoords;
 out vec3 vNormal_vs;
@@ -23,7 +24,7 @@ void main() {
     
     vVertexTexcoords = aVertexTexcoords;
 
-    elevation = length(aVertexPosition) - 1.0f;
+    elevation = clamp((length(aVertexPosition) - 1) / (u_maxElevation - 1), 0, 1);
 
     gl_Position = uMVPMatrix * vertexPosition;
 }
