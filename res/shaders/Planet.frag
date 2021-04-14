@@ -34,6 +34,8 @@ uniform DirLight dirLight;
 uniform vec3[MAX_COLOR_STEPS] u_colors;
 uniform float[MAX_COLOR_STEPS] u_steps;
 uniform int u_colorStepCount;
+uniform float u_oceanDepth;
+uniform vec3 u_oceanColor;
 
 vec3 ComputeDirLight(vec3 diffuseColorRamp, Material material, DirLight dirLight, vec3 normal, vec3 viewDir);
 
@@ -47,8 +49,8 @@ void main()
     // Ocean
     if (depth < 0)
     {
-        float inverseDepth = clamp(1 - abs(2 * depth), 0, 1);
-        diffuseColorRamp = vec3(0, 0, inverseDepth);
+        float inverseDepth = clamp(1 - abs(u_oceanDepth * depth), 0, 1);
+        diffuseColorRamp = inverseDepth * u_oceanColor;
     }
     // Land
     else

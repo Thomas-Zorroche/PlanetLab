@@ -47,6 +47,8 @@ void Planet::sendUniforms()
 	auto shader = _staticMesh.GetShader();
 	shader->Bind();
 
+	_colorSettings->SendUniforms(shader);
+
 	for (size_t i = 0; i < _marks.size() && i < _MAX_STEPS_COLOR; i++)
 	{
 		std::string nameColor = "u_colors[" + std::to_string(i) + "]";

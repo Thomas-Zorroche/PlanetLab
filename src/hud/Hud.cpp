@@ -282,19 +282,37 @@ void Hud::ShowSettingsWindow()
             {
                 ShowUpdateItem();
 
-                if (ImGui::ColorEdit3("Planet Color", (float*)&(_color->color())))
+                if (ImGui::TreeNode("Landmass"))
                 {
-                    Application::Get().Update(ObserverFlag::COLOR);
-                }
-                // GRADIENT DATA::
-                static ImGradient gradient;
-                static ImGradientMark* draggingMark = nullptr;
-                static ImGradientMark* selectedMark = nullptr;
-                if (ImGui::GradientEditor(&gradient, draggingMark, selectedMark))
-                {
-                    _planet->updateColors(gradient.getMarks());
+                    static bool useRamp = false;
+                    if (!useRamp)
+                    {
+                        if (ImGui::ColorEdit3("Color", (float*)&(_color->color())))
+                        {
+                            Application::Get().Update(ObserverFlag::COLOR);
+                        }
+                    }
+                    
+                    ImGui::Checkbox("Use Color Ramp", &useRamp);
+                    if (useRamp)
+                    {
+                        static ImGradient gradient;
+                        static ImGradientMark* draggingMark = nullptr;
+                        static ImGradientMark* selectedMark = nullptr;
+                        if (ImGui::GradientEditor(&gradient, draggingMark, selectedMark))
+                        {
+                            _planet->updateColors(gradient.getMarks());
+                        }
+                    }
+                    ImGui::TreePop();
                 }
 
+                if (ImGui::TreeNode("Ocean"))
+                {
+                    ImGui::SliderFloat("Depth", &_planet->colorSettings()->GetOceanDepth(), 0.0f, 10.0f);
+                    ImGui::ColorEdit3("Color", (float*)&_planet->colorSettings()->GetOceanColor());
+                    ImGui::TreePop();
+                }
 
                 ImGui::EndTabItem();
             }
@@ -310,6 +328,7 @@ void Hud::ShowSettingsWindow()
                 {
                     LightManager::Get().GetLight()->SetAmbient(ambientGlobal);
                 }
+
                 ImGui::EndTabItem();
             }
 
