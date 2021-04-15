@@ -21,7 +21,7 @@
 
 #include "io/IOManager.hpp"
 
-#include "editor/imgui_color_gradient.h"
+#include "imgui/imgui_color_gradient.h"
 
 void Hud::init(Window& window)
 {

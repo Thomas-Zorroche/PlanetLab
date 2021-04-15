@@ -1,7 +1,7 @@
 #pragma once
 
 #include "engine/Color.hpp"
-#include "editor/imgui_color_gradient.h"
+#include "imgui/imgui_color_gradient.h"
 
 #include <memory>
 #include <vector>
