@@ -21,6 +21,8 @@
 
 #include "io/IOManager.hpp"
 
+#include "imgui/imgui_color_gradient.h"
+
 void Hud::init(Window& window)
 {
     // Initialize ImGui
@@ -192,116 +194,170 @@ void Hud::ShowSettingsWindow()
 {
     if (ImGui::Begin("Procedural Planets Settings"))
     {
-        ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
-        ImGui::Combo("Update Mode", &(int&)Application::Get().GetUpdateMode(), "Auto\0On Release\0On Generate\0\0");
-        ImGui::PopItemWidth();
-
-        if (Application::Get().GetUpdateMode() == UpdateMode::OnGenerate)
+        ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+        if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
         {
-            ImGui::SameLine();
-            if (ImGui::Button("Generate"))
+            if (ImGui::BeginTabItem("Planet"))
             {
-                Application::Get().SetReadyToGenerate(true);
-            }
-        }
+                ShowUpdateItem();
 
-        if (ImGui::CollapsingHeader("Overlays"))
-        {
-            ImGui::Checkbox("Wireframe Mode", &Application::Get().GetEditor().GetWireframePtr());
-            ImGui::Checkbox("Show Axis", &Application::Get().GetEditor().GetAxisPtr());
-        }
-
-        if (ImGui::CollapsingHeader("World"))
-        {
-            ImGui::ColorEdit3("World Color", (float*)&(Application::Get().GetBackgroundColor()));
-            ImGui::SliderFloat("Sun", &LightManager::Get().GetLight()->Intensity(), 0.0f, 1.0f);
-            static float ambientGlobal = 0.2f;
-            if (ImGui::SliderFloat("Ambient Light", &ambientGlobal, 0.0f, 1.0f))
-            {
-                LightManager::Get().GetLight()->SetAmbient(ambientGlobal);
-            }
-        }
-
-        if (ImGui::CollapsingHeader("Planet"))
-        {
-            if (ImGui::SliderInt("Resolution", &_planet->resolution(), 4, 256))
-            {
-                Application::Get().Update(ObserverFlag::RESOLUTION);
-            }
-            ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
-            if (ImGui::Combo("FaceRenderMask", &(int&)_planet->getFaceRenderMask(), "All\0Top\0Bottom\0Left\0Right\0Front\0Back\0\0"))
-            {
-                Application::Get().Update(ObserverFlag::MESH);
-            }
-            ImGui::PopItemWidth();
-            if (ImGui::ColorEdit3("Planet Color", (float*)&(_color->color())))
-            {
-                Application::Get().Update(ObserverFlag::COLOR);
-            }
-            if (ImGui::SliderFloat("Size", &_shape->planetRadius(), 0.2f, 4.0f))
-            {
-                Application::Get().Update(ObserverFlag::MESH);
-            }
-            static glm::vec3 globalRot;
-            if (ImGui::SliderFloat3("Euler Rotation", (float*)&globalRot, 0.0f, 360.0f))
-            {
-                _planet->Rotate(globalRot);
-            }
-        }
-
-        if (ImGui::CollapsingHeader("Noise Layers"))
-        {
-            static int noiseLayersCount = _shape->noiseLayers().size();
-            if (ImGui::SliderInt("Count", &noiseLayersCount, 0, 5))
-            {
-                _planet->updateNoiseLayersCount(noiseLayersCount);
-                Application::Get().Update(ObserverFlag::MESH);
-            }
-
-            int layerCountNode = 0;
-            for (auto& layer : _shape->noiseLayers())
-            {
-                std::string titleNode("Noise Layer " + std::to_string(layerCountNode));
-                if (ImGui::TreeNode(titleNode.c_str()))
+                if (ImGui::SliderInt("Resolution", &_planet->resolution(), 4, 256))
                 {
-                    if (ImGui::Checkbox("Enabled", &layer->enabled()))
-                    {
-                        Application::Get().Update(ObserverFlag::MESH);
-                    }
+                    Application::Get().Update(ObserverFlag::RESOLUTION);
+                }
+                ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
+                if (ImGui::Combo("FaceRenderMask", &(int&)_planet->getFaceRenderMask(), "All\0Top\0Bottom\0Left\0Right\0Front\0Back\0\0"))
+                {
+                    Application::Get().Update(ObserverFlag::MESH);
+                }
+                ImGui::PopItemWidth();
+                static glm::vec3 globalRot;
+                if (ImGui::SliderFloat3("Euler Rotation", (float*)&globalRot, 0.0f, 360.0f))
+                {
+                    _planet->Rotate(globalRot);
+                }
+                ImGui::EndTabItem();
+            }
 
-                    if (ImGui::TreeNode("Noise Settings"))
+            if (ImGui::BeginTabItem("Noise"))
+            {
+                ShowUpdateItem();
+
+                static int noiseLayersCount = _shape->noiseLayers().size();
+                if (ImGui::SliderInt("Count", &noiseLayersCount, 0, 5))
+                {
+                    _planet->updateNoiseLayersCount(noiseLayersCount);
+                    Application::Get().Update(ObserverFlag::MESH);
+                }
+
+                int layerCountNode = 0;
+                for (auto& layer : _shape->noiseLayers())
+                {
+                    std::string titleNode("Noise Layer " + std::to_string(layerCountNode));
+                    if (ImGui::TreeNode(titleNode.c_str()))
                     {
-                        ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
-                        if (ImGui::Combo("Filter Type", &(int&)layer->noiseSettings()->GetFilterType(), "Simple\0Rigid\0\0"))
+                        if (ImGui::Checkbox("Enabled", &layer->enabled()))
                         {
-                            _planet->shapeGenerator()->updateFilterType(layerCountNode);
                             Application::Get().Update(ObserverFlag::MESH);
                         }
-                        ImGui::PopItemWidth();
 
-
-                        if (ImGui::InputInt("Seed", &(int&)_planet->shapeGenerator()->noiseFilter(layerCountNode)->Seed()))
+                        if (ImGui::TreeNode("Noise Settings"))
                         {
-                            _planet->shapeGenerator()->noiseFilter(layerCountNode)->Reseed();
-                            Application::Get().Update(ObserverFlag::MESH);
+                            ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
+                            if (ImGui::Combo("Filter Type", &(int&)layer->noiseSettings()->GetFilterType(), "Simple\0Rigid\0\0"))
+                            {
+                                _planet->shapeGenerator()->updateFilterType(layerCountNode);
+                                Application::Get().Update(ObserverFlag::MESH);
+                            }
+                            ImGui::PopItemWidth();
+
+
+                            if (ImGui::InputInt("Seed", &(int&)_planet->shapeGenerator()->noiseFilter(layerCountNode)->Seed()))
+                            {
+                                _planet->shapeGenerator()->noiseFilter(layerCountNode)->Reseed();
+                                Application::Get().Update(ObserverFlag::MESH);
+                            }
+
+                            /*
+                            * Display All the Noise Settings
+                            */
+                            layer->noiseSettings()->Display();
+
+
+                            ImGui::TreePop();
                         }
-                        
-                        /*
-                        * Display All the Noise Settings
-                        */
-                        layer->noiseSettings()->Display();
-
-
                         ImGui::TreePop();
+                        ImGui::Separator();
+                    }
+                    layerCountNode++;
+                }
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("Material"))
+            {
+                ShowUpdateItem();
+
+                if (ImGui::TreeNode("Landmass"))
+                {
+                    if (!_color->GetUseLandmassRamp())
+                    {
+                        if (ImGui::ColorEdit3("Color", (float*)&(_color->color())))
+                        {
+                            Application::Get().Update(ObserverFlag::COLOR);
+                        }
+                    }
+                    
+                    ImGui::Checkbox("Use Color Ramp", &_color->GetUseLandmassRamp());
+
+                    if (_color->GetUseLandmassRamp())
+                    {
+                        static ImGradientMark* draggingMark = nullptr;
+                        static ImGradientMark* selectedMark = nullptr;
+                        ImGui::GradientEditor(&_color->GetGradient(), draggingMark, selectedMark);
                     }
                     ImGui::TreePop();
-                    ImGui::Separator();
                 }
-                layerCountNode++;
+
+                if (ImGui::TreeNode("Ocean"))
+                {
+                    ImGui::Checkbox("Use a different color for ocean", &_color->GetUseOceanColor());
+                    
+                    if (_color->GetUseOceanColor()) 
+                    {
+                        ImGui::SliderFloat("Depth", &_planet->colorSettings()->GetOceanDepth(), 0.0f, 10.0f);
+                        ImGui::ColorEdit3("Color", (float*)&_planet->colorSettings()->GetOceanColor());
+                    }
+                    ImGui::TreePop();
+                }
+
+                ImGui::EndTabItem();
             }
+
+            if (ImGui::BeginTabItem("World"))
+            {
+                ShowUpdateItem();
+                static bool useWorldGradient = true;
+                ImGui::ColorEdit3("World Color", (float*)&(Application::Get().GetBackgroundColor()));
+                ImGui::SliderFloat("Sun", &LightManager::Get().GetLight()->Intensity(), 0.0f, 1.0f);
+                static float ambientGlobal = 0.2f;
+                if (ImGui::SliderFloat("Ambient Light", &ambientGlobal, 0.0f, 1.0f))
+                {
+                    LightManager::Get().GetLight()->SetAmbient(ambientGlobal);
+                }
+
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("Overlays"))
+            {
+                ImGui::Checkbox("Wireframe Mode", &Application::Get().GetEditor().GetWireframePtr());
+                ImGui::Checkbox("Show Axis", &Application::Get().GetEditor().GetAxisPtr());
+                ImGui::EndTabItem();
+            }
+            ImGui::EndTabBar();
         }
+
+
+
     }
     ImGui::End(); // Settings
+}
+
+void Hud::ShowUpdateItem()
+{
+    ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
+    ImGui::Combo("Update Mode", &(int&)Application::Get().GetUpdateMode(), "Auto\0On Release\0On Generate\0\0");
+    ImGui::PopItemWidth();
+    if (Application::Get().GetUpdateMode() == UpdateMode::OnGenerate)
+    {
+        ImGui::SameLine();
+        if (ImGui::Button("Generate"))
+        {
+            Application::Get().SetReadyToGenerate(true);
+        }
+    }
+    ImGui::Separator();
 }
 
 void Hud::ShowViewportWindow()

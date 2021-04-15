@@ -34,15 +34,15 @@ bool IOManager::saveAs(const std::string& outputFileName)
 	{
 		std::string section = "noiseSettings_" + std::to_string(layerCount);
 
-		//ini[section]["strength"] = std::to_string(layer->noiseSettings()->GetParameter("Strength"));
-		//ini[section]["layersCount"] = std::to_string(layer->noiseSettings()->GetParameter("Layer Count"));
-		//ini[section]["baseRoughness"] = std::to_string(layer->noiseSettings()->baseRoughness());
-		//ini[section]["roughness"] = std::to_string(layer->noiseSettings()->roughness());
-		//ini[section]["persistence"] = std::to_string(layer->noiseSettings()->persistence());
-		//ini[section]["centerX"] = std::to_string(layer->noiseSettings()->center().x);
-		//ini[section]["centerY"] = std::to_string(layer->noiseSettings()->center().y);
-		//ini[section]["centerZ"] = std::to_string(layer->noiseSettings()->center().z);
-		//ini[section]["minValue"] = std::to_string(layer->noiseSettings()->minValue());
+		ini[section]["strength"] = std::to_string(layer->noiseSettings()->strength());
+		ini[section]["layersCount"] = std::to_string(layer->noiseSettings()->layersCount());
+		ini[section]["baseRoughness"] = std::to_string(layer->noiseSettings()->baseRoughness());
+		ini[section]["roughness"] = std::to_string(layer->noiseSettings()->roughness());
+		ini[section]["persistence"] = std::to_string(layer->noiseSettings()->persistence());
+		ini[section]["centerX"] = std::to_string(layer->noiseSettings()->center().x);
+		ini[section]["centerY"] = std::to_string(layer->noiseSettings()->center().y);
+		ini[section]["centerZ"] = std::to_string(layer->noiseSettings()->center().z);
+		ini[section]["minValue"] = std::to_string(layer->noiseSettings()->minValue());
 
 		layerCount++;
 	}
@@ -118,14 +118,14 @@ void IOManager::loadValues(const mINI::INIStructure& ini)
 		std::string& minValueStr      = ini.get(section).get("minValue");
 	
 		// Assign values
-		//_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->strength() = std::atof(strengthStr.c_str());
-		//_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->layersCount() = std::atof(layersCountStr.c_str());
-		//_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->baseRoughness() = std::atof(baseRoughnessStr.c_str());
-		//_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->roughness() = std::atof(roughnessStr.c_str());
-		//_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().x = std::atof(centerXStr.c_str());
-		//_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().y = std::atof(centerYStr.c_str());
-		//_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().z = std::atof(centerZStr.c_str());
-		//_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->minValue() = std::atof(minValueStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->strength() = std::atof(strengthStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->layersCount() = std::atof(layersCountStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->baseRoughness() = std::atof(baseRoughnessStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->roughness() = std::atof(roughnessStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().x = std::atof(centerXStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().y = std::atof(centerYStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().z = std::atof(centerZStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->minValue() = std::atof(minValueStr.c_str());
 	}
 
 	_planet->update(ObserverFlag::MESH);

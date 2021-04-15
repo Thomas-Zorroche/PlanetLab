@@ -61,6 +61,8 @@ private:
 	void ShowSaveAsWindow();
 	void ShowNewSceneWindow();
 
+	void ShowUpdateItem();
+
 private:
 	Framebuffer _fbo = Framebuffer();
 

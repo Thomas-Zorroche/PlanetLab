@@ -31,26 +31,44 @@ Planet::Planet(int resolution)
 		_terrainFaces[3].mesh(),
 		_terrainFaces[4].mesh(),
 		_terrainFaces[5].mesh(),
-	})
+	}, TransformLayout(glm::vec3(0)), "Planet")
 {
 	generatePlanet();
 }
 
 void Planet::draw()
 {
+	sendUniforms();
 	_staticMesh.Draw();
 }
+
+void Planet::sendUniforms()
+{
+	auto shader = _staticMesh.GetShader();
+	shader->Bind();
+
+	_colorSettings->SendUniforms(shader);
+	shader->SetUniform1f("u_maxElevation", _maxElevation);
+
+	shader->Unbind();
+}
+
 
 /* Generate Fonctions */
 void Planet::generateMesh()
 {
 	std::size_t i = 0;
+	_maxElevation = 0;
 	for (TerrainFace& face : _terrainFaces)
 	{
 		if (_faceRenderMask == FaceRenderMask::All || (int)_faceRenderMask - 1 == i)
 		{
 			face.setVisibility(true);
 			face.constructMesh();
+			if (face.maxElevation() > _maxElevation)
+			{
+				_maxElevation = face.maxElevation();
+			}
 		}
 		else
 		{

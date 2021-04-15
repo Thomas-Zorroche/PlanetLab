@@ -13,7 +13,7 @@ ShapeGenerator::ShapeGenerator(const std::shared_ptr<ShapeSettings>& shapeSettin
 
 }
 
-glm::vec3 ShapeGenerator::calculatePointOnPlanet(const glm::vec3& pointOnUnitSphere) const
+float ShapeGenerator::calculateUnscaledElevation(const glm::vec3& pointOnUnitSphere) const
 {
 	float firstLayerValue = 0;
 	float elevation = 0;
@@ -35,7 +35,14 @@ glm::vec3 ShapeGenerator::calculatePointOnPlanet(const glm::vec3& pointOnUnitSph
 			elevation += _noiseFilters[i]->Evaluate(pointOnUnitSphere) * mask;
 		}
 	}
-	return pointOnUnitSphere * _settings->planetRadius() * (1 + elevation);
+	return elevation;
+}
+
+float ShapeGenerator::getScaledElevation(float unscaledElevation) const
+{
+	float elevation = std::max(0.0f, unscaledElevation);
+	elevation = _settings->planetRadius() * (1 + elevation);
+	return elevation;
 }
 
 std::vector<std::shared_ptr<NoiseFilter> > ShapeGenerator::noiseFilters()

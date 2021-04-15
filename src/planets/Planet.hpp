@@ -8,7 +8,10 @@
 #include "planets/ColorSettings.hpp"
 #include "planets/ShapeGenerator.hpp"
 
+#include "imgui/imgui_color_gradient.h"
+
 #include <memory>
+#include <list>
 
 enum class FaceRenderMask
 {
@@ -44,10 +47,13 @@ public:
 
 	FaceRenderMask& getFaceRenderMask() { return _faceRenderMask; }
 
+
 private:
 	void generatePlanet();
 	void generateMesh();
 	void generateColors();
+
+	void sendUniforms();
 
 private:
 	int _resolution;
@@ -60,4 +66,6 @@ private:
 	StaticMesh _staticMesh;
 
 	FaceRenderMask _faceRenderMask = FaceRenderMask::All;
+
+	float _maxElevation = 0.0f;
 };
