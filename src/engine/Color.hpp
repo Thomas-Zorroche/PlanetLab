@@ -2,6 +2,7 @@
 
 #include "glm/glm.hpp"
 #include <algorithm>
+#include <random>
 
 struct Color
 {
@@ -21,7 +22,6 @@ struct Color
     float clamp(float value) { return std::clamp(value, 0.0f, 1.0f); }
 
     glm::vec3 vector() const { return glm::vec3(r, g, b); }
-
 
     bool operator==(const Color& rhs)
     {

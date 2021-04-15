@@ -9,6 +9,8 @@
 #include "io/IOManager.hpp"
 
 #include <vector>
+#include <random>
+#include <chrono>
 
 
 Planet::Planet(int resolution)
@@ -151,6 +153,25 @@ void Planet::reset()
 void Planet::Rotate(const glm::vec3& angles)
 {
 	_staticMesh.Rotate(angles);
+}
+
+void Planet::RandomGenerate()
+{
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	std::default_random_engine generator(seed);
+
+	// Reseed
+	for (std::size_t i = 0; i < _shapeGenerator->noiseFilters().size(); i++)
+	{
+		_shapeGenerator->noiseFilter(i)->Reseed(seed);
+	}
+
+	// Colors
+	_colorSettings->SetRandomColors(seed);
+
+	// Update Mesh
+	Application::Get().Update(ObserverFlag::MESH);
+	Application::Get().Update(ObserverFlag::COLOR);
 }
 
 

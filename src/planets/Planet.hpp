@@ -47,6 +47,8 @@ public:
 
 	FaceRenderMask& getFaceRenderMask() { return _faceRenderMask; }
 
+	void RandomGenerate();
+
 
 private:
 	void generatePlanet();

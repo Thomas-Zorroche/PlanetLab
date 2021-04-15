@@ -50,3 +50,31 @@ void ColorSettings::SendUniforms(std::shared_ptr<Shader>& shader)
 
 }
 
+void ColorSettings::SetRandomColors(std::uint32_t seed)
+{
+	_useLandmassRamp = true;
+	_useOceanColor = true;
+	_gradient.getMarks().clear();
+
+	std::default_random_engine generator(seed);
+	std::uniform_real_distribution<float> random(0, 1);
+
+	for (std::size_t i = 0; i < 4; i++)
+	{
+		auto pos = random(generator);
+		ImColor color(
+			random(generator),
+			random(generator),
+			random(generator)
+		);
+		_gradient.addMark(pos, color);
+	}
+
+	_oceanColor = Color(
+		random(generator),
+		random(generator),
+		random(generator)
+	);
+	_oceanDepth = 9;
+}
+

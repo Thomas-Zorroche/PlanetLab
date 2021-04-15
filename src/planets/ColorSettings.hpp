@@ -33,6 +33,8 @@ public:
 	bool& GetUseOceanColor() { return _useOceanColor; }
 	bool GetUseOceanColor() const { return _useOceanColor; }
 
+	void SetRandomColors(std::uint32_t seed);
+
 private:
 	// Landmass settigns
 	Color _colorPlanet;

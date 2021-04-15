@@ -216,6 +216,15 @@ void Hud::ShowSettingsWindow()
                 {
                     _planet->Rotate(globalRot);
                 }
+
+                ImGui::Separator();
+
+                // Changer le seed, les couleurs, et ajoute un epsilon au valeur 
+                if (ImGui::Button("Generate Random")) 
+                {
+                    _planet->RandomGenerate();
+                }
+
                 ImGui::EndTabItem();
             }
 
