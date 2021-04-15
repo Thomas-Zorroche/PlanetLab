@@ -284,8 +284,7 @@ void Hud::ShowSettingsWindow()
 
                 if (ImGui::TreeNode("Landmass"))
                 {
-                    static bool useRamp = false;
-                    if (!useRamp)
+                    if (!_color->GetUseLandmassRamp())
                     {
                         if (ImGui::ColorEdit3("Color", (float*)&(_color->color())))
                         {
@@ -293,24 +292,26 @@ void Hud::ShowSettingsWindow()
                         }
                     }
                     
-                    ImGui::Checkbox("Use Color Ramp", &useRamp);
-                    if (useRamp)
+                    ImGui::Checkbox("Use Color Ramp", &_color->GetUseLandmassRamp());
+
+                    if (_color->GetUseLandmassRamp())
                     {
-                        static ImGradient gradient;
                         static ImGradientMark* draggingMark = nullptr;
                         static ImGradientMark* selectedMark = nullptr;
-                        if (ImGui::GradientEditor(&gradient, draggingMark, selectedMark))
-                        {
-                            _planet->updateColors(gradient.getMarks());
-                        }
+                        ImGui::GradientEditor(&_color->GetGradient(), draggingMark, selectedMark);
                     }
                     ImGui::TreePop();
                 }
 
                 if (ImGui::TreeNode("Ocean"))
                 {
-                    ImGui::SliderFloat("Depth", &_planet->colorSettings()->GetOceanDepth(), 0.0f, 10.0f);
-                    ImGui::ColorEdit3("Color", (float*)&_planet->colorSettings()->GetOceanColor());
+                    ImGui::Checkbox("Use a different color for ocean", &_color->GetUseOceanColor());
+                    
+                    if (_color->GetUseOceanColor()) 
+                    {
+                        ImGui::SliderFloat("Depth", &_planet->colorSettings()->GetOceanDepth(), 0.0f, 10.0f);
+                        ImGui::ColorEdit3("Color", (float*)&_planet->colorSettings()->GetOceanColor());
+                    }
                     ImGui::TreePop();
                 }
 

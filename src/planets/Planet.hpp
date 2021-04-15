@@ -47,7 +47,6 @@ public:
 
 	FaceRenderMask& getFaceRenderMask() { return _faceRenderMask; }
 
-	void updateColors(const std::list<ImGradientMark*>& marks);
 
 private:
 	void generatePlanet();
@@ -67,13 +66,6 @@ private:
 	StaticMesh _staticMesh;
 
 	FaceRenderMask _faceRenderMask = FaceRenderMask::All;
-
-	std::vector<ImGradientMark> _marks = {
-		ImGradientMark(glm::vec3(0, 0, 0), 0),
-		ImGradientMark(glm::vec3(1, 1, 1), 1)
-	};
-
-	const int _MAX_STEPS_COLOR = 5;
 
 	float _maxElevation = 0.0f;
 };

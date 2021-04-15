@@ -80,7 +80,7 @@ struct ImGradientMark
 class ImGradient
 {
 public:
-    ImGradient();
+    ImGradient(std::size_t maxMark);
     ~ImGradient();
     
     void getColorAt(float position, float* color) const;
@@ -88,10 +88,13 @@ public:
     void removeMark(ImGradientMark* mark);
     void refreshCache();
     std::list<ImGradientMark*> & getMarks(){ return m_marks; }
+
 private:
+    const std::size_t _MAX_MARKS;
     void computeColorAt(float position, float* color) const;
     std::list<ImGradientMark*> m_marks;
     float m_cachedValues[256 * 3];
+
 };
 
 namespace ImGui

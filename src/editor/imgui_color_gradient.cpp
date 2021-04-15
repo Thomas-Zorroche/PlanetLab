@@ -12,7 +12,8 @@ static const float GRADIENT_BAR_WIDGET_HEIGHT = 25;
 static const float GRADIENT_BAR_EDITOR_HEIGHT = 40;
 static const float GRADIENT_MARK_DELETE_DIFFY = 40;
 
-ImGradient::ImGradient()
+ImGradient::ImGradient(std::size_t maxMark)
+    : _MAX_MARKS(maxMark)
 {
     addMark(0.0f, ImColor(0.0f,0.0f,0.0f));
     addMark(1.0f, ImColor(1.0f,1.0f,1.0f));
@@ -28,7 +29,7 @@ ImGradient::~ImGradient()
 
 void ImGradient::addMark(float position, ImColor const color)
 {
-    if (m_marks.size() < 5)
+    if (m_marks.size() < _MAX_MARKS)
     {
         position = ImClamp(position, 0.0f, 1.0f);
 	    ImGradientMark* newMark = new ImGradientMark();
