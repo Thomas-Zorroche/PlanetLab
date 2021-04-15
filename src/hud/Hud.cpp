@@ -211,10 +211,6 @@ void Hud::ShowSettingsWindow()
                     Application::Get().Update(ObserverFlag::MESH);
                 }
                 ImGui::PopItemWidth();
-                if (ImGui::SliderFloat("Size", &_shape->planetRadius(), 0.2f, 4.0f))
-                {
-                    Application::Get().Update(ObserverFlag::MESH);
-                }
                 static glm::vec3 globalRot;
                 if (ImGui::SliderFloat3("Euler Rotation", (float*)&globalRot, 0.0f, 360.0f))
                 {
@@ -321,7 +317,7 @@ void Hud::ShowSettingsWindow()
             if (ImGui::BeginTabItem("World"))
             {
                 ShowUpdateItem();
-
+                static bool useWorldGradient = true;
                 ImGui::ColorEdit3("World Color", (float*)&(Application::Get().GetBackgroundColor()));
                 ImGui::SliderFloat("Sun", &LightManager::Get().GetLight()->Intensity(), 0.0f, 1.0f);
                 static float ambientGlobal = 0.2f;
