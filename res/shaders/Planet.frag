@@ -50,7 +50,7 @@ void main()
     // Ocean
     if (u_oceanDepth >= 0 && depth < 0 )
     {
-        float inverseDepth = clamp(1 - abs(u_oceanDepth * depth), 0, 1);
+        float inverseDepth = clamp(1 - abs(u_oceanDepth * depth), 0.25, 1);
         diffuseColorRamp = inverseDepth * u_oceanColor;
         finalColor += ComputeDirLight(diffuseColorRamp, material, dirLight, Normal_vs, viewDir_vs);
     }

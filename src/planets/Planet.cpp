@@ -78,7 +78,6 @@ void Planet::generateMesh()
 	}
 }
 
-
 void Planet::generateColors()
 {
 	for (TerrainFace& face : _terrainFaces)
