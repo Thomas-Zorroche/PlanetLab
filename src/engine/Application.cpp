@@ -93,7 +93,6 @@ void Application::GenerateUpdateQueue(bool onRelease)
 
 void Application::Update(ObserverFlag flag)
 {
-    //_updateMode == UpdateMode::Auto ? _planet->update(flag) : AddUpdateIntoQueue(flag);
     _loading = true;
     AddUpdateIntoQueue(flag);
 }
@@ -103,7 +102,11 @@ void Application::AddUpdateIntoQueue(ObserverFlag flag)
     bool alreadyIn = false;
     for (const auto& f : _updatesQueue)
     {
-        if (flag == f) alreadyIn = true;
+        if (flag == f)
+        {
+            alreadyIn = true;
+            break;
+        }
     }
 
     if (!alreadyIn)

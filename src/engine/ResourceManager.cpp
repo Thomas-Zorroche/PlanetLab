@@ -243,6 +243,8 @@ void ResourceManager::LoadAllShaders()
 	ResourceManager::Get().LoadShader("res/shaders/Default.vert", "res/shaders/Default.frag", "Default");
 	// RGB Color with Lights
 	ResourceManager::Get().LoadShader("res/shaders/Default.vert", "res/shaders/DefaultLighting.frag", "DefaultLighting");
+	// Planet Shader
+	ResourceManager::Get().LoadShader("res/shaders/Planet.vert", "res/shaders/Planet.frag", "Planet");
 	// Red Wireframe Shader
 	ResourceManager::Get().LoadShader("res/shaders/Default.vert", "res/shaders/wireframe.frag", "Wireframe");
 	// Normal shader

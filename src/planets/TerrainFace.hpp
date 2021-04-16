@@ -15,6 +15,12 @@ public:
 	
 	std::shared_ptr<Mesh>& mesh() { return _mesh; }
 
+	void setVisibility(bool visibility) 
+	{ 
+		_mesh->setVisibility(visibility);
+	}
+
+	float maxElevation() const { return _maxElevation; }
 
 private:
 	std::shared_ptr<Mesh> _mesh;
@@ -25,4 +31,6 @@ private:
 	glm::vec3 _axisB;
 
 	std::shared_ptr<ShapeGenerator> _shapeGenerator;
+
+	float _maxElevation = 1.0f;
 };

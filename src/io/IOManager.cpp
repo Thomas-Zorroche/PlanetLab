@@ -128,7 +128,7 @@ void IOManager::loadValues(const mINI::INIStructure& ini)
 		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->minValue() = std::atof(minValueStr.c_str());
 	}
 
-	_planet->update(ObserverFlag::NOISE);
+	_planet->update(ObserverFlag::MESH);
 }
 
 void IOManager::updateTitleWindow()

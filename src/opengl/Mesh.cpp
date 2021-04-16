@@ -63,31 +63,34 @@ void Mesh::SetupMesh(bool generateBuffers)
 
 void Mesh::Draw(std::shared_ptr<Shader>& shader) const
 {
-    shader->Bind();
-
-    _material->SendMaterialUniform(shader);
-
-    // Textures 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    if (_material->TextureCount() > 0)
+    if (_visibility)
     {
-        glActiveTexture(GL_TEXTURE0); 
-        glBindTexture(GL_TEXTURE_2D, _material->GetParameterTexture(0));
+        shader->Bind();
+
+        _material->SendMaterialUniform(shader);
+
+        // Textures 
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        if (_material->TextureCount() > 0)
+        {
+            glActiveTexture(GL_TEXTURE0); 
+            glBindTexture(GL_TEXTURE_2D, _material->GetParameterTexture(0));
+        }
+
+        // draw mesh
+        glBindVertexArray(VAO);
+        if (_indices.empty())
+            glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
+        else
+            glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+
+        shader->Unbind();
+        glActiveTexture(GL_TEXTURE0);
+        glDisable(GL_BLEND);
     }
-
-    // draw mesh
-    glBindVertexArray(VAO);
-    if (_indices.empty())
-        glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
-    else
-        glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-
-    shader->Unbind();
-    glActiveTexture(GL_TEXTURE0);
-    glDisable(GL_BLEND);
 }
 
 void Mesh::UpdateGeometry(const std::vector<ShapeVertex>& vertices, const std::vector<unsigned int>& indices)

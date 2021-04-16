@@ -8,9 +8,21 @@
 #include "planets/ColorSettings.hpp"
 #include "planets/ShapeGenerator.hpp"
 
+#include "imgui/imgui_color_gradient.h"
+
 #include <memory>
+#include <list>
 
-
+enum class FaceRenderMask
+{
+	All = 0,
+	Top,
+	Bottom,
+	Left,
+	Right,
+	Front,
+	Back
+};
 
 class Planet
 {
@@ -33,10 +45,17 @@ public:
 
 	void Rotate(const glm::vec3& angles);
 
+	FaceRenderMask& getFaceRenderMask() { return _faceRenderMask; }
+
+	void RandomGenerate();
+
+
 private:
 	void generatePlanet();
 	void generateMesh();
 	void generateColors();
+
+	void sendUniforms();
 
 private:
 	int _resolution;
@@ -47,4 +66,8 @@ private:
 
 	TerrainFace _terrainFaces[6];
 	StaticMesh _staticMesh;
+
+	FaceRenderMask _faceRenderMask = FaceRenderMask::All;
+
+	float _maxElevation = 0.0f;
 };
