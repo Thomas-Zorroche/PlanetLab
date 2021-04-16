@@ -57,7 +57,7 @@ private:
 	void ShowMenuBar(GLFWwindow* window);
 	void ShowSettingsWindow();
 	void ShowViewportWindow();
-	void ShowConsoleWindow();
+	void ShowLogWindow();
 	void ShowSaveAsWindow();
 	void ShowNewSceneWindow();
 
@@ -65,8 +65,6 @@ private:
 
 private:
 	Framebuffer _fbo = Framebuffer();
-
-	std::string _consoleBuffer = "";
 
 	bool _saveFileOpen = false;
 	bool _newFileOpen = false;

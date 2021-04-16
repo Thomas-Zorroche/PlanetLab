@@ -11,6 +11,9 @@
 #include "engine/Scene.hpp"
 #include "engine/Color.hpp"
 
+#include "editor/AppLog.hpp"
+
+
 void mainloop(Window& windowObject);
 
 class Planet;
@@ -67,6 +70,9 @@ public:
 	bool IsReadyToGenerate() const { return _readyToGenerate; }
 	void SetReadyToGenerate(bool ready) { _readyToGenerate = ready; }
 
+	void AppendLog(const char* str) { _log.AddLog(("[%05d] " + std::string(str) + "\n").c_str(), ImGui::GetFrameCount()); }
+	void DrawLog() { _log.Draw(); }
+
 private:
 	static Application* s_instance;
 
@@ -85,5 +91,7 @@ private:
 	bool _loading = false;
 	bool _readyToGenerate = false; // TODO : remove this
 
+	AppLog _log;
 };
+
 

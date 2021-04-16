@@ -121,7 +121,7 @@ void Hud::draw(GLFWwindow* window)
     /* Permanent Windows */
     if (_settingsOpen) ShowSettingsWindow();
     ShowViewportWindow();
-    if (_terminalOpen) ShowConsoleWindow();
+    if (_terminalOpen) ShowLogWindow();
     ShowMenuBar(window);
 
     ImGui::End(); // Main Window
@@ -153,11 +153,11 @@ void  Hud::ShowMenuBar(GLFWwindow * window)
                         _planet->reset();
                         if (!IOManager::get().open(paths[i]))
                         {
-                            _consoleBuffer = "Error IO :: cannot open file " + paths[i];
+                            Application::Get().AppendLog(std::string("Error IO :: cannot open file " + paths[i]).c_str());
                         }
                         else
                         {
-                            _consoleBuffer = "File has been opened";
+                            Application::Get().AppendLog("File has been opened");
                         }
                     }
                 }
@@ -404,15 +404,9 @@ void Hud::ShowViewportWindow()
     ImGui::End();
 }
 
-void Hud::ShowConsoleWindow()
+void Hud::ShowLogWindow()
 {
-    // Console
-    if (ImGui::Begin("Console"))
-    {
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::Text(std::string("> " + _consoleBuffer).c_str());
-    }
-    ImGui::End();
+    Application::Get().DrawLog();
 }
 
 void Hud::ShowSaveAsWindow()
@@ -428,12 +422,12 @@ void Hud::ShowSaveAsWindow()
             // Error
             if (!IOManager::get().saveAs(std::string("res/scene/" + std::string(_bufferSaveLocation) + ".ini")))
             {
-                _consoleBuffer = "Error IO :: cannot save document";
+                Application::Get().AppendLog("Error IO :: cannot save document");
             }
             // Save As Success
             else
             {
-                _consoleBuffer = "File has been saved";
+                Application::Get().AppendLog("File has been saved");
             }
             _saveFileOpen = false;
         }
@@ -464,7 +458,7 @@ void Hud::ShowNewSceneWindow()
             _newFileOpen = false;
             IOManager::get().newFile();
             _planet->reset();
-            _consoleBuffer = "New scene created";
+            Application::Get().AppendLog("New scene created");
         }
         ImGui::SameLine();
         if (ImGui::Button("Cancel"))
@@ -504,11 +498,11 @@ void Hud::saveFile()
         // Check whether the save succeed
         if (!IOManager::get().save())
         {
-            _consoleBuffer = "Error IO :: cannot save file ";
+            Application::Get().AppendLog("Error IO :: cannot save file ");
         }
         else
         {
-            _consoleBuffer = "File has been saved";
+            Application::Get().AppendLog("File has been saved");
         }
     }
     // If not, open save as windows
