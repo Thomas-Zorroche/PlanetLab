@@ -1,5 +1,7 @@
 #include "IOManager.hpp"
 #include "planets/Planet.hpp"
+#include "planets/ShapeGenerator.hpp"
+#include "noise/NoiseFilter.hpp"
 
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -34,6 +36,11 @@ bool IOManager::saveAs(const std::string& outputFileName)
 	{
 		std::string section = "noiseSettings_" + std::to_string(layerCount);
 
+		std::string type = (layer->noiseSettings()->GetFilterType() == FilterType::Simple) ? "simple" : "rigid"; // TODO for the moment, there is just 2 type of noise...
+		ini[section]["type"] = type;
+		
+		ini[section]["seed"] = std::to_string(_planet->shapeGenerator()->noiseFilter(layerCount - 1)->Seed());
+
 		ini[section]["strength"] = std::to_string(layer->noiseSettings()->strength());
 		ini[section]["layersCount"] = std::to_string(layer->noiseSettings()->layersCount());
 		ini[section]["baseRoughness"] = std::to_string(layer->noiseSettings()->baseRoughness());
@@ -43,6 +50,7 @@ bool IOManager::saveAs(const std::string& outputFileName)
 		ini[section]["centerY"] = std::to_string(layer->noiseSettings()->center().y);
 		ini[section]["centerZ"] = std::to_string(layer->noiseSettings()->center().z);
 		ini[section]["minValue"] = std::to_string(layer->noiseSettings()->minValue());
+		ini[section]["weightMultiplier"] = std::to_string(layer->noiseSettings()->weightMultiplier());
 
 		layerCount++;
 	}
@@ -108,6 +116,8 @@ void IOManager::loadValues(const mINI::INIStructure& ini)
 	{
 		std::string section = "noiseSettings_" + std::to_string(i);
 		// Read values
+		std::string& typeStr		  = ini.get(section).get("type");
+		std::string& seedStr		  = ini.get(section).get("seed");
 		std::string& strengthStr      = ini.get(section).get("strength");
 		std::string& layersCountStr   = ini.get(section).get("layersCount");
 		std::string& baseRoughnessStr = ini.get(section).get("baseRoughness");
@@ -116,8 +126,11 @@ void IOManager::loadValues(const mINI::INIStructure& ini)
 		std::string& centerYStr       = ini.get(section).get("centerY");
 		std::string& centerZStr       = ini.get(section).get("centerZ");
 		std::string& minValueStr      = ini.get(section).get("minValue");
+		std::string& weightMultiplierStr      = ini.get(section).get("weightMultiplier");
 	
 		// Assign values
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->GetFilterType() = (typeStr == "simple") ? FilterType::Simple : FilterType::Rigid;
+		_planet->shapeGenerator()->noiseFilter(i - 1)->Reseed(std::atof(seedStr.c_str()));
 		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->strength() = std::atof(strengthStr.c_str());
 		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->layersCount() = std::atof(layersCountStr.c_str());
 		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->baseRoughness() = std::atof(baseRoughnessStr.c_str());
@@ -126,6 +139,7 @@ void IOManager::loadValues(const mINI::INIStructure& ini)
 		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().y = std::atof(centerYStr.c_str());
 		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().z = std::atof(centerZStr.c_str());
 		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->minValue() = std::atof(minValueStr.c_str());
+		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->weightMultiplier() = std::atof(weightMultiplierStr.c_str());
 	}
 
 	_planet->update(ObserverFlag::MESH);

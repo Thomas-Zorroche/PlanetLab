@@ -14,6 +14,7 @@ NoiseFilter::NoiseFilter(
 void NoiseFilter::Reseed(std::uint32_t seed)
 {
 	_noise.reseed(seed);
+	_seed = seed;
 }
 
 void NoiseFilter::Reseed()

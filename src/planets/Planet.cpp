@@ -120,6 +120,7 @@ void Planet::update(ObserverFlag flag)
 void Planet::updateNoiseLayersCount(int noiseLayersCount)
 {
 	int layersDiffCount = noiseLayersCount - _shapeSettings->noiseLayers().size();
+
 	// Add layers and filters
 	if (layersDiffCount > 0)
 	{
