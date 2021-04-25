@@ -5,8 +5,8 @@
 #include "engine/InputHandler.hpp"
 #include "engine/ResourceManager.hpp"
 #include "hud/Hud.hpp"
-#include "planets/Planet.hpp"
-#include "io/IOManager.hpp"
+#include "proceduralPlanet/Planet.hpp"
+#include "proceduralPlanet/io/IOManager.hpp"
 #include "engine/ProceduralEditor.hpp"
 
 namespace editor

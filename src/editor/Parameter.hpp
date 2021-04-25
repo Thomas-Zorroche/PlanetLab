@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <variant>
-#include "noise/NoiseSettings.hpp"
+#include "proceduralPlanet/noise/NoiseSettings.hpp"
 #include "engine/Application.hpp"
 
 #include "imgui/imgui.h"

@@ -5,7 +5,7 @@
 #include "glm/glm.hpp"
 #include "engine/Color.hpp"
 #include <GLFW/glfw3.h>
-#include "planets/Planet.hpp"
+#include "proceduralPlanet/Planet.hpp"
 #include "engine/SpriteSheet.hpp"
 
 #include <memory>

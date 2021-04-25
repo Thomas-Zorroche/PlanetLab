@@ -9,17 +9,17 @@
 
 #include "lighting/LightManager.hpp"
 
-#include "planets/Planet.hpp"
-#include "planets/ShapeSettings.hpp"
-#include "planets/ColorSettings.hpp"
-#include "noise/NoiseSettings.hpp"
-#include "noise/NoiseFilter.hpp"
+#include "proceduralPlanet//Planet.hpp"
+#include "proceduralPlanet//ShapeSettings.hpp"
+#include "proceduralPlanet//ColorSettings.hpp"
+#include "proceduralPlanet/noise/NoiseSettings.hpp"
+#include "proceduralPlanet/noise/NoiseFilter.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-#include "io/IOManager.hpp"
+#include "proceduralPlanet/io/IOManager.hpp"
 
 #include "imgui/imgui_color_gradient.h"
 
