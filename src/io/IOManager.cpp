@@ -15,12 +15,12 @@ void IOManager::newFile()
 }
 
 
-bool IOManager::save()
+bool IOManager::save(std::shared_ptr<Planet>& planet)
 {
-	return _currentFileSaved ? saveAs(_currentFileName) : false;
+	return _currentFileSaved ? saveAs(_currentFileName, planet) : false;
 }
 
-bool IOManager::saveAs(const std::string& outputFileName)
+bool IOManager::saveAs(const std::string& outputFileName, std::shared_ptr<Planet>& planet)
 {
 	// create a file instance
 	mINI::INIFile file(outputFileName);
@@ -29,17 +29,17 @@ bool IOManager::saveAs(const std::string& outputFileName)
 	mINI::INIStructure ini;
 
 	// populate the structure
-	ini["layers"]["count"] = std::to_string(_planet->shapeSettings()->noiseLayers().size());
+	ini["layers"]["count"] = std::to_string(planet->shapeSettings()->noiseLayers().size());
 
 	int layerCount = 1;
-	for (const auto& layer : _planet->shapeSettings()->noiseLayers())
+	for (const auto& layer : planet->shapeSettings()->noiseLayers())
 	{
 		std::string section = "noiseSettings_" + std::to_string(layerCount);
 
 		std::string type = (layer->noiseSettings()->GetFilterType() == FilterType::Simple) ? "simple" : "rigid"; // TODO for the moment, there is just 2 type of noise...
 		ini[section]["type"] = type;
 		
-		ini[section]["seed"] = std::to_string(_planet->shapeGenerator()->noiseFilter(layerCount - 1)->Seed());
+		ini[section]["seed"] = std::to_string(planet->shapeGenerator()->noiseFilter(layerCount - 1)->Seed());
 
 		ini[section]["strength"] = std::to_string(layer->noiseSettings()->strength());
 		ini[section]["layersCount"] = std::to_string(layer->noiseSettings()->layersCount());
@@ -70,7 +70,7 @@ bool IOManager::saveAs(const std::string& outputFileName)
 	}
 }
 
-bool IOManager::open(const std::string& inputFileName)
+bool IOManager::open(const std::string& inputFileName, std::shared_ptr<Planet>& planet)
 {
 	// first, create a file instance
 	mINI::INIFile file(inputFileName);
@@ -86,7 +86,7 @@ bool IOManager::open(const std::string& inputFileName)
 	}
 
 	// then import values and assign to the planet
-	loadValues(ini);
+	loadValues(ini, planet);
 
 	_currentFileSaved = true;
 	_currentFileName = inputFileName;
@@ -106,11 +106,11 @@ std::vector<std::string> IOManager::getAllFilesFromFolder(const std::string& pat
 	return paths;
 }
 
-void IOManager::loadValues(const mINI::INIStructure& ini)
+void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet>& planet)
 {
 	std::string& layersCountStr = ini.get("layers").get("count");
 	const int layersCount = std::atoi(layersCountStr.c_str());
-	_planet->updateNoiseLayersCount(layersCount);
+	planet->updateNoiseLayersCount(layersCount);
 
 	for (size_t i = 1; i <= layersCount; i++)
 	{
@@ -129,20 +129,20 @@ void IOManager::loadValues(const mINI::INIStructure& ini)
 		std::string& weightMultiplierStr      = ini.get(section).get("weightMultiplier");
 	
 		// Assign values
-		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->GetFilterType() = (typeStr == "simple") ? FilterType::Simple : FilterType::Rigid;
-		_planet->shapeGenerator()->noiseFilter(i - 1)->Reseed(std::atof(seedStr.c_str()));
-		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->strength() = std::atof(strengthStr.c_str());
-		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->layersCount() = std::atof(layersCountStr.c_str());
-		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->baseRoughness() = std::atof(baseRoughnessStr.c_str());
-		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->roughness() = std::atof(roughnessStr.c_str());
-		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().x = std::atof(centerXStr.c_str());
-		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().y = std::atof(centerYStr.c_str());
-		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().z = std::atof(centerZStr.c_str());
-		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->minValue() = std::atof(minValueStr.c_str());
-		_planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->weightMultiplier() = std::atof(weightMultiplierStr.c_str());
+		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->GetFilterType() = (typeStr == "simple") ? FilterType::Simple : FilterType::Rigid;
+		planet->shapeGenerator()->noiseFilter(i - 1)->Reseed(std::atof(seedStr.c_str()));
+		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->strength() = std::atof(strengthStr.c_str());
+		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->layersCount() = std::atof(layersCountStr.c_str());
+		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->baseRoughness() = std::atof(baseRoughnessStr.c_str());
+		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->roughness() = std::atof(roughnessStr.c_str());
+		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().x = std::atof(centerXStr.c_str());
+		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().y = std::atof(centerYStr.c_str());
+		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->center().z = std::atof(centerZStr.c_str());
+		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->minValue() = std::atof(minValueStr.c_str());
+		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->weightMultiplier() = std::atof(weightMultiplierStr.c_str());
 	}
 
-	_planet->update(ObserverFlag::MESH);
+	planet->update(ObserverFlag::MESH);
 }
 
 void IOManager::updateTitleWindow()

@@ -24,11 +24,10 @@ public:
 	IOManager& operator=(const IOManager&) = delete;
 
 	void setWindowPtr(GLFWwindow* window) { _windowPtr = window; }
-	void setPlanetPtr(const std::shared_ptr<Planet>& planet) { _planet = planet; }
 
-	bool save();
-	bool saveAs(const std::string& outputFileName);
-	bool open(const std::string& inputFileName);
+	bool save(std::shared_ptr<Planet>& planet);
+	bool saveAs(const std::string& outputFileName, std::shared_ptr<Planet>& planet);
+	bool open(const std::string& inputFileName, std::shared_ptr<Planet>& planet);
 	void newFile();
 
 	std::vector<std::string> getAllFilesFromFolder(const std::string& path);
@@ -40,7 +39,7 @@ public:
 	void updateTitleWindow();
 
 private:
-	void loadValues(const mINI::INIStructure& ini);
+	void loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet>& planet);
 
 	IOManager() = default;
 	~IOManager() = default;
@@ -51,5 +50,4 @@ private:
 	std::string _currentFileName = "New Scene";
 
 	GLFWwindow* _windowPtr = nullptr;
-	std::shared_ptr<Planet> _planet = nullptr;
 };

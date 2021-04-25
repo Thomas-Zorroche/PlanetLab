@@ -47,7 +47,6 @@ void Hud::init(Window& window)
 
     _fbo.resize(_viewportWidth, _viewportHeight);
     
-    IOManager::get().setWindowPtr(window.GetNativeWindow());
 }
 
 void Hud::draw(GLFWwindow* window)
@@ -151,7 +150,7 @@ void  Hud::ShowMenuBar(GLFWwindow * window)
                     if (ImGui::MenuItem(paths[i].c_str()))
                     {
                         _planet->reset();
-                        if (!IOManager::get().open(paths[i]))
+                        if (!IOManager::get().open(paths[i], _planet))
                         {
                             Application::Get().AppendLog(std::string("Error IO :: cannot open file " + paths[i]).c_str());
                         }
@@ -420,7 +419,7 @@ void Hud::ShowSaveAsWindow()
         if (ImGui::Button("Save"))
         {
             // Error
-            if (!IOManager::get().saveAs(std::string("res/scene/" + std::string(_bufferSaveLocation) + ".ini")))
+            if (!IOManager::get().saveAs(std::string("res/scene/" + std::string(_bufferSaveLocation) + ".ini"), _planet))
             {
                 Application::Get().AppendLog("Error IO :: cannot save document");
             }
@@ -496,7 +495,7 @@ void Hud::saveFile()
     if (IOManager::get().currentFileSaved())
     {
         // Check whether the save succeed
-        if (!IOManager::get().save())
+        if (!IOManager::get().save(_planet))
         {
             Application::Get().AppendLog("Error IO :: cannot save file ");
         }

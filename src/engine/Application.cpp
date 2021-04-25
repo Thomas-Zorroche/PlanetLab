@@ -13,13 +13,13 @@
 void mainloop(Window& windowObject)
 {
     GLFWwindow* window = windowObject.GetNativeWindow();
+    IOManager::get().setWindowPtr(window);
 
     // Load all the 
     ResourceManager::Get().LoadAllShaders();
 
     Scene scene;
     Hud::Get().init(windowObject);
-    IOManager::get().setPlanetPtr(scene.planet());
 
     auto camera = std::make_shared<Camera>();
     Renderer::Get().SetCamera(camera);

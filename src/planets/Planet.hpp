@@ -11,6 +11,7 @@
 #include "imgui/imgui_color_gradient.h"
 
 #include <memory>
+#include <string>
 #include <list>
 
 enum class FaceRenderMask
