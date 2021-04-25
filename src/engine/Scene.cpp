@@ -11,6 +11,10 @@
 
 #include <memory>
 
+namespace editor 
+{
+
+using namespace proceduralPlanet;
 
 Scene::Scene()
 	: _gizmo(2, 0.005)
@@ -41,3 +45,4 @@ void Scene::Free()
 	ResourceManager::Get().DeleteAllResources();
 }
 
+} // ns Editor

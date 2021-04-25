@@ -3,13 +3,18 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <GLFW/glfw3.h>
 
 #include "ini.h"
 #include "engine/Application.hpp"
 
-
+namespace proceduralPlanet
+{
 class Planet;
-class GLFWwindow;
+}
+
+namespace editor
+{
 
 class IOManager
 {
@@ -25,9 +30,9 @@ public:
 
 	void setWindowPtr(GLFWwindow* window) { _windowPtr = window; }
 
-	bool save(std::shared_ptr<Planet>& planet);
-	bool saveAs(const std::string& outputFileName, std::shared_ptr<Planet>& planet);
-	bool open(const std::string& inputFileName, std::shared_ptr<Planet>& planet);
+	bool save(std::shared_ptr<proceduralPlanet::Planet>& planet);
+	bool saveAs(const std::string& outputFileName, std::shared_ptr<proceduralPlanet::Planet>& planet);
+	bool open(const std::string& inputFileName, std::shared_ptr<proceduralPlanet::Planet>& planet);
 	void newFile();
 
 	std::vector<std::string> getAllFilesFromFolder(const std::string& path);
@@ -39,7 +44,7 @@ public:
 	void updateTitleWindow();
 
 private:
-	void loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet>& planet);
+	void loadValues(const mINI::INIStructure& ini, std::shared_ptr<proceduralPlanet::Planet>& planet);
 
 	IOManager() = default;
 	~IOManager() = default;
@@ -51,3 +56,5 @@ private:
 
 	GLFWwindow* _windowPtr = nullptr;
 };
+
+} // ns editor

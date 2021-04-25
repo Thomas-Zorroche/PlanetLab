@@ -11,12 +11,19 @@
 #include <memory>
 #include <string>
 
-class Window;
-class Camera;
-class Application;
+namespace proceduralPlanet
+{
 class NoiseSettings;
 class ShapeSettings;
 class ColorSettings;
+}
+
+namespace editor
+{
+
+class Window;
+class Camera;
+class Application;
 
 class Hud
 {
@@ -90,3 +97,5 @@ private:
 	float _WIDTH;
 	float _HEIGHT;
 };
+
+}	// ns editor

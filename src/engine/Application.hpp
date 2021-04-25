@@ -13,10 +13,15 @@
 
 #include "editor/AppLog.hpp"
 
+namespace proceduralPlanet 
+{
+	class Planet;
+};
+
+namespace editor 
+{
 
 void mainloop(Window& windowObject);
-
-class Planet;
 
 enum class UpdateMode
 {
@@ -31,7 +36,6 @@ enum class ObserverFlag
 	COLOR,
 	MESH
 };
-
 
 class Application
 {
@@ -55,9 +59,9 @@ public:
 
 	Window& GetWindow() { return *_window; }
 	ProceduralEditor& GetEditor() { return *_editor; }
-	std::shared_ptr<Planet> GetPlanet() { return _planet; }
+	std::shared_ptr<proceduralPlanet::Planet> GetPlanet() { return _planet; }
 
-	void AppendPlanet(const std::shared_ptr<Planet>& planet) { _planet = planet; }
+	void AppendPlanet(const std::shared_ptr<proceduralPlanet::Planet>& planet) { _planet = planet; }
 
 	Color GetBackgroundColor() const { return _backgroundColor; }
 	Color& GetBackgroundColor() { return _backgroundColor; }
@@ -79,8 +83,8 @@ private:
 private:
 	std::unique_ptr<Window> _window = nullptr;
 	std::unique_ptr<ProceduralEditor> _editor = nullptr;
-	std::shared_ptr<Planet> _planet = nullptr;
-	
+	std::shared_ptr<proceduralPlanet::Planet> _planet = nullptr;
+
 	UpdateMode _updateMode = UpdateMode::Auto;
 	std::vector<ObserverFlag> _updatesQueue;
 
@@ -93,5 +97,7 @@ private:
 
 	AppLog _log;
 };
+
+} // ns Editor
 
 

@@ -4,6 +4,9 @@
 #include <algorithm>
 #include <random>
 
+namespace editor
+{
+
 struct Color
 {
     float r, g, b;
@@ -37,3 +40,5 @@ struct Color
 
     friend bool operator==(const Color& lhs, const Color& rhs);
 };
+
+}   // ns editor

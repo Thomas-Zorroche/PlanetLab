@@ -4,6 +4,9 @@
 #include <GLFW/glfw3.h>
 
 
+namespace editor
+{
+
 void InitLogLevel(char* level);
 
 class Window
@@ -31,5 +34,7 @@ private:
     float _width = 1280.0f;
     float _height = 720.0f;
 };
+
+}   // ns editor
 
 

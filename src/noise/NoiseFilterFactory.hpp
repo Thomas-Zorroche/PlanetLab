@@ -9,6 +9,9 @@
 
 #include <memory>
 
+namespace proceduralPlanet
+{
+
 class NoiseFilterFactory
 {
 public:
@@ -26,3 +29,5 @@ public:
 		}
 	}
 };
+
+}	// ns proceduralPlanet

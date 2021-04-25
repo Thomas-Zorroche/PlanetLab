@@ -2,6 +2,8 @@
 
 #include "glm/glm.hpp"
 
+namespace editor
+{
 
 enum class KeyCode
 {
@@ -32,3 +34,5 @@ public:
 private:
 	//static bool _keyPressed = false;
 };
+
+}   // ns editor

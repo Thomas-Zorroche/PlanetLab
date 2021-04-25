@@ -6,6 +6,9 @@
 #include <vector>
 #include "GLFW/glfw3.h"
 
+namespace editor
+{
+
 class Camera;
 struct CallbackPtr;
 
@@ -38,3 +41,5 @@ struct CallbackPtr
 	CallbackPtr(const std::shared_ptr<Camera>& camera)
 		: _camera(camera) {}
 };
+
+}   // ns editor

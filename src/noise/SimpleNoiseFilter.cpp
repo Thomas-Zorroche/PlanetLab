@@ -4,6 +4,9 @@
 
 #include <algorithm>    // std::max
 
+namespace proceduralPlanet
+{
+
 SimpleNoiseFilter::SimpleNoiseFilter(const std::shared_ptr<NoiseSettings>& settings, std::uint32_t seed)
 	: NoiseFilter(settings, seed)
 {
@@ -30,3 +33,5 @@ float SimpleNoiseFilter::Evaluate(const glm::vec3& point) const
 	noiseValue = noiseValue - _settings->minValue();
 	return noiseValue * _settings->strength();
 }
+
+}	// ns proceduralPlanet

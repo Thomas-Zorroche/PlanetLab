@@ -1,6 +1,8 @@
 #include "ColorSettings.hpp"
 #include "opengl/Shader.h"
-#include <iostream> //TODO remove this
+
+namespace proceduralPlanet
+{
 
 ColorSettings::ColorSettings(const Color& color)
 	: _colorPlanet(color) {}
@@ -77,4 +79,6 @@ void ColorSettings::SetRandomColors(std::uint32_t seed)
 	);
 	_oceanDepth = 9;
 }
+
+}	// ns proceduralPlanet
 

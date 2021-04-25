@@ -6,6 +6,9 @@
 #include "noise/NoiseFilter.hpp"
 #include "noise/NoiseFilterFactory.hpp"
 
+namespace proceduralPlanet
+{
+
 ShapeGenerator::ShapeGenerator(const std::shared_ptr<ShapeSettings>& shapeSettings)
 	: _settings(shapeSettings), 
 	_noiseFilters(std::vector<std::shared_ptr<NoiseFilter> >(_settings->noiseLayers().size(), nullptr))
@@ -90,3 +93,5 @@ void ShapeGenerator::updateFilterType(std::uint32_t index)
 		_noiseFilters[index] = NoiseFilterFactory::CreateNoiseFilter(_settings->noiseLayer(index)->noiseSettings());
 	}
 }
+
+}	// ns proceduralPlanet

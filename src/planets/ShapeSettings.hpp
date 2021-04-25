@@ -5,6 +5,9 @@
 
 #include "noise/NoiseSettings.hpp"
 
+namespace proceduralPlanet
+{
+
 class NoiseLayer
 {
 public:
@@ -41,5 +44,7 @@ private:
 	float _planetRadius;
 	std::vector<std::shared_ptr<NoiseLayer> > _noiseLayers;
 };
+
+}	// ns proceduralPlanet
 
 

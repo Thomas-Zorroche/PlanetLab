@@ -1,6 +1,9 @@
 #include "TerrainFace.hpp"
 #include <vector>
 
+namespace proceduralPlanet
+{
+
 glm::vec3 calculateSurfaceNormal(const glm::vec3& A, const glm::vec3& B, const glm::vec3& C);
 
 TerrainFace::TerrainFace(const std::shared_ptr<ShapeGenerator>& shapeGenerator, int resolution, const glm::vec3& localUp)
@@ -69,4 +72,6 @@ void TerrainFace::updateResolution(int resolution)
 	_resolution = resolution;
 	constructMesh();
 }
+
+}	// ns proceduralPlanet
 

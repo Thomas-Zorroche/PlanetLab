@@ -7,6 +7,7 @@
 
 #include <iostream>
 
+
 const int Material::NumberTexturesMax = 5;
 
 Material::Material()
@@ -97,3 +98,4 @@ void Material::SendMaterialUniform(std::shared_ptr<Shader>& shader)
 	shader->SetUniform3f("material.specular", _specular);
 	shader->SetUniform1f("material.shininess", _shininess);
 }
+

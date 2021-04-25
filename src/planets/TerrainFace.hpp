@@ -5,6 +5,9 @@
 #include "planets/ShapeGenerator.hpp"
 #include <memory>
 
+namespace proceduralPlanet
+{
+
 class TerrainFace
 {
 public:
@@ -34,3 +37,5 @@ private:
 
 	float _maxElevation = 1.0f;
 };
+
+}	// ns proceduralPlanet

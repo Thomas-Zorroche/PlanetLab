@@ -1,5 +1,8 @@
 #pragma once
 
+namespace editor
+{
+
 enum class LogLevel
 {
 	NONE = 0, INFO, WARNING, ERROR
@@ -30,3 +33,5 @@ private:
 	LogLevel _logLevel = LogLevel::INFO;
 
 };
+
+}   // ns editor

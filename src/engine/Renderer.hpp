@@ -14,6 +14,9 @@
 #include <memory>
 
 
+namespace editor
+{
+
 class Renderer
 {
 public:
@@ -38,11 +41,11 @@ public:
 		float ratio = Hud::Get().viewportWidth() / Hud::Get().viewportHeight();
 		float nearPlane = _camera->GetNearPlane();
 		float farPlane = _camera->GetFarPlane();
-		
+
 		_projection = glm::perspective(glm::radians(fov), ratio, nearPlane, farPlane);
 	}
 
-	void SendTransMatrixUniforms(const glm::mat4 & modelMatrix, std::shared_ptr<Shader>& shader, bool removeTranslationView = false)
+	void SendTransMatrixUniforms(const glm::mat4& modelMatrix, std::shared_ptr<Shader>& shader, bool removeTranslationView = false)
 	{
 		if (removeTranslationView)
 			_view = glm::mat4(glm::mat3(_view));
@@ -65,7 +68,7 @@ public:
 		ComputeProjectionMatrix();
 	}
 
-	glm::mat4 View() const { return _view;  }
+	glm::mat4 View() const { return _view; }
 
 private:
 	Renderer() = default;
@@ -75,3 +78,5 @@ private:
 	glm::mat4 _projection;
 	glm::mat4 _view;
 };
+
+}	// ns editor

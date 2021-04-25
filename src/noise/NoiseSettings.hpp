@@ -7,6 +7,8 @@
 #include <vector>
 #include <memory>
 
+namespace proceduralPlanet
+{
 
 enum class FilterType
 {
@@ -74,4 +76,6 @@ private:
 	// Rigid
 	float _weightMultiplier = 0.5;
 };
+
+}	// ns proceduralPlanet
 

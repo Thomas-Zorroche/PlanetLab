@@ -13,6 +13,9 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+namespace editor
+{
+
 // Default Constructor
 StaticMesh::StaticMesh(const std::shared_ptr<Model>& model, const TransformLayout& transLayout, const std::string& shaderName)
 	: _model(model), 
@@ -120,3 +123,4 @@ void StaticMesh::Free()
 	_model->Free();
 }
 
+}   // ns editor

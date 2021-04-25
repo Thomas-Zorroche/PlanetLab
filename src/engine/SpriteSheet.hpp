@@ -3,6 +3,9 @@
 #include "opengl/Texture.h"
 #include "glm/glm.hpp"
 
+namespace editor
+{
+
 class SpriteSheet
 {
 public:
@@ -24,3 +27,5 @@ private:
 	glm::vec2 _uv1;
 	glm::vec2 _uv2;
 };
+
+}   // ns editor

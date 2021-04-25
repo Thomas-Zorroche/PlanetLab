@@ -1,5 +1,8 @@
 ﻿#include "NoiseFilter.hpp"
 
+namespace proceduralPlanet
+{
+
 NoiseFilter::NoiseFilter(
 	const std::shared_ptr<NoiseSettings>& settings,
 	std::uint32_t seed
@@ -31,4 +34,6 @@ void NoiseFilter::SetSettings(const std::shared_ptr<NoiseSettings>& settings)
 {
 	_settings = settings;
 }
+
+}	// ns proceduralPlanet
 

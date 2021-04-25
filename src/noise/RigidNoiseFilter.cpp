@@ -3,6 +3,8 @@
 
 #include <algorithm>    // std::max
 
+namespace proceduralPlanet
+{
 
 RigidNoiseFilter::RigidNoiseFilter(const std::shared_ptr<NoiseSettings>& settings, std::uint32_t seed)
 	: NoiseFilter(settings, seed)
@@ -34,3 +36,5 @@ float RigidNoiseFilter::Evaluate(const glm::vec3& point) const
 	noiseValue = std::max(0.0f, noiseValue - _settings->minValue());
 	return noiseValue * _settings->strength();
 }
+
+}	// ns proceduralPlanet

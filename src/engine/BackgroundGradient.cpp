@@ -5,6 +5,9 @@
 
 #include <vector>
 
+namespace editor
+{
+
 BackgroundGradient::BackgroundGradient()
 	: _mesh(Mesh()), _shader(ResourceManager::Get().GetShader("BackgroundGradient"))
 {
@@ -38,4 +41,7 @@ void BackgroundGradient::Draw(float viewportHeight)
 	glEnable(GL_DEPTH_TEST);
 	_shader->Unbind();
 }
+
+} // ns editor
+
 

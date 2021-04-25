@@ -6,6 +6,9 @@
 #include "PerlinNoise.hpp"
 #include "NoiseSettings.hpp"
 
+namespace proceduralPlanet
+{
+
 /*
 * Abstact Class For all the noise filters
 */
@@ -19,7 +22,7 @@ public:
 
 	virtual ~NoiseFilter() {};
 
-	virtual float Evaluate(const glm::vec3& point) const  = 0;
+	virtual float Evaluate(const glm::vec3& point) const = 0;
 
 	virtual void Reseed(std::uint32_t seed);
 
@@ -34,3 +37,5 @@ protected:
 	siv::PerlinNoise _noise;
 	std::shared_ptr<NoiseSettings> _settings;
 };
+
+}	// ns proceduralPlanet

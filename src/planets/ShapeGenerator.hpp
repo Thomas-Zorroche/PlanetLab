@@ -5,6 +5,10 @@
 #include <memory>
 #include <vector>
 
+
+namespace proceduralPlanet
+{
+
 class NoiseFilter;
 class ShapeSettings;
 
@@ -32,3 +36,5 @@ private:
 	std::shared_ptr<ShapeSettings> _settings;
 	std::vector<std::shared_ptr<NoiseFilter> > _noiseFilters;
 };
+
+}	// ns proceduralPlanet

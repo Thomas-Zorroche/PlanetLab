@@ -6,8 +6,12 @@
 #include <memory>
 #include <vector>
 
+
 class Color;
 class Shader;
+
+namespace proceduralPlanet
+{
 
 class ColorSettings
 {
@@ -48,3 +52,5 @@ private:
 	Color _oceanColor = Color(0, 0, 1);
 
 };
+
+}	// ns proceduralPlanet

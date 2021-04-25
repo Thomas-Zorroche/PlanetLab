@@ -23,6 +23,11 @@
 
 #include "imgui/imgui_color_gradient.h"
 
+namespace editor
+{
+
+using namespace proceduralPlanet;
+
 void Hud::init(Window& window)
 {
     // Initialize ImGui
@@ -46,7 +51,7 @@ void Hud::init(Window& window)
     _settingsWidth = _WIDTH - _viewportWidth;
 
     _fbo.resize(_viewportWidth, _viewportHeight);
-    
+
 }
 
 void Hud::draw(GLFWwindow* window)
@@ -65,65 +70,65 @@ void Hud::draw(GLFWwindow* window)
     else
     {
 
-    static bool opt_fullscreen = true;
-    static bool opt_padding = false;
-    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+        static bool opt_fullscreen = true;
+        static bool opt_padding = false;
+        static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-    // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-    // because it would be confusing to have two docking targets within each others.
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-    if (opt_fullscreen)
-    {
-        const ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(viewport->WorkPos);
-        ImGui::SetNextWindowSize(viewport->WorkSize);
-        ImGui::SetNextWindowViewport(viewport->ID);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-    }
-    else
-    {
-        dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-    }
+        // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+        // because it would be confusing to have two docking targets within each others.
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        if (opt_fullscreen)
+        {
+            const ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos(viewport->WorkPos);
+            ImGui::SetNextWindowSize(viewport->WorkSize);
+            ImGui::SetNextWindowViewport(viewport->ID);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+            window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+            window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        }
+        else
+        {
+            dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+        }
 
-    if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-        window_flags |= ImGuiWindowFlags_NoBackground;
+        if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+            window_flags |= ImGuiWindowFlags_NoBackground;
 
-    if (!opt_padding)
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-    ImGui::Begin("DockSpace Demo", &_dockspaceOpen, window_flags);
-    if (!opt_padding)
-        ImGui::PopStyleVar();
+        if (!opt_padding)
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::Begin("DockSpace Demo", &_dockspaceOpen, window_flags);
+        if (!opt_padding)
+            ImGui::PopStyleVar();
 
-    if (opt_fullscreen)
-        ImGui::PopStyleVar(2);
+        if (opt_fullscreen)
+            ImGui::PopStyleVar(2);
 
-    // DockSpace
-    if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-    {
-        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-    }
+        // DockSpace
+        if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+        {
+            ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+        }
 
 
-    if (Application::Get().GetUpdateMode() == UpdateMode::Auto || Application::Get().IsReadyToGenerate())
-    {
-        Application::Get().GenerateUpdateQueue();
-    }
+        if (Application::Get().GetUpdateMode() == UpdateMode::Auto || Application::Get().IsReadyToGenerate())
+        {
+            Application::Get().GenerateUpdateQueue();
+        }
 
-    /* Pop up Windows */
-    if (_saveFileOpen) ShowSaveAsWindow();
-    if (_newFileOpen) ShowNewSceneWindow();
+        /* Pop up Windows */
+        if (_saveFileOpen) ShowSaveAsWindow();
+        if (_newFileOpen) ShowNewSceneWindow();
 
-    /* Permanent Windows */
-    if (_settingsOpen) ShowSettingsWindow();
-    ShowViewportWindow();
-    if (_terminalOpen) ShowLogWindow();
-    ShowMenuBar(window);
+        /* Permanent Windows */
+        if (_settingsOpen) ShowSettingsWindow();
+        ShowViewportWindow();
+        if (_terminalOpen) ShowLogWindow();
+        ShowMenuBar(window);
 
-    ImGui::End(); // Main Window
+        ImGui::End(); // Main Window
     }
 
     // Render ImGUI
@@ -131,7 +136,7 @@ void Hud::draw(GLFWwindow* window)
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void  Hud::ShowMenuBar(GLFWwindow * window)
+void  Hud::ShowMenuBar(GLFWwindow* window)
 {
     if (ImGui::BeginMenuBar())
     {
@@ -219,7 +224,7 @@ void Hud::ShowSettingsWindow()
                 ImGui::Separator();
 
                 // Changer le seed, les couleurs, et ajoute un epsilon au valeur 
-                if (ImGui::Button("Generate Random")) 
+                if (ImGui::Button("Generate Random"))
                 {
                     _planet->RandomGenerate();
                 }
@@ -295,7 +300,7 @@ void Hud::ShowSettingsWindow()
                             Application::Get().Update(ObserverFlag::COLOR);
                         }
                     }
-                    
+
                     ImGui::Checkbox("Use Color Ramp", &_color->GetUseLandmassRamp());
 
                     if (_color->GetUseLandmassRamp())
@@ -310,8 +315,8 @@ void Hud::ShowSettingsWindow()
                 if (ImGui::TreeNode("Ocean"))
                 {
                     ImGui::Checkbox("Use a different color for ocean", &_color->GetUseOceanColor());
-                    
-                    if (_color->GetUseOceanColor()) 
+
+                    if (_color->GetUseOceanColor())
                     {
                         ImGui::SliderFloat("Depth", &_planet->colorSettings()->GetOceanDepth(), 0.0f, 10.0f);
                         ImGui::ColorEdit3("Color", (float*)&_planet->colorSettings()->GetOceanColor());
@@ -390,8 +395,8 @@ void Hud::ShowViewportWindow()
             if (ImGui::Begin("Loading", false, window_flags))
             {
                 float frame = Application::Get().GetLastFrameDuration();
-                ImGui::Image((ImTextureID)_loadingWheel.GetId(), ImVec2(40, 40), 
-                    ImVec2(_loadingWheel.GetUV1().x, _loadingWheel.GetUV1().y), 
+                ImGui::Image((ImTextureID)_loadingWheel.GetId(), ImVec2(40, 40),
+                    ImVec2(_loadingWheel.GetUV1().x, _loadingWheel.GetUV1().y),
                     ImVec2(_loadingWheel.GetUV2().x, _loadingWheel.GetUV2().y)
                 );
                 _loadingWheel.NextSprite();
@@ -536,4 +541,6 @@ void Hud::unbindFbo()
 {
     _fbo.unbind();
 }
+
+};  // ns editor
 

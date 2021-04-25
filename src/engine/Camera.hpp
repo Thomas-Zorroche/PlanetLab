@@ -12,6 +12,9 @@
 
 #include "engine/Application.hpp"
 
+namespace editor
+{
+
 enum class DIRCAM
 {
 	FRONT = 0, LEFT
@@ -31,14 +34,14 @@ public:
 	float GetHeight() const { return _heightScreen; }
 	float GetNearPlane() const { return _nearPlane; }
 	float GetFarPlane() const { return _farPlane; }
-	
+
 	void updateViewMatrix();
 	glm::mat4 getViewMatrix() const { return _viewMatrix; }
 
 	// Getters Camera
-	float GetLastX() const  { return _lastX; }
-	float GetLastY() const  { return _lastY; }
-	float GetSensitivity() const  { return _sensitivity; }
+	float GetLastX() const { return _lastX; }
+	float GetLastY() const { return _lastY; }
+	float GetSensitivity() const { return _sensitivity; }
 	glm::vec3 GetPosition() const { return _Position; };
 	glm::vec3 GetUpVector() const { return _UpVector; };
 	glm::vec3 GetViewDir() const { return -glm::transpose(_viewMatrix)[2]; }
@@ -58,7 +61,7 @@ private:
 	float _distanceFromCenter = 4.0f;
 	glm::vec3 _Position;
 
-	glm::vec3 _UpVector = glm::vec3(0, 1, 0); 
+	glm::vec3 _UpVector = glm::vec3(0, 1, 0);
 
 	float _lastX;     // Last Mouse coordinates
 	float _lastY;
@@ -74,3 +77,5 @@ private:
 
 	bool _canRotate = false;
 };
+
+}	// ns editor

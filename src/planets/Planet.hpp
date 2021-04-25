@@ -14,6 +14,9 @@
 #include <string>
 #include <list>
 
+namespace proceduralPlanet
+{
+
 enum class FaceRenderMask
 {
 	All = 0,
@@ -38,7 +41,7 @@ public:
 
 	int& resolution() { return _resolution; }
 
-	void update(ObserverFlag flag);
+	void update(editor::ObserverFlag flag);
 
 	void updateNoiseLayersCount(int noiseLayersCount);
 
@@ -50,12 +53,10 @@ public:
 
 	void RandomGenerate();
 
-
 private:
 	void generatePlanet();
 	void generateMesh();
 	void generateColors();
-
 	void sendUniforms();
 
 private:
@@ -72,3 +73,5 @@ private:
 
 	float _maxElevation = 0.0f;
 };
+
+} // ns Procedural Planet

@@ -2,6 +2,8 @@
 
 #include "noise/NoiseSettings.hpp"
 
+namespace proceduralPlanet
+{
 
 ShapeSettings::ShapeSettings(float radius)
 	: _planetRadius(radius),
@@ -62,3 +64,5 @@ NoiseLayer::NoiseLayer(const std::shared_ptr<NoiseSettings>& settings)
 {
 
 }
+
+}	// ns proceduralPlanet

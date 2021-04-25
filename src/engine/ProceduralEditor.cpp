@@ -1,5 +1,7 @@
 ﻿#include "ProceduralEditor.hpp"
 
+namespace editor
+{
 
 ProceduralEditor::ProceduralEditor()
 {
@@ -35,3 +37,5 @@ bool& ProceduralEditor::GetAxisPtr()
 {
     return _showAxis;
 }
+
+}   // ns editor

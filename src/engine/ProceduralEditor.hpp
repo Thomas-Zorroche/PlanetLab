@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+namespace editor
+{
+
 class ProceduralEditor
 {
 public:
@@ -20,3 +23,5 @@ private:
 	bool _showWireframe = false;
 	bool _showAxis = false;
 };
+
+}   // ns editor

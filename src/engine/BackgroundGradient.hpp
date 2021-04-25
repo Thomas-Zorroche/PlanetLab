@@ -5,6 +5,9 @@
 #include "opengl/Shader.h"
 #include <memory>
 
+namespace editor
+{
+
 class BackgroundGradient
 {
 public:
@@ -16,3 +19,5 @@ private:
 	Mesh _mesh;
 	std::shared_ptr<Shader> _shader;
 };
+
+} // ns editor

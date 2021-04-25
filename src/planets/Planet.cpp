@@ -12,6 +12,8 @@
 #include <random>
 #include <chrono>
 
+namespace proceduralPlanet
+{
 
 Planet::Planet(int resolution)
 	: _resolution(resolution),
@@ -55,7 +57,6 @@ void Planet::sendUniforms()
 	shader->Unbind();
 }
 
-
 /* Generate Fonctions */
 void Planet::generateMesh()
 {
@@ -93,7 +94,6 @@ void Planet::generatePlanet()
 	generateMesh();
 	generateColors();
 }
-
 
 void Planet::update(ObserverFlag flag)
 {
@@ -175,6 +175,7 @@ void Planet::RandomGenerate()
 	Application::Get().Update(ObserverFlag::COLOR);
 }
 
+} // ns Procedural Planet
 
 
 

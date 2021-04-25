@@ -4,6 +4,8 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+namespace editor
+{
 
 bool Input::IsKeyPressed(KeyCode key)
 {
@@ -31,3 +33,5 @@ float Input::GetMouseY()
 {
 	return 0.0f;
 }
+
+}   // ns editor

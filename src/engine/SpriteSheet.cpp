@@ -1,6 +1,9 @@
 ﻿#include "SpriteSheet.hpp"
 #include "engine/ResourceManager.hpp"
 
+namespace editor
+{
+
 SpriteSheet::SpriteSheet(const std::string& texturePath, int spriteCount)
 	: _texture(ResourceManager::Get().LoadTexture(texturePath)),
 	_spriteCount(spriteCount)
@@ -32,3 +35,5 @@ glm::vec2 SpriteSheet::GetUV2() const
 {
 	return glm::vec2(_uv2.x / _texture.Width(), _uv2.y);
 }
+
+}   // ns editor

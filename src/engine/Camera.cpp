@@ -1,17 +1,19 @@
 #include "engine/Camera.hpp"
 #include "common.hpp"
 
+namespace editor
+{
 
 Camera::Camera()
 	: _Position(0, 0, +_distanceFromCenter),
-	_lastX(450.0f), 
+	_lastX(450.0f),
 	_lastY(320.0f)
 {
 	updateViewMatrix();
 }
 
 void Camera::updateViewMatrix()
-{ 
+{
 	_viewMatrix = glm::lookAt(_Position, glm::vec3(0, 0, 0), _UpVector);
 }
 
@@ -26,6 +28,8 @@ void Camera::zoom(float value)
 	_Position *= value;
 	updateViewMatrix();
 }
+
+}	// ns editor
 
 
 
