@@ -16,6 +16,13 @@
 namespace proceduralPlanet 
 {
 	class Planet;
+
+	enum class ObserverFlag
+	{
+		RESOLUTION = 0,
+		COLOR,
+		MESH
+	};
 };
 
 namespace editor 
@@ -30,12 +37,7 @@ enum class UpdateMode
 	OnGenerate
 };
 
-enum class ObserverFlag
-{
-	RESOLUTION = 0,
-	COLOR,
-	MESH
-};
+
 
 class Application
 {
@@ -52,8 +54,8 @@ public:
 
 	// Updates Handler
 	void GenerateUpdateQueue(bool onRelease = false);
-	void Update(ObserverFlag flag);
-	void AddUpdateIntoQueue(ObserverFlag flag);
+	void Update(proceduralPlanet::ObserverFlag flag);
+	void AddUpdateIntoQueue(proceduralPlanet::ObserverFlag flag);
 	UpdateMode& GetUpdateMode() { return _updateMode; }
 	UpdateMode GetUpdateMode() const { return _updateMode; }
 
@@ -86,7 +88,7 @@ private:
 	std::shared_ptr<proceduralPlanet::Planet> _planet = nullptr;
 
 	UpdateMode _updateMode = UpdateMode::Auto;
-	std::vector<ObserverFlag> _updatesQueue;
+	std::vector<proceduralPlanet::ObserverFlag> _updatesQueue;
 
 	Color _backgroundColor = Color(0.570, 0.598, 0.727);
 

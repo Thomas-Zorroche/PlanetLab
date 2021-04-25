@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include <GLFW/glfw3.h>
+//#include <GLFW/glfw3.h>
 
 #include "ini.h"
 #include "engine/Application.hpp"
@@ -13,8 +13,6 @@ namespace proceduralPlanet
 class Planet;
 }
 
-namespace editor
-{
 
 class IOManager
 {
@@ -28,7 +26,7 @@ public:
 	IOManager(const IOManager&) = delete;
 	IOManager& operator=(const IOManager&) = delete;
 
-	void setWindowPtr(GLFWwindow* window) { _windowPtr = window; }
+	//void setWindowPtr(GLFWwindow* window) { _windowPtr = window; }
 
 	bool save(std::shared_ptr<proceduralPlanet::Planet>& planet);
 	bool saveAs(const std::string& outputFileName, std::shared_ptr<proceduralPlanet::Planet>& planet);
@@ -54,7 +52,6 @@ private:
 	bool _unsavedValues = false;				// If user change any value and did not save
 	std::string _currentFileName = "New Scene";
 
-	GLFWwindow* _windowPtr = nullptr;
+	//GLFWwindow* _windowPtr = nullptr;
 };
 
-} // ns editor

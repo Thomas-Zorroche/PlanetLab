@@ -3,12 +3,12 @@
 
 int main(int argc, char** argv)
 {
-    Application& app = Application(argc, argv);
+    editor::Application& app = editor::Application(argc, argv);
 
     if (!app.GetWindow().Init())
         return -1;
 
-    mainloop(app.GetWindow());
+    editor::mainloop(app.GetWindow());
 
     glfwTerminate();
     return 0;

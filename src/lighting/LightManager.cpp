@@ -17,7 +17,7 @@ void LightManager::SendUniforms(const std::shared_ptr<Shader>& shader)
 	shader->SetUniform3f("dirLight.specular", _light->Specular());
 
 	glm::mat4 modelLight = glm::rotate(glm::mat4(1.0f), glm::radians((float)glfwGetTime() * 0), glm::vec3(0, 1, 0));
-	glm::vec4 LightDirection = Renderer::Get().View() * modelLight * glm::vec4(1, 1, 1, 0);
+	glm::vec4 LightDirection = editor::Renderer::Get().View() * modelLight * glm::vec4(1, 1, 1, 0);
 
 	shader->SetUniform3f("dirLight.direction", LightDirection.x, LightDirection.y, LightDirection.z);
 }

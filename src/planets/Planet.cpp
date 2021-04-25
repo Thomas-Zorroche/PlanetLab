@@ -171,8 +171,8 @@ void Planet::RandomGenerate()
 	_colorSettings->SetRandomColors(seed);
 
 	// Update Mesh
-	Application::Get().Update(ObserverFlag::MESH);
-	Application::Get().Update(ObserverFlag::COLOR);
+	editor::Application::Get().Update(ObserverFlag::MESH);
+	editor::Application::Get().Update(ObserverFlag::COLOR);
 }
 
 } // ns Procedural Planet

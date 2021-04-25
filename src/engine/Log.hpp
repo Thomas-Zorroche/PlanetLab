@@ -1,8 +1,5 @@
 #pragma once
 
-namespace editor
-{
-
 enum class LogLevel
 {
 	NONE = 0, INFO, WARNING, ERROR
@@ -34,4 +31,3 @@ private:
 
 };
 
-}   // ns editor

@@ -3,9 +3,10 @@
 #include "planets/ShapeGenerator.hpp"
 #include "noise/NoiseFilter.hpp"
 
-#include <GLFW/glfw3.h>
 #include <iostream>
 #include <filesystem>
+
+using namespace proceduralPlanet;
 
 void IOManager::newFile()
 {
@@ -147,14 +148,14 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 
 void IOManager::updateTitleWindow()
 {
-	if (_unsavedValues && _currentFileSaved)
-	{
-		glfwSetWindowTitle(_windowPtr, std::string("Procedural Planets * " + _currentFileName).c_str());
-	}
-	else
-	{
-		glfwSetWindowTitle(_windowPtr, std::string("Procedural Planets " + _currentFileName).c_str());
-	}
+	//if (_unsavedValues && _currentFileSaved)
+	//{
+	//	glfwSetWindowTitle(_windowPtr, std::string("Procedural Planets * " + _currentFileName).c_str());
+	//}
+	//else
+	//{
+	//	glfwSetWindowTitle(_windowPtr, std::string("Procedural Planets " + _currentFileName).c_str());
+	//}
 }
 
 void IOManager::setUnsavedValues()

@@ -7,6 +7,13 @@
 #include <vector>
 #include <memory>
 
+
+namespace editor
+{
+class ParameterBase;
+using ParametersMap = std::unordered_map < std::string, std::shared_ptr<ParameterBase> >;
+}
+
 namespace proceduralPlanet
 {
 
@@ -15,10 +22,6 @@ enum class FilterType
 	Simple =0,
 	Rigid
 };
-
-class ParameterBase;
-using ParametersMap = std::unordered_map < std::string, std::shared_ptr<ParameterBase> >;
-
 
 class NoiseSettings
 {
@@ -56,12 +59,12 @@ public:
 	FilterType& GetFilterType();
 
 private:
-	friend const std::shared_ptr<ParameterBase>& GetParameterByName(const ParametersMap& parameters, const std::string& name);
+	friend const std::shared_ptr<editor::ParameterBase>& GetParameterByName(const editor::ParametersMap& parameters, const std::string& name);
 
 private:
 	enum FilterType _filterType = FilterType::Simple;
 
-	ParametersMap _parameters;
+	editor::ParametersMap _parameters;
 	std::vector<std::string> _parametersNames; // liste triée
 
 	// Simple

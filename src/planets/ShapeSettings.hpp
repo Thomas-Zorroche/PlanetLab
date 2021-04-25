@@ -34,7 +34,6 @@ public:
 	std::vector<std::shared_ptr<NoiseLayer> > noiseLayers();
 	std::shared_ptr<NoiseLayer> noiseLayer(unsigned int index);
 
-	void updateLayers(int layersCount);
 	void addLayer(const std::shared_ptr<NoiseLayer>& layer);
 	void removeLastLayer();
 	void removeLayer(unsigned int index);

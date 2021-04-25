@@ -17,7 +17,7 @@ using namespace proceduralPlanet;
 void mainloop(Window& windowObject)
 {
     GLFWwindow* window = windowObject.GetNativeWindow();
-    IOManager::get().setWindowPtr(window);
+    //IOManager::get().setWindowPtr(window);
 
     // Load all the 
     ResourceManager::Get().LoadAllShaders();

@@ -41,7 +41,7 @@ public:
 
 	int& resolution() { return _resolution; }
 
-	void update(editor::ObserverFlag flag);
+	void update(ObserverFlag flag);
 
 	void updateNoiseLayersCount(int noiseLayersCount);
 

@@ -10,6 +10,10 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+
+namespace editor
+{
+
 using ParameterType = std::variant<float, int, bool, glm::vec3>;
 
 /*
@@ -18,12 +22,12 @@ using ParameterType = std::variant<float, int, bool, glm::vec3>;
 class ParameterBase
 {
 public:
-	ParameterBase(const std::string& name, FilterType type, ObserverFlag flag)
+	ParameterBase(const std::string& name, proceduralPlanet::FilterType type, proceduralPlanet::ObserverFlag flag)
 		: _name(name), _type(type), _flag(flag)	{};
 
 	virtual ~ParameterBase() {}
 
-	FilterType GetType() const { return _type; };
+	proceduralPlanet::FilterType GetType() const { return _type; };
 
 	//ParameterType GetValue() const { return _value; }
 	//ParameterType& GetValue() { return _value; }
@@ -32,8 +36,8 @@ public:
 
 protected:
 	std::string _name;
-	FilterType _type;
-	ObserverFlag _flag;
+	proceduralPlanet::FilterType _type;
+	proceduralPlanet::ObserverFlag _flag;
 };
 
 /*
@@ -42,7 +46,7 @@ protected:
 class ParameterFloat : public ParameterBase
 {
 public:
-	ParameterFloat(const std::string& name, FilterType type, ObserverFlag flag, float& value, float min, float max)
+	ParameterFloat(const std::string& name, proceduralPlanet::FilterType type, proceduralPlanet::ObserverFlag flag, float& value, float min, float max)
 		: ParameterBase(name, type, flag), _value(value), _min(min), _max(max) {};
 
 	void Display() override 
@@ -62,7 +66,7 @@ private:
 class ParameterInt : public ParameterBase
 {
 public:
-	ParameterInt(const std::string& name, FilterType type, ObserverFlag flag, int& value, int min, int max)
+	ParameterInt(const std::string& name, proceduralPlanet::FilterType type, proceduralPlanet::ObserverFlag flag, int& value, int min, int max)
 		: ParameterBase(name, type, flag), _value(value), _min(min), _max(max) {};
 
 
@@ -83,7 +87,7 @@ private:
 class ParameterBoolean : public ParameterBase
 {
 public:
-	ParameterBoolean(const std::string& name, FilterType type, ObserverFlag flag, bool value)
+	ParameterBoolean(const std::string& name, proceduralPlanet::FilterType type, proceduralPlanet::ObserverFlag flag, bool value)
 		: ParameterBase(name, type, flag), _value(value) {};
 
 	void Display() override
@@ -98,28 +102,11 @@ private:
 	bool& _value;
 };
 
-//class ParameterColor : public ParameterBase
-//{
-//public:
-//	ParameterColor(const std::string& name, FilterType type, ObserverFlag flag, const Color& defaultValue)
-//		: ParameterBase(name, type, flag), _value(defaultValue) {};
-//
-//	void Display() override
-//	{
-//		if (ImGui::ColorEdit3(_name.c_str(), (float*)&(_value)))
-//		{
-//			Application::Get().Update(_flag);
-//		}
-//	};
-//
-//private:
-//	Color _value;
-//};
 
 class ParameterVec3 : public ParameterBase
 {
 public:
-	ParameterVec3(const std::string& name, FilterType type, ObserverFlag flag, glm::vec3& value, float min, float max)
+	ParameterVec3(const std::string& name, proceduralPlanet::FilterType type, proceduralPlanet::ObserverFlag flag, glm::vec3& value, float min, float max)
 		: ParameterBase(name, type, flag), _value(value), _min(min), _max(max) {};
 
 	void Display() override
@@ -135,4 +122,7 @@ private:
 	float _min;
 	float _max;
 };
+
+}   // ns editor
+
 

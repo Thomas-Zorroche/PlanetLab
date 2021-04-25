@@ -3,6 +3,9 @@
 #include "NoiseFilter.hpp"
 #include <memory>
 
+namespace proceduralPlanet
+{
+
 class NoiseSettings;
 
 class SimpleNoiseFilter : public NoiseFilter
@@ -15,3 +18,5 @@ public:
 
 	float Evaluate(const glm::vec3& point) const override;
 };
+
+}	// ns proceduralPlanet

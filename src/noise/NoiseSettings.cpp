@@ -7,14 +7,14 @@ namespace proceduralPlanet
 
 NoiseSettings::NoiseSettings()
 	: _parameters {
-		{ ParameterFactory::Float("Strength", FilterType::Simple, editor::ObserverFlag::MESH, _strength, 0.0f, 10.0f) },
-		{ ParameterFactory::Float("Base Roughness", FilterType::Simple, editor::ObserverFlag::MESH, _baseRoughness, 0.0f, 10.0f) },
-		{ ParameterFactory::Float("Roughness", FilterType::Simple, editor::ObserverFlag::MESH, _roughness, 0.0f, 10.0f) },
-		{ ParameterFactory::Vec3("Center", FilterType::Simple, editor::ObserverFlag::MESH, _center, 0.0f, 10.0f) },
-		{ ParameterFactory::Int("Layers Count", FilterType::Simple, editor::ObserverFlag::MESH, _layersCount, 0, 10) },
-		{ ParameterFactory::Float("Persistence", FilterType::Simple, editor::ObserverFlag::MESH, _persistence, 0.0f, 10.0f) },
-		{ ParameterFactory::Float("Min Value", FilterType::Simple, editor::ObserverFlag::MESH, _minValue, 0.0f, 10.0f) },
-		{ ParameterFactory::Float("Weight Multiplier", FilterType::Rigid, editor::ObserverFlag::MESH, _weightMultiplier, 0.0f, 10.0f) },
+		{ editor::ParameterFactory::Float("Strength", FilterType::Simple, ObserverFlag::MESH, _strength, 0.0f, 10.0f) },
+		{ editor::ParameterFactory::Float("Base Roughness", FilterType::Simple, ObserverFlag::MESH, _baseRoughness, 0.0f, 10.0f) },
+		{ editor::ParameterFactory::Float("Roughness", FilterType::Simple, ObserverFlag::MESH, _roughness, 0.0f, 10.0f) },
+		{ editor::ParameterFactory::Vec3("Center", FilterType::Simple, ObserverFlag::MESH, _center, 0.0f, 10.0f) },
+		{ editor::ParameterFactory::Int("Layers Count", FilterType::Simple, ObserverFlag::MESH, _layersCount, 0, 10) },
+		{ editor::ParameterFactory::Float("Persistence", FilterType::Simple, ObserverFlag::MESH, _persistence, 0.0f, 10.0f) },
+		{ editor::ParameterFactory::Float("Min Value", FilterType::Simple, ObserverFlag::MESH, _minValue, 0.0f, 10.0f) },
+		{ editor::ParameterFactory::Float("Weight Multiplier", FilterType::Rigid, ObserverFlag::MESH, _weightMultiplier, 0.0f, 10.0f) },
 	},
 	_parametersNames{
 		"Strength",
@@ -72,7 +72,7 @@ float& NoiseSettings::weightMultiplier() { return _weightMultiplier; }
 /*
 * Friends Functions
 */
-const std::shared_ptr<ParameterBase>& GetParameterByName(const ParametersMap& parameters, const std::string& name)
+const std::shared_ptr<editor::ParameterBase>& GetParameterByName(const editor::ParametersMap& parameters, const std::string& name)
 {
 	auto it = parameters.find(name);
 	if (it == parameters.end())

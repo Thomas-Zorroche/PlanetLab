@@ -13,8 +13,6 @@
 #include "engine/Material.hpp"
 #include "opengl/Shader.h"
 
-namespace editor
-{
 
 void ResourceManager::DeleteAllResources()
 {
@@ -256,6 +254,4 @@ void ResourceManager::LoadAllShaders()
 	// Gizmo Shader
 	ResourceManager::Get().LoadShader("res/shaders/Gizmo.vert", "res/shaders/Gizmo.frag", "Gizmo");
 }
-
-}   // ns editor
 

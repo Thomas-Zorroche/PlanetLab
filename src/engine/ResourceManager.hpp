@@ -9,8 +9,6 @@
 #include "engine/Model.hpp"
 #include "opengl/Shader.h"
 
-namespace editor
-{
 
 class ResourceManager
 {
@@ -62,6 +60,4 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<Model>> _modelCache;
 	std::unordered_map<std::string, std::shared_ptr<Material>> _materialCache;
 };
-
-}   // ns editor
 
