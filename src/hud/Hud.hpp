@@ -3,7 +3,7 @@
 #include "engine/Window.hpp"
 #include "opengl/Framebuffer.hpp"
 #include "glm/glm.hpp"
-#include "engine/Color.hpp"
+#include "proceduralPlanet/Color.hpp"
 #include <GLFW/glfw3.h>
 #include "proceduralPlanet/Planet.hpp"
 #include "engine/SpriteSheet.hpp"

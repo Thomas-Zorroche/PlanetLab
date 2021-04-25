@@ -9,7 +9,7 @@
 #include "engine/Log.hpp"
 #include "engine/Window.hpp"
 #include "engine/Scene.hpp"
-#include "engine/Color.hpp"
+#include "proceduralPlanet/Color.hpp"
 
 #include "editor/AppLog.hpp"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "engine/Color.hpp"
+#include "proceduralPlanet/Color.hpp"
 
 class Framebuffer
 {

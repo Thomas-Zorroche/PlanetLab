@@ -1,6 +1,6 @@
 #pragma once
 
-#include "engine/Color.hpp"
+#include "Color.hpp"
 #include "imgui/imgui_color_gradient.h"
 
 #include <memory>
