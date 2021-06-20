@@ -5,18 +5,20 @@
 #include "engine/Application.hpp"
 
 #include "lighting/LightManager.hpp"
-#include "planets/Planet.hpp"
+#include "proceduralPlanet/Planet.hpp"
 
-#include "io/IOManager.hpp"
+#include "proceduralPlanet/io/IOManager.hpp"
 
 #include <memory>
 
+namespace editor 
+{
 
 Scene::Scene()
 	: _gizmo(2, 0.005)
 {
 	// Procedural Planet
-	_planet = std::make_shared<Planet>();
+	_planet = std::make_shared<proceduralPlanet::Planet>();
 	IOManager::get().open("res/scene/Emma.ini", _planet);
 	Application::Get().AppendPlanet(_planet);
 
@@ -41,3 +43,4 @@ void Scene::Free()
 	ResourceManager::Get().DeleteAllResources();
 }
 
+} // ns Editor

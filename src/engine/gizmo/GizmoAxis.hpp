@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "engine/Color.hpp"
+#include "proceduralPlanet/Color.hpp"
 #include "engine/StaticMesh.hpp"
 
 enum class Axis

@@ -3,10 +3,13 @@
 #include <iostream>
 #include <string.h>
 
+namespace editor
+{
+
 Window::Window(int argc, char** argv)
 {
     HandleArgs(argc, argv);
-    
+
 }
 
 int Window::Init()
@@ -85,3 +88,5 @@ void InitLogLevel(char* level)
     else
         Log::Get().SetLevel(LogLevel::NONE);
 }
+
+}   // ns editor

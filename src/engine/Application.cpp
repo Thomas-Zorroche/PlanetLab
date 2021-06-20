@@ -5,15 +5,19 @@
 #include "engine/InputHandler.hpp"
 #include "engine/ResourceManager.hpp"
 #include "hud/Hud.hpp"
-#include "planets/Planet.hpp"
-#include "io/IOManager.hpp"
+#include "proceduralPlanet/Planet.hpp"
+#include "proceduralPlanet/io/IOManager.hpp"
 #include "engine/ProceduralEditor.hpp"
 
+namespace editor
+{
+
+using namespace proceduralPlanet;
 
 void mainloop(Window& windowObject)
 {
     GLFWwindow* window = windowObject.GetNativeWindow();
-    IOManager::get().setWindowPtr(window);
+    //IOManager::get().setWindowPtr(window);
 
     // Load all the 
     ResourceManager::Get().LoadAllShaders();
@@ -32,7 +36,7 @@ void mainloop(Window& windowObject)
     float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame
     glEnable(GL_DEPTH_TEST);
-    
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -120,5 +124,7 @@ void Application::ClearColor() const
     glClearColor(0, 0, 0, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
+
+} // ns editor
 
 

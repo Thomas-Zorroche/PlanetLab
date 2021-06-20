@@ -13,6 +13,8 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+using namespace proceduralPlanet;
+
 // Default Constructor
 StaticMesh::StaticMesh(const std::shared_ptr<Model>& model, const TransformLayout& transLayout, const std::string& shaderName)
 	: _model(model), 
@@ -56,11 +58,11 @@ void StaticMesh::Draw(bool hasWireframe)
 {
 	SendUniforms();
 	_model->Draw(_shader);
-	if (hasWireframe && Application::Get().GetEditor().IsWireframeVisible())
+	if (hasWireframe && editor::Application::Get().GetEditor().IsWireframeVisible())
 	{
 		auto shaderWireframe = ResourceManager::Get().GetShader("Wireframe");
 		shaderWireframe->Bind();
-		Renderer::Get().SendTransMatrixUniforms(_modelMatrix, shaderWireframe);
+		editor::Renderer::Get().SendTransMatrixUniforms(_modelMatrix, shaderWireframe);
 		shaderWireframe->Unbind();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		_model->Draw(shaderWireframe);
@@ -102,7 +104,7 @@ void StaticMesh::SendUniforms()
 	_shader->Bind();
 
 	// Send Transformations Matrixes
-	Renderer::Get().SendTransMatrixUniforms(GetModelMatrix(), _shader);
+	editor::Renderer::Get().SendTransMatrixUniforms(GetModelMatrix(), _shader);
 
 	// Send Lights
 	LightManager::Get().SendUniforms(_shader);

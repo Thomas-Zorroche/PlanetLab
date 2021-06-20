@@ -30,3 +30,4 @@ private:
 	LogLevel _logLevel = LogLevel::INFO;
 
 };
+

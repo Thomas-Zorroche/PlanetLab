@@ -4,8 +4,15 @@
 
 #include "gizmo/Gizmo.hpp"
 
-class Skybox;
+namespace proceduralPlanet 
+{
 class Planet;
+}
+
+
+namespace editor 
+{
+
 class BackgroundGradient;
 class Application;
 
@@ -22,13 +29,14 @@ public:
 
 	void Free();
 
-	std::shared_ptr<Planet> planet() { return _planet; }
+	std::shared_ptr<proceduralPlanet::Planet> planet() { return _planet; }
 
 private:
-	std::shared_ptr<Skybox> _skybox = nullptr;
-	std::shared_ptr<Planet> _planet = nullptr;
+	std::shared_ptr<proceduralPlanet::Planet> _planet = nullptr;
 	std::shared_ptr<BackgroundGradient> _backgroundPlane = nullptr;
 
 	Gizmo _gizmo;
 };
+
+} // ns Editor
 

@@ -3,20 +3,27 @@
 #include "engine/Window.hpp"
 #include "opengl/Framebuffer.hpp"
 #include "glm/glm.hpp"
-#include "engine/Color.hpp"
+#include "proceduralPlanet/Color.hpp"
 #include <GLFW/glfw3.h>
-#include "planets/Planet.hpp"
+#include "proceduralPlanet/Planet.hpp"
 #include "engine/SpriteSheet.hpp"
 
 #include <memory>
 #include <string>
 
-class Window;
-class Camera;
-class Application;
+namespace proceduralPlanet
+{
 class NoiseSettings;
 class ShapeSettings;
 class ColorSettings;
+}
+
+namespace editor
+{
+
+class Window;
+class Camera;
+class Application;
 
 class Hud
 {
@@ -77,9 +84,9 @@ private:
 	int _sliderSpeed = 100;
 	float _sliderSpeedDefault = 0.00005;
 
-	std::shared_ptr<Planet> _planet = nullptr;
-	std::shared_ptr<ShapeSettings> _shape = nullptr;
-	std::shared_ptr<ColorSettings> _color = nullptr;
+	std::shared_ptr<proceduralPlanet::Planet> _planet = nullptr;
+	std::shared_ptr<proceduralPlanet::ShapeSettings> _shape = nullptr;
+	std::shared_ptr<proceduralPlanet::ColorSettings> _color = nullptr;
 
 	SpriteSheet _loadingWheel = SpriteSheet("res/img/LoadingSheet.png", 31);
 
@@ -90,3 +97,5 @@ private:
 	float _WIDTH;
 	float _HEIGHT;
 };
+
+}	// ns editor

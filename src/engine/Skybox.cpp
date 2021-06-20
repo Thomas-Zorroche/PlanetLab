@@ -55,7 +55,7 @@ void Skybox::Draw(const std::shared_ptr<Fog>& fog)
 void Skybox::SendUniforms(const std::shared_ptr<Fog>& fog)
 {
     _shader->Bind();
-    Renderer::Get().SendTransMatrixUniforms(glm::mat4(1.0f), _shader, true);
+    editor::Renderer::Get().SendTransMatrixUniforms(glm::mat4(1.0f), _shader, true);
     _shader->Unbind();
 }
 

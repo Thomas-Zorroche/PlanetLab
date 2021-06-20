@@ -5,6 +5,9 @@
 #include "imgui/imgui_impl_opengl3.h"
 
 
+namespace editor
+{
+
 struct AppLog
 {
     ImGuiTextBuffer     Buf;
@@ -73,3 +76,5 @@ struct AppLog
         ImGui::End();
     }
 };
+
+}   // ns editor

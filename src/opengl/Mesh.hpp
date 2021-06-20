@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 #include "common.hpp"
-#include "engine/Color.hpp"
+#include "proceduralPlanet/Color.hpp"
 #include "opengl/Shader.h"
 #include "engine/Material.hpp"
 

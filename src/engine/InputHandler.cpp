@@ -7,6 +7,8 @@
 #include <iostream>
 #include "GLFW/glfw3.h"
 
+namespace editor
+{
 
 void InputHandler::SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr)
 {
@@ -146,4 +148,6 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
             Application::Get().SetReadyToGenerate(true);
     }
 }
+
+}   // ns editor
 
