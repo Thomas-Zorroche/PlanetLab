@@ -1,0 +1,52 @@
+
+	- __Ceres --> 3D Procedural Planet Library
+
+		- noise
+
+
+	- __PlanetLab --> Software for creating Planet (ui / editor)
+
+		- __ui (view)
+			- gizmo
+				- gizmo*
+				- gizmoAxis*
+			- hud* (--> UserInterface)
+			- backgroundGradient*
+			- AppLog*
+
+		- __editor (model)
+			- Parameter*
+			- ParameterFactory*
+			- Application*
+			- ProceduralEditor* (--> EditorSettings)
+
+		- __event (controller)
+			- Input*
+			- InputHandler*
+
+		- __io
+			- IOManager*
+
+		- Log*
+		- common.hpp
+		- main.cpp
+
+		- __engine --> opengl / utils / implementation ... 
+
+			- opengl
+
+			- lighting
+
+			- shape
+
+			- Camera*
+			- glad
+			- Material*
+			- Model*
+			- Renderer*
+			- RessourceManager
+			- Skybox
+			- SpriteSheet
+			- StaticMesh
+			- Scene*
+			- Window
