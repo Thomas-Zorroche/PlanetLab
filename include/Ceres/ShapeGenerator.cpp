@@ -86,12 +86,14 @@ void ShapeGenerator::removeAllFilters()
 
 void ShapeGenerator::updateFilterType(std::uint32_t index)
 {
-	if (index >= _noiseFilters.size())
+	if (index >= _noiseFilters.size()) 
+	{
 		std::cout << "Error: index out of bounds\n";
-	else {
-		FilterType type = _settings->noiseLayer(index)->noiseSettings()->GetFilterType();
+	}
+	else 
+	{
 		_noiseFilters[index] = NoiseFilterFactory::CreateNoiseFilter(_settings->noiseLayer(index)->noiseSettings());
 	}
 }
 
-}	// ns proceduralPlanet
+}	// ns Ceres
