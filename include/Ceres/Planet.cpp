@@ -146,8 +146,15 @@ void Planet::updateNoiseLayersCount(int noiseLayersCount)
 
 void Planet::reset()
 {
+	// Remove all noise settings layers
 	_shapeSettings->removeAllLayers();
+
+	// Remove all noise filters (noise alogrithm)
 	_shapeGenerator->removeAllFilters();
+
+	// Remove colors
+	_colorSettings->reset();
+
 	update(ObserverFlag::MESH);
 }
 

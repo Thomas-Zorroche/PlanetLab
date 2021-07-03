@@ -41,6 +41,8 @@ public:
 
 	void SetRandomColors(std::uint32_t seed);
 
+	void reset();
+
 private:
 	// Landmass settigns
 	PlanetLab::Color _colorPlanet;
@@ -55,4 +57,4 @@ private:
 
 };
 
-}	// ns proceduralPlanet
+}	// ns Ceres

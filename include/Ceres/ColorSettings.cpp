@@ -80,5 +80,15 @@ void ColorSettings::SetRandomColors(std::uint32_t seed)
 	_oceanDepth = 9;
 }
 
-}	// ns proceduralPlanet
+void ColorSettings::reset()
+{
+	_colorPlanet = PlanetLab::Color(255, 255, 255);
+	_useLandmassRamp = false;
+
+	_useOceanColor = false;
+	_oceanDepth = 0.0f;
+	_oceanColor = PlanetLab::Color(0, 0, 1);
+}
+
+}	// ns Ceres
 
