@@ -238,7 +238,7 @@ void Interface::ShowSettingsWindow()
             {
                 ShowUpdateItem();
 
-                static int noiseLayersCount = _shape->noiseLayers().size();
+                int noiseLayersCount = _shape->noiseLayers().size();
                 if (ImGui::SliderInt("Count", &noiseLayersCount, 0, 5))
                 {
                     _planet->updateNoiseLayersCount(noiseLayersCount);

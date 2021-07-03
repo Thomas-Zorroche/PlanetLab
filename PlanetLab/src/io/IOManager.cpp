@@ -40,7 +40,7 @@ bool IOManager::saveAs(const std::string& outputFileName, std::shared_ptr<Planet
 	{
 		std::string section = "noiseSettings_" + std::to_string(layerCount);
 
-		std::string type = (layer->noiseSettings()->GetFilterType() == FilterType::Simple) ? "simple" : "rigid"; // TODO for the moment, there is just 2 type of noise...
+		std::string type = (layer->noiseSettings()->GetFilterType() == FilterType::Simple) ? "simple" : "rigid"; // TODO for the moment, there are just 2 type of noise...
 		ini[section]["type"] = type;
 		
 		ini[section]["seed"] = std::to_string(planet->shapeGenerator()->noiseFilter(layerCount - 1)->Seed());
