@@ -82,6 +82,8 @@ public:
 	void AppendLog(const char* str) { _log.AddLog(("[%05d] " + std::string(str) + "\n").c_str(), ImGui::GetFrameCount()); }
 	void DrawLog() { _log.Draw(); }
 
+	void updateTitle(const std::string& newTitle);
+
 private:
 	static Application* s_instance;
 

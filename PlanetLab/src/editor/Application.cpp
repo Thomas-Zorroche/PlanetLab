@@ -128,6 +128,12 @@ void Application::ClearColor() const
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void Application::updateTitle(const std::string& newTitle)
+{
+    glfwSetWindowTitle(_window->GetNativeWindow(), newTitle.c_str());
+}
+
+
 } // ns editor
 
 

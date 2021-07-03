@@ -22,15 +22,8 @@ namespace PlanetLab
 {
 	class Window;
 	class Camera;
-}
-
-namespace PlanetLab
-{
 	class Application;
-}
 
-namespace PlanetLab
-{
 
 class Interface
 {

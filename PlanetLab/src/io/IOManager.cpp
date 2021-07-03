@@ -120,21 +120,21 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 	{
 		std::string section = "noiseSettings_" + std::to_string(i);
 		// Read values
-		std::string& typeStr		  = ini.get(section).get("type");
-		std::string& seedStr		  = ini.get(section).get("seed");
-		std::string& strengthStr      = ini.get(section).get("strength");
-		std::string& layersCountStr   = ini.get(section).get("layersCount");
-		std::string& baseRoughnessStr = ini.get(section).get("baseRoughness");
-		std::string& roughnessStr     = ini.get(section).get("roughness");
-		std::string& centerXStr       = ini.get(section).get("centerX");
-		std::string& centerYStr       = ini.get(section).get("centerY");
-		std::string& centerZStr       = ini.get(section).get("centerZ");
-		std::string& minValueStr      = ini.get(section).get("minValue");
-		std::string& weightMultiplierStr      = ini.get(section).get("weightMultiplier");
+		std::string& typeStr		      = ini.get(section).get("type");
+		std::string& seedStr		      = ini.get(section).get("seed");
+		std::string& strengthStr          = ini.get(section).get("strength");
+		std::string& layersCountStr       = ini.get(section).get("layersCount");
+		std::string& baseRoughnessStr     = ini.get(section).get("baseRoughness");
+		std::string& roughnessStr         = ini.get(section).get("roughness");
+		std::string& centerXStr           = ini.get(section).get("centerX");
+		std::string& centerYStr           = ini.get(section).get("centerY");
+		std::string& centerZStr           = ini.get(section).get("centerZ");
+		std::string& minValueStr          = ini.get(section).get("minValue");
+		std::string& weightMultiplierStr  = ini.get(section).get("weightMultiplier");
 	
 		// Assign values
-		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->GetFilterType() = (typeStr == "simple") ? FilterType::Simple : FilterType::Rigid;
 		planet->shapeGenerator()->noiseFilter(i - 1)->Reseed(std::atof(seedStr.c_str()));
+		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->GetFilterType() = (typeStr == "simple") ? FilterType::Simple : FilterType::Rigid;
 		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->strength() = std::atof(strengthStr.c_str());
 		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->layersCount() = std::atof(layersCountStr.c_str());
 		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->baseRoughness() = std::atof(baseRoughnessStr.c_str());
@@ -151,14 +151,14 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 
 void IOManager::updateTitleWindow()
 {
-	//if (_unsavedValues && _currentFileSaved)
-	//{
-	//	glfwSetWindowTitle(_windowPtr, std::string("Procedural Planets * " + _currentFileName).c_str());
-	//}
-	//else
-	//{
-	//	glfwSetWindowTitle(_windowPtr, std::string("Procedural Planets " + _currentFileName).c_str());
-	//}
+	if (_unsavedValues && _currentFileSaved)
+	{
+		Application::Get().updateTitle(std::string("Procedural Planets * " + _currentFileName));
+	}
+	else
+	{
+		Application::Get().updateTitle(std::string("Procedural Planets " + _currentFileName));
+	}
 }
 
 void IOManager::setUnsavedValues()

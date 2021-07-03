@@ -27,8 +27,6 @@ public:
 	IOManager(const IOManager&) = delete;
 	IOManager& operator=(const IOManager&) = delete;
 
-	//void setWindowPtr(GLFWwindow* window) { _windowPtr = window; }
-
 	bool save(std::shared_ptr<Ceres::Planet>& planet);
 	bool saveAs(const std::string& outputFileName, std::shared_ptr<Ceres::Planet>& planet);
 	bool open(const std::string& inputFileName, std::shared_ptr<Ceres::Planet>& planet);
@@ -52,8 +50,6 @@ private:
 	bool _currentFileSaved = false;				// If user has already save once or open a scene
 	bool _unsavedValues = false;				// If user change any value and did not save
 	std::string _currentFileName = "New Scene";
-
-	//GLFWwindow* _windowPtr = nullptr;
 };
 
 }
