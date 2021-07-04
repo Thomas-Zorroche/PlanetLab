@@ -128,6 +128,13 @@ void ImGradient::refreshCache()
     }
 }
 
+void ImGradient::reset()
+{
+    m_marks.clear();
+    addMark(0.0f, ImColor(0.0f, 0.0f, 0.0f));
+    addMark(1.0f, ImColor(1.0f, 1.0f, 1.0f));
+}
+
 
 
 namespace ImGui

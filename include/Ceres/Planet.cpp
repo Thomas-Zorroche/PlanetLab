@@ -155,6 +155,7 @@ void Planet::reset()
 	// Remove colors
 	_colorSettings->reset();
 
+	update(ObserverFlag::COLOR);
 	update(ObserverFlag::MESH);
 }
 

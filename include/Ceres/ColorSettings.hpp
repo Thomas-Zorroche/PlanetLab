@@ -41,6 +41,8 @@ public:
 
 	void SetRandomColors(std::uint32_t seed);
 
+	void setColorMarks(const std::list<ImGradientMark>& marks);
+
 	void reset();
 
 private:

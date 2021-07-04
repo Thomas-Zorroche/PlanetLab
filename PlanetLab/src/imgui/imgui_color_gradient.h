@@ -88,6 +88,7 @@ public:
     void removeMark(ImGradientMark* mark);
     void refreshCache();
     std::list<ImGradientMark*> & getMarks(){ return m_marks; }
+    void reset();
 
 private:
     const std::size_t _MAX_MARKS;

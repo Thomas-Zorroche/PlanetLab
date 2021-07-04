@@ -428,7 +428,7 @@ namespace mINI
 		std::ofstream fileWriteStream;
 
 	public:
-		bool prettyPrint = false;
+		bool prettyPrint = true;
 
 		INIGenerator(std::string const& filename)
 		{

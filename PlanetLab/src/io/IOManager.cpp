@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <filesystem>
+#include <sstream>
 
 namespace PlanetLab
 {
@@ -57,6 +58,27 @@ bool IOManager::saveAs(const std::string& outputFileName, std::shared_ptr<Planet
 		ini[section]["weightMultiplier"] = std::to_string(layer->noiseSettings()->weightMultiplier());
 
 		layerCount++;
+	}
+
+	// Save color settings
+	ini["colorSettings"]["useOceanColor"] = std::to_string(planet->colorSettings()->GetUseOceanColor());
+	ini["colorSettings"]["oceanDepth"] = std::to_string(planet->colorSettings()->GetOceanDepth());
+	ini["colorSettings"]["oceanColor"] = writeColor(planet->colorSettings()->GetOceanColor());
+	ini["colorSettings"]["planetColor"] = writeColor(planet->colorSettings()->color());
+	ini["colorSettings"]["useLandmassRamp"] = std::to_string(planet->colorSettings()->GetUseLandmassRamp());
+	
+	// Save Gradient Settings
+	const auto& marks = planet->colorSettings()->GetGradient().getMarks();
+	int marksCount = marks.size();
+	ini["gradientSettings"]["marksCount"] = std::to_string(marksCount);
+	int index = 1;
+	for (const auto& mark : marks)
+	{
+		std::string labelPos = "pos_" + std::to_string(index);
+		std::string labelColor = "color_" + std::to_string(index);
+		ini["gradientSettings"][labelPos] = std::to_string(mark->position);
+		ini["gradientSettings"][labelColor] = writeColor(mark->color);
+		index++;
 	}
 
 	// generate an INI file (overwrites any previous file)
@@ -127,7 +149,7 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 		std::string& layersCountStr       = ini.get(section).get("layersCount");
 		std::string& baseRoughnessStr     = ini.get(section).get("baseRoughness");
 		std::string& roughnessStr         = ini.get(section).get("roughness");
-		std::string& centerXStr           = ini.get(section).get("centerX");
+		std::string& centerXStr           = ini.get(section).get("centerX");	// TODO Replace with parse Vec3 function
 		std::string& centerYStr           = ini.get(section).get("centerY");
 		std::string& centerZStr           = ini.get(section).get("centerZ");
 		std::string& minValueStr          = ini.get(section).get("minValue");
@@ -148,7 +170,37 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->weightMultiplier() = std::atof(weightMultiplierStr.c_str());
 	}
 
+	// Load Color values
+	std::string& useoceancolorStr = ini.get("colorsettings").get("useoceancolor");
+	std::string& oceandepthStr = ini.get("colorsettings").get("oceandepth");
+	std::string& oceancolorStr = ini.get("colorsettings").get("oceancolor");
+	std::string& planetcolorStr = ini.get("colorsettings").get("planetcolor");
+	std::string& uselandmassrampStr = ini.get("colorsettings").get("uselandmassramp");
+
+	planet->colorSettings()->GetUseOceanColor() = std::atoi(useoceancolorStr.c_str());
+	planet->colorSettings()->GetOceanDepth() = std::atoi(oceandepthStr.c_str());
+	planet->colorSettings()->GetOceanColor() = parseColor(oceancolorStr);
+	planet->colorSettings()->color() = parseColor(planetcolorStr);
+	planet->colorSettings()->GetUseLandmassRamp() = std::atoi(oceandepthStr.c_str());
+
+	// Load Gradient values
+	std::string& marksCountStr = ini.get("gradientsettings").get("markscount");
+	int marksCount = std::atof(marksCountStr.c_str());
+	std::list<ImGradientMark> marks;
+	for (size_t i = 1; i <= marksCount; i++)
+	{
+		std::string labelPos = "pos_" + std::to_string(i);
+		std::string labelColor = "color_" + std::to_string(i);
+
+		std::string& posStr = ini.get("gradientsettings").get(labelPos);
+		std::string& colorStr = ini.get("gradientsettings").get(labelColor);
+
+		marks.push_back(ImGradientMark( parseVec3(colorStr), std::atof(posStr.c_str()) ));
+	}
+	planet->colorSettings()->setColorMarks(marks);
+
 	planet->update(ObserverFlag::MESH);
+	planet->update(ObserverFlag::COLOR);
 }
 
 void IOManager::updateTitleWindow()
@@ -171,5 +223,45 @@ void IOManager::setUnsavedValues()
 		updateTitleWindow();
 	}
 }
+
+PlanetLab::Color IOManager::parseColor(const std::string& vec3String)
+{
+	std::vector<int> color;
+	std::string value;
+	std::istringstream stream(vec3String);
+	while (std::getline(stream, value, ' '))
+	{
+		color.push_back(std::atof(value.c_str()));
+	}
+
+	return PlanetLab::Color(color[0], color[1], color[2]);
+}
+
+glm::vec3 IOManager::parseVec3(const std::string& vec3String)
+{
+	std::vector<float> vec3;
+	std::string value;
+	std::istringstream stream(vec3String);
+	while (std::getline(stream, value, ' '))
+	{
+		vec3.push_back(std::atof(value.c_str()));
+	}
+
+	return glm::vec3(vec3[0], vec3[1], vec3[2]);
+}
+
+
+std::string IOManager::writeColor(const PlanetLab::Color& color)
+{
+	return std::to_string(color.r) + " " + std::to_string(color.g) + " " + std::to_string(color.b);
+}
+
+std::string IOManager::writeColor(const float* color)
+{
+	return std::to_string(color[0]) + " " + std::to_string(color[1]) + " " + std::to_string(color[2]);
+}
+
+
+
 
 }

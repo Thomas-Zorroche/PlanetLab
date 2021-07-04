@@ -61,7 +61,7 @@ void ColorSettings::SetRandomColors(std::uint32_t seed)
 	std::default_random_engine generator(seed);
 	std::uniform_real_distribution<float> random(0, 1);
 
-	for (std::size_t i = 0; i < 4; i++)
+	for (std::size_t i = 0; i < 4; i++)	// TODO Max random colors variable
 	{
 		auto pos = random(generator);
 		ImColor color(
@@ -80,14 +80,29 @@ void ColorSettings::SetRandomColors(std::uint32_t seed)
 	_oceanDepth = 9;
 }
 
+void ColorSettings::setColorMarks(const std::list<ImGradientMark>& marks)
+{
+	_gradient.getMarks().clear();
+	
+	for (const auto& mark : marks)
+	{
+		ImColor color(mark.color[0], mark.color[1], mark.color[2]);
+		_gradient.addMark(mark.position, color);
+	}
+}
+
+
 void ColorSettings::reset()
 {
-	_colorPlanet = PlanetLab::Color(255, 255, 255);
+	_colorPlanet = PlanetLab::Color();
 	_useLandmassRamp = false;
 
 	_useOceanColor = false;
 	_oceanDepth = 0.0f;
 	_oceanColor = PlanetLab::Color(0, 0, 1);
+
+	_gradient.reset();
+
 }
 
 }	// ns Ceres

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "ini.h"
+#include "glm/glm.hpp"
 #include "editor/Application.hpp"
 
 namespace Ceres
@@ -42,6 +43,16 @@ public:
 
 private:
 	void loadValues(const mINI::INIStructure& ini, std::shared_ptr<Ceres::Planet>& planet);
+
+	// Read vec3 string from ini files and return Color
+	PlanetLab::Color parseColor(const std::string& vec3String);
+
+	// Read vec3 string from ini files and return glm::vec3
+	glm::vec3 parseVec3(const std::string& vec3String);
+
+	// Write Color into vec3 string
+	std::string writeColor(const PlanetLab::Color& color);
+	std::string writeColor(const float* color);
 
 	IOManager() = default;
 	~IOManager() = default;
