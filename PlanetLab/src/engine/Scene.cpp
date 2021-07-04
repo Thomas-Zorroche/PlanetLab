@@ -19,7 +19,6 @@ Scene::Scene()
 {
 	// Procedural Planet
 	_planet = std::make_shared<Ceres::Planet>();
-	IOManager::get().open("res/scene/Emma.ini", _planet);
 	Application::Get().AppendPlanet(_planet);
 
 	// Background Gradient (Simple Plane placed on camera far plane)
