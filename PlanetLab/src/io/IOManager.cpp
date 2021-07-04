@@ -119,6 +119,7 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 	for (size_t i = 1; i <= layersCount; i++)
 	{
 		std::string section = "noiseSettings_" + std::to_string(i);
+
 		// Read values
 		std::string& typeStr		      = ini.get(section).get("type");
 		std::string& seedStr		      = ini.get(section).get("seed");
@@ -133,9 +134,9 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 		std::string& weightMultiplierStr  = ini.get(section).get("weightMultiplier");
 	
 		// Assign values
-		planet->shapeGenerator()->noiseFilter(i - 1)->Reseed(std::atof(seedStr.c_str()));
 		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->GetFilterType() = (typeStr == "simple") ? FilterType::Simple : FilterType::Rigid;
 		planet->shapeGenerator()->updateFilterType(i - 1);
+		planet->shapeGenerator()->noiseFilter(i - 1)->Reseed(std::atof(seedStr.c_str()));
 		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->strength() = std::atof(strengthStr.c_str());
 		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->layersCount() = std::atof(layersCountStr.c_str());
 		planet->shapeSettings()->noiseLayer(i - 1)->noiseSettings()->baseRoughness() = std::atof(baseRoughnessStr.c_str());
