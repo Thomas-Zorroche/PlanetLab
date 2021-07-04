@@ -488,12 +488,12 @@ void Interface::setDefaultSliderSpeed()
 
 void Interface::ShowSettings()
 {
-    _settingsOpen = _settingsOpen ? false : true;
+    _settingsOpen = _settingsOpen && !_saveFileOpen ? false : true;
 }
 
 void Interface::ShowTerminal()
 {
-    _terminalOpen = _terminalOpen ? false : true;
+    _terminalOpen = _terminalOpen && !_saveFileOpen ? false : true;
 }
 
 void Interface::saveFile()
