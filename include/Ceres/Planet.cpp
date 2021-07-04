@@ -17,7 +17,7 @@ namespace Ceres
 
 Planet::Planet(int resolution)
 	: _resolution(resolution),
-	_shapeSettings(std::make_shared<ShapeSettings>(1.0f)),
+	_shapeSettings(std::make_shared<ShapeSettings>(1.0f /* radius */)),
 	_colorSettings(std::make_shared<ColorSettings>()),
 	_shapeGenerator(std::make_shared<ShapeGenerator>(_shapeSettings)),
 	_terrainFaces{ 

@@ -226,7 +226,9 @@ void IOManager::setUnsavedValues()
 
 PlanetLab::Color IOManager::parseColor(const std::string& vec3String)
 {
-	std::vector<int> color;
+	if (vec3String == "") return PlanetLab::Color();
+
+	std::vector<float> color;
 	std::string value;
 	std::istringstream stream(vec3String);
 	while (std::getline(stream, value, ' '))
@@ -239,6 +241,8 @@ PlanetLab::Color IOManager::parseColor(const std::string& vec3String)
 
 glm::vec3 IOManager::parseVec3(const std::string& vec3String)
 {
+	if (vec3String == "") return glm::vec3();
+
 	std::vector<float> vec3;
 	std::string value;
 	std::istringstream stream(vec3String);
