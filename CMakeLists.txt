@@ -4,7 +4,7 @@ cmake_minimum_required (VERSION 3.8)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Set project name
-project (Procedural_Planets)
+project (PlanetLab)
 
 # /////////////////////////////////////////////////////////////////////////////
 # ////////////////////////// FUNCTIONS ////////////////////////////////////////
@@ -53,7 +53,6 @@ elseif (WIN32)
 
 endif(UNIX)
 
-add_library(GLAD "thirdparty/glad.c")
 
 if(WIN32)
   set(LIBS glfw3 opengl32 STB_IMAGE GLAD assimp-vc142-mtd)
@@ -80,10 +79,26 @@ else()
   set(LIBS )
 endif(WIN32)
 
+# ///////////////////////////////////////////////////
+# STB_IMAGE
 add_library(STB_IMAGE "thirdparty/stb_image.cpp")
 set(LIBS ${LIBS} STB_IMAGE)
 
+# ///////////////////////////////////////////////////
+# GLAD
+add_library(GLAD "thirdparty/glad.c")
 set(LIBS ${LIBS} GLAD)
+
+# ///////////////////////////////////////////////////
+# CERES
+file(GLOB CERES_SOURCES 
+  "${CMAKE_SOURCE_DIR}/include/Ceres/*.hpp"
+  "${CMAKE_SOURCE_DIR}/include/Ceres/*.cpp"
+  "${CMAKE_SOURCE_DIR}/include/Ceres/noise/*.cpp"
+  "${CMAKE_SOURCE_DIR}/include/Ceres/noise/*.hpp")
+add_library(CERES ${CERES_SOURCES})
+set_property(TARGET CERES PROPERTY CXX_STANDARD 17)
+set(LIBS ${LIBS} CERES)
 
 macro(makeLink src dest target)
   add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E create_symlink ${src} ${dest}  DEPENDS  ${dest} COMMENT "mklink ${src} -> ${dest}")
@@ -96,19 +111,18 @@ link_directories(${CMAKE_SOURCE_DIR}/lib)
 # ////////////////////////// RESSOURCES ///////////////////////////////////////
 # /////////////////////////////////////////////////////////////////////////////
 # Configure assets header file
-configure_file(src/helpers/RootDir.h src/helpers/RootDir.h)
+configure_file(PlanetLab/src/helpers/RootDir.h PlanetLab/src/helpers/RootDir.h)
 
 # Set include directories
 include_directories(
-  ${CMAKE_BINARY_DIR}/src
-  ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_SOURCE_DIR}/PlanetLab/src
   ${CMAKE_SOURCE_DIR}/include)
 
 # Grab all the source files
-file(GLOB_RECURSE MY_SOURCES ${CMAKE_SOURCE_DIR}/src/*)
-file(GLOB_RECURSE MY_SHADERS ${CMAKE_SOURCE_DIR}/res/shaders/*)
-file(GLOB_RECURSE MY_MODELS ${CMAKE_SOURCE_DIR}/res/models/*)
-file(GLOB_RECURSE MY_SCENES ${CMAKE_SOURCE_DIR}/res/scene/*)
+file(GLOB_RECURSE MY_SOURCES ${CMAKE_SOURCE_DIR}/PlanetLab/src/*)
+file(GLOB_RECURSE MY_SHADERS ${CMAKE_SOURCE_DIR}/PlanetLab/res/shaders/*)
+file(GLOB_RECURSE MY_MODELS ${CMAKE_SOURCE_DIR}/PlanetLab/res/models/*)
+file(GLOB_RECURSE MY_SCENES ${CMAKE_SOURCE_DIR}/PlanetLab/res/scene/*)
 
 # Create target executable
 add_executable(${PROJECT_NAME}
@@ -127,8 +141,10 @@ target_link_libraries(${PROJECT_NAME} ${LIBS})
 VS_RegisterFiles("${MY_SOURCES}")
 VS_RegisterFiles("${MY_SHADERS}")
 VS_RegisterFiles("${MY_SCENES}")
+VS_RegisterFiles("${CERES_SOURCES}")
+
 
 # copy shader files to build directory
-file(COPY ${CMAKE_SOURCE_DIR}/res
+file(COPY ${CMAKE_SOURCE_DIR}/PlanetLab/res
   DESTINATION ${CMAKE_BINARY_DIR})
 
