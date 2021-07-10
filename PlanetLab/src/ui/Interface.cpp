@@ -425,14 +425,19 @@ void Interface::ShowSaveAsWindow()
         ImGui::InputText(".ini", _bufferSaveLocation, IM_ARRAYSIZE(_bufferSaveLocation));
         if (ImGui::Button("Save"))
         {
-            // Error
-            if (!IOManager::get().saveAs(std::string("res/scene/" + std::string(_bufferSaveLocation) + ".ini"), _planet))
+            if (std::string(_bufferSaveLocation).empty())
             {
+                // Error empty buffer
+                Application::Get().AppendLog("Filename cannot be empty");
+            }
+            else if (!IOManager::get().saveAs(std::string("res/scene/" + std::string(_bufferSaveLocation) + ".ini"), _planet))
+            {
+                // Error Cannot Save
                 Application::Get().AppendLog("Error IO :: cannot save document");
             }
-            // Save As Success
             else
             {
+                // Save As Success
                 Application::Get().AppendLog("File has been saved");
             }
             _saveFileOpen = false;
