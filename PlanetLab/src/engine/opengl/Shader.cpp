@@ -4,10 +4,6 @@
 
 #include "glm/glm.hpp"
 #include "common.hpp"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
 
 namespace PlanetLab
 {

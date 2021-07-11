@@ -3,7 +3,6 @@
 #include "engine/ResourceManager.hpp"
 #include "editor/Application.hpp"
 
-#include <vector>
 
 namespace PlanetLab
 {

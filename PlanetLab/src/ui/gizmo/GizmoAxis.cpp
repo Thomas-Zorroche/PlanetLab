@@ -4,7 +4,6 @@
 #include "engine/shape/ShapeCube.hpp"
 #include "engine/opengl/Mesh.hpp"
 
-#include <memory>
 
 namespace PlanetLab
 {

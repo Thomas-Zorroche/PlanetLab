@@ -1,10 +1,5 @@
 #include "Mesh.hpp"
-#include "common.hpp"
-#include "Shader.h"
 #include "Texture.h"
-#include <string>
-#include <iostream>
-#include "engine/Material.hpp"
 #include "engine/ResourceManager.hpp"
 
 namespace PlanetLab

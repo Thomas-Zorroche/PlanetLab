@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-#include <iostream>
-#include <string>
-#include <variant>
-
 #include "ceres/noise/NoiseSettings.hpp"
 #include "editor/Application.hpp"
 
@@ -15,7 +11,7 @@
 namespace PlanetLab
 {
 
-using ParameterType = std::variant<float, int, bool, glm::vec3>;
+//using ParameterType = std::variant<float, int, bool, glm::vec3>;
 
 /*
 * Abstract Parameter Class

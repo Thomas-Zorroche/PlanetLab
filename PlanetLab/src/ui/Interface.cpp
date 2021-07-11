@@ -1,13 +1,11 @@
 #include "ui/Interface.hpp"
 
 #include "engine/opengl/Framebuffer.hpp"
-
 #include "engine/Window.hpp"
 #include "engine/Renderer.hpp"
+#include "engine/lighting/LightManager.hpp"
 #include "editor/Application.hpp"
 #include "event/Input.hpp"
-
-#include "engine/lighting/LightManager.hpp"
 
 #include "ceres/Planet.hpp"
 #include "ceres/ShapeSettings.hpp"
@@ -18,10 +16,10 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui_color_gradient.h"
 
 #include "io/IOManager.hpp"
 
-#include "imgui/imgui_color_gradient.h"
 
 namespace PlanetLab
 {

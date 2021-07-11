@@ -1,13 +1,6 @@
 #include "engine/ResourceManager.hpp"
 #include "Log.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <unordered_map> 
-#include <vector> 
-#include <string> 
-
 #include "stb_image.h"
 #include "opengl/Texture.h"
 #include "engine/Material.hpp"

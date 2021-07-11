@@ -8,7 +8,7 @@
 
 namespace PlanetLab
 {
-class Color;
+struct Color;
 class Shader;
 }
 

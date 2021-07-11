@@ -3,8 +3,7 @@
 #define _USE_MATH_DEFINES
 #define NOMINAX // Avoid conflicts between min and max constants in Windef.h
 
-#include <iostream>
-#include <algorithm>
+
 #include <math.h>
 
 #include "glm/glm.hpp"

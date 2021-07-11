@@ -3,10 +3,6 @@
 #include "ceres/ShapeGenerator.hpp"
 #include "ceres/noise/NoiseFilter.hpp"
 
-#include <iostream>
-#include <filesystem>
-#include <sstream>
-
 namespace PlanetLab
 {
 

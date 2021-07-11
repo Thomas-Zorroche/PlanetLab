@@ -1,6 +1,5 @@
-#include "Window.hpp"
 
-#include <iostream>
+#include "Window.hpp"
 #include <string.h>
 
 namespace PlanetLab
@@ -89,4 +88,4 @@ void InitLogLevel(char* level)
         PlanetLab::Log::Get().SetLevel(PlanetLab::LogLevel::NONE);
 }
 
-}   // ns editor
+} // ns editor

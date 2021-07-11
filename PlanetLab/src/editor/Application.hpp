@@ -2,8 +2,6 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <vector>
-#include <memory>
 
 #include "Log.hpp"
 
@@ -11,10 +9,9 @@
 
 #include "engine/Window.hpp"
 #include "engine/Scene.hpp"
+#include "engine/Color.hpp"
 
 #include "ui/AppLog.hpp"
-
-#include "engine/Color.hpp"
 
 
 namespace Ceres
@@ -106,5 +103,3 @@ private:
 };
 
 } // ns Editor
-
-

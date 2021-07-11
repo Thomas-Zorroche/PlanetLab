@@ -7,8 +7,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include <iostream>
-#include <memory>
 #include "stb_image.h"
 
 namespace PlanetLab

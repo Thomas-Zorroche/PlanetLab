@@ -1,7 +1,6 @@
 #include "Framebuffer.hpp"
 
 #include <glad/glad.h>
-#include <iostream>
 
 namespace PlanetLab
 {

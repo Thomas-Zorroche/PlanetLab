@@ -8,8 +8,6 @@
 #include "ceres/Planet.hpp"
 #include "engine/SpriteSheet.hpp"
 
-#include <memory>
-#include <string>
 
 namespace Ceres
 {

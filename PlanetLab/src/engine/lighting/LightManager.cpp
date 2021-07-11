@@ -1,8 +1,5 @@
 #include "LightManager.hpp"
 
-#include <string>
-#include <iostream>
-
 #include "DirectionalLight.hpp"
 #include "engine/Renderer.hpp"
 #include "PointLight.hpp"

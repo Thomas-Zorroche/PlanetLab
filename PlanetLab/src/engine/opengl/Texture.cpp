@@ -2,9 +2,6 @@
 
 #include <glad/glad.h>
 #include "stb_image.h"
-#include <string>
-
-#include <iostream>
 
 namespace PlanetLab
 {

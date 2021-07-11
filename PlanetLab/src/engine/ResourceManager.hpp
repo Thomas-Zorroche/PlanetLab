@@ -1,9 +1,5 @@
 #pragma once
 
-#include <unordered_map> 
-#include <memory> 
-#include <vector> 
-#include <string> 
 #include "opengl/Texture.h"
 #include "opengl/Shader.h"
 #include "engine/Model.hpp"

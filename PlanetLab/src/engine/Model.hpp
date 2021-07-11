@@ -1,9 +1,5 @@
 # pragma once 
 
-#include <vector>
-#include <string>
-#include <memory>
-
 #include "opengl/Mesh.hpp"
 #include "opengl/Texture.h"
 #include "opengl/Shader.h"

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-#include <memory>
 
 #include "BaseLight.hpp"
 #include "../opengl/Shader.h"

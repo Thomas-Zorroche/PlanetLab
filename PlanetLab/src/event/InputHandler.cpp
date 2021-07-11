@@ -4,7 +4,6 @@
 #include "editor/Application.hpp"
 #include "ui/Interface.hpp"
 
-#include <iostream>
 #include "GLFW/glfw3.h"
 
 namespace PlanetLab

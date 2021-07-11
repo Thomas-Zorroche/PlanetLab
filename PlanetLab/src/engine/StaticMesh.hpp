@@ -3,11 +3,6 @@
 #include "engine/Model.hpp"
 #include "opengl/Shader.h"
 
-#include <string>
-#include <memory>
-#include <functional>
-#include <vector>
-
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 

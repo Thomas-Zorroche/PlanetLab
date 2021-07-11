@@ -148,3 +148,36 @@ VS_RegisterFiles("${CERES_SOURCES}")
 file(COPY ${CMAKE_SOURCE_DIR}/PlanetLab/res
   DESTINATION ${CMAKE_BINARY_DIR})
 
+# /////////////////////////////////////////////////////////////////////////////
+# ////////////////////////// PRECOMPILED HEADERS //////////////////////////////
+# /////////////////////////////////////////////////////////////////////////////
+
+set(PCH_TARGET     
+  # Libraries
+    <glm/vec2.hpp>
+    <glm/vec3.hpp>
+
+  # std
+    <iostream>
+    <random>
+    <memory>
+    <chrono>
+    <algorithm>
+    <functional>
+    <thread>
+    <utility>
+    <filesystem>
+
+  # Data Structures
+    <vector>
+    <string>
+    <array>
+    <map>
+    <set>
+    <unordered_map>
+    <queue>
+    <fstream>
+    <sstream>)
+
+target_precompile_headers(CERES PRIVATE ${PCH_TARGET})
+target_precompile_headers(${PROJECT_NAME} PRIVATE ${PCH_TARGET})

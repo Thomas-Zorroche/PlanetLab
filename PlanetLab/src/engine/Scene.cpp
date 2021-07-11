@@ -9,8 +9,6 @@
 
 #include "io/IOManager.hpp"
 
-#include <memory>
-
 namespace PlanetLab
 {
 

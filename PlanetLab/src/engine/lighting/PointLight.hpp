@@ -1,7 +1,6 @@
 #pragma once
 
 #include "BaseLight.hpp"
-#include <unordered_map>
 
 namespace PlanetLab
 {

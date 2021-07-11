@@ -4,9 +4,6 @@
 
 #include "glm/glm.hpp"
 
-#include <string>
-#include <unordered_map>
-
 namespace PlanetLab
 {
 
