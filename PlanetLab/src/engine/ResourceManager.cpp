@@ -83,6 +83,7 @@ std::vector<unsigned short> ResourceManager::LoadHeightmap(const std::string& pa
 	return imageData;
 }
 
+
 unsigned int ResourceManager::LoadCubemap(const std::vector<std::string>& faces) const
 {
 	unsigned int textureID;
@@ -91,9 +92,10 @@ unsigned int ResourceManager::LoadCubemap(const std::vector<std::string>& faces)
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
 	int width, height, BPP;
+	std::string path = "";
 	for (unsigned int i = 0; i < faces.size(); i++)
 	{
-		std::string path = "res/img/skybox/" + faces[i];
+		path = "res/img/skybox/" + faces[i];
 		unsigned char* data = stbi_load(path.c_str(), &width, &height, &BPP, 4);
 		if (data)
 		{
