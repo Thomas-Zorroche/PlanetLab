@@ -50,8 +50,7 @@ Texture ResourceManager::LoadTexture(const std::string& path, TextureType type)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	if (PlanetLab::Log::Get().Level() >= PlanetLab::LogLevel::INFO)
-		std::cout << "[Resource Manager] : loaded texture: " << path << std::endl;
+	PLANETLAB_INFO("Loaded texture: {}", path);
 	
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer);
 
@@ -77,8 +76,7 @@ std::vector<unsigned short> ResourceManager::LoadHeightmap(const std::string& pa
 	// Fill imageData in order to retrieve pixel color later
 	std::vector<unsigned short> imageData(localBuffer, localBuffer + height * height);
 	
-	if (PlanetLab::Log::Get().Level() >= PlanetLab::LogLevel::INFO)
-		std::cout << "[Resource Manager] : loaded texture: " << path << std::endl;
+	std::cout << "[Resource Manager] : loaded texture: " << path << std::endl;
 
 	stbi_image_free(localBuffer);
 
@@ -116,8 +114,7 @@ unsigned int ResourceManager::LoadCubemap(const std::vector<std::string>& faces)
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-	if (PlanetLab::Log::Get().Level() >= PlanetLab::LogLevel::INFO)
-		std::cout << "[Resource Manager] : loaded skybox" << std::endl;
+	std::cout << "[Resource Manager] : loaded skybox" << std::endl;
 
 	return textureID;
 }

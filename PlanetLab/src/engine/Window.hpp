@@ -1,14 +1,10 @@
 #pragma once
 
-
-#include "Log.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 namespace PlanetLab
 {
-
-void InitLogLevel(char* level);
 
 class Window
 {

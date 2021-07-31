@@ -177,7 +177,11 @@ set(PCH_TARGET
     <unordered_map>
     <queue>
     <fstream>
-    <sstream>)
+    <sstream>
+
+  # PlanetLab
+    PlanetLab/src/Log.hpp
+)
 
 target_precompile_headers(CERES PRIVATE ${PCH_TARGET})
 target_precompile_headers(${PROJECT_NAME} PRIVATE ${PCH_TARGET})

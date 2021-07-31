@@ -80,6 +80,9 @@ Application* Application::s_instance = nullptr;
 Application::Application(int argc, char** argv)
 {
     s_instance = this;
+    
+    PlanetLab::Log::init(argc, argv);
+
     _window = std::make_unique<Window>(argc, argv);
     _editor = std::make_unique<EditorSettings>();
 }
