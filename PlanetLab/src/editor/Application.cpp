@@ -55,10 +55,15 @@ void mainloop(Window& windowObject)
         // Render scene here
         Interface::Get().bindFbo();
         scene.Draw(Interface::Get().viewportHeight());
+        Interface::Get().unbindFbo();
 
         // Render Interface
-        Interface::Get().unbindFbo();
         Interface::Get().draw(window);
+
+        if (Application::Get().GetUpdateMode() == UpdateMode::Auto || Application::Get().IsReadyToGenerate())
+        {
+            Application::Get().GenerateUpdateQueue();
+        }
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

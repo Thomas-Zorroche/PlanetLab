@@ -91,11 +91,7 @@ set(LIBS ${LIBS} GLAD)
 
 # ///////////////////////////////////////////////////
 # CERES
-file(GLOB CERES_SOURCES 
-  "${CMAKE_SOURCE_DIR}/include/Ceres/*.hpp"
-  "${CMAKE_SOURCE_DIR}/include/Ceres/*.cpp"
-  "${CMAKE_SOURCE_DIR}/include/Ceres/noise/*.cpp"
-  "${CMAKE_SOURCE_DIR}/include/Ceres/noise/*.hpp")
+file(GLOB_RECURSE CERES_SOURCES ${CMAKE_SOURCE_DIR}/include/Ceres/*)
 add_library(CERES ${CERES_SOURCES})
 set_property(TARGET CERES PROPERTY CXX_STANDARD 17)
 set(LIBS ${LIBS} CERES)
@@ -174,6 +170,7 @@ set(PCH_TARGET
     <array>
     <map>
     <set>
+    <list>
     <unordered_map>
     <queue>
     <fstream>

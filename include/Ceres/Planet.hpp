@@ -2,17 +2,15 @@
 
 #include "TerrainFace.hpp"
 #include "engine/StaticMesh.hpp"
-#include "editor/Application.hpp"
 
 #include "ShapeSettings.hpp"
 #include "ColorSettings.hpp"
 #include "ShapeGenerator.hpp"
 
+#include "observer/PlanetSubject.hpp"
+
 #include "imgui/imgui_color_gradient.h"
 
-#include <memory>
-#include <string>
-#include <list>
 
 namespace Ceres
 {
@@ -27,6 +25,14 @@ enum class FaceRenderMask
 	Front,
 	Back
 };
+
+enum class ObserverFlag
+{
+	RESOLUTION = 0,
+	COLOR,
+	MESH
+};
+
 
 class Planet
 {
@@ -53,6 +59,11 @@ public:
 
 	void RandomGenerate();
 
+	int getVerticesCount() const;
+	int getFacesCount() const;
+
+	PlanetSubject& getPlanetSubject() { return _planetSubject; }
+
 private:
 	void generatePlanet();
 	void generateMesh();
@@ -72,6 +83,8 @@ private:
 	FaceRenderMask _faceRenderMask = FaceRenderMask::All;
 
 	float _maxElevation = 0.0f;
+
+	PlanetSubject _planetSubject;
 };
 
 } // ns Procedural Planet

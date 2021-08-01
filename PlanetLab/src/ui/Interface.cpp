@@ -40,6 +40,8 @@ void Interface::init(Window& window)
 
     // Init shared pointers
     _planet = Application::Get().GetPlanet();
+    _observer = std::make_unique<UiObserver>(_planet->getPlanetSubject());
+
     _shape = _planet->shapeSettings();
     _color = _planet->colorSettings();
 
@@ -52,6 +54,7 @@ void Interface::init(Window& window)
 
     _fbo.resize(_viewportWidth, _viewportHeight);
 
+    updateStatistics();
 }
 
 void Interface::draw(GLFWwindow* window)
@@ -113,10 +116,7 @@ void Interface::draw(GLFWwindow* window)
         }
 
 
-        if (Application::Get().GetUpdateMode() == UpdateMode::Auto || Application::Get().IsReadyToGenerate())
-        {
-            Application::Get().GenerateUpdateQueue();
-        }
+
 
         /* Pop up Windows */
         if (_saveFileOpen) ShowSaveAsWindow();
@@ -377,6 +377,7 @@ void Interface::ShowViewportWindow()
 {
     if (ImGui::Begin("Renderer"))
     {
+        // 3D Viewport
         ImVec2 wsize = ImGui::GetWindowSize();
         ImGui::Image((ImTextureID)_fbo.id(), wsize, ImVec2(0, 1), ImVec2(1, 0));
         _viewportWidth = wsize.x;
@@ -384,6 +385,22 @@ void Interface::ShowViewportWindow()
         _fbo.resize(_viewportWidth, _viewportHeight);
         Renderer::Get().ComputeProjectionMatrix();
 
+        // Statistics
+        if (true)   // TODO Replace by a button
+        {
+            ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBackground
+                | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
+            ImGui::SetNextWindowPos(ImVec2(25, 50));
+            ImGui::SetNextWindowSize(ImVec2(150, 80));
+            if (ImGui::Begin("Statistics", false, window_flags))
+            {
+                ImGui::Text("Vertices  %s", _statistics.verticesCount.c_str());
+                ImGui::Text("Faces     %s", _statistics.facesCount.c_str());
+                ImGui::Text("Triangles %s", _statistics.trianglesCount.c_str());
+                ImGui::Text("Fps       %.1f", ImGui::GetIO().Framerate);
+            }
+            ImGui::End();
+        }
 
         // Loading Wheel
         if (Application::Get().GetLoading())
@@ -545,6 +562,31 @@ void Interface::bindFbo()
 void Interface::unbindFbo()
 {
     _fbo.unbind();
+}
+
+void Interface::updateStatistics()
+{
+    prettyPrintNumber(_planet->getVerticesCount(), _statistics.verticesCount);
+    prettyPrintNumber(_planet->getFacesCount(), _statistics.facesCount);
+    prettyPrintNumber(_planet->getFacesCount() * 2, _statistics.trianglesCount);
+}
+
+void Interface::onResolutionUpdate(int resolution)
+{
+    updateStatistics();
+}
+
+
+// Turn 1451862 into 1 451 862
+// TODO: stock in variable and call this onVerticesChange
+void prettyPrintNumber(int number, std::string& str)
+{
+    str = std::to_string(number);
+    str.reserve(str.length() + str.length() / 3);
+
+    for (int i = 0, j = 3 - str.length() % 3; i < str.length(); ++i, ++j)
+        if (i != 0 && j % 3 == 0)
+            str.insert(i++, 1, ' ');
 }
 
 };  // ns editor

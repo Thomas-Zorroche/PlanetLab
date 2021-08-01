@@ -1,5 +1,4 @@
 #include "TerrainFace.hpp"
-#include <vector>
 
 namespace Ceres
 {
@@ -24,7 +23,6 @@ void TerrainFace::constructMesh()
 	std::vector<unsigned int> indices((_resolution - 1) * (_resolution - 1) * 6); 
 	int triIndex = 0;
 	_maxElevation = 0;
-
 
 	// fill vertices and indices arrays
 	for (size_t y = 0; y < _resolution; y++)

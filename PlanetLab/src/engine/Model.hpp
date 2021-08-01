@@ -33,6 +33,8 @@ public:
 
 	void Free();
 
+	int getVerticesCount() const;
+
 private:
 	std::vector<std::shared_ptr<Mesh> > _meshes;
 	std::string _directory;

@@ -184,6 +184,11 @@ glm::vec3 Mesh::calculateSurfaceNormal(const glm::vec3& A, const glm::vec3& B, c
     return glm::normalize(glm::cross(u, v));
 }
 
+int Mesh::getVerticesCount() const
+{
+    return _vertices.size();
+}
+
 
 }
 

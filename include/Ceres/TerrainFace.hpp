@@ -1,9 +1,7 @@
 #pragma once
 
 #include "engine/opengl/Mesh.hpp"
-#include "glm/glm.hpp"
 #include "ShapeGenerator.hpp"
-#include <memory>
 
 namespace Ceres
 {

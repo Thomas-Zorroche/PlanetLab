@@ -28,8 +28,8 @@ private:
 private:
     GLFWwindow* _glfw_Window = nullptr;
 
-    float _width = 1280.0f;
-    float _height = 720.0f;
+    float _width = 1920.0f;
+    float _height = 1080.0f;
 };
 
 }   // ns editor

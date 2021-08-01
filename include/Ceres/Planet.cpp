@@ -1,16 +1,13 @@
 #include "Planet.hpp"
-#include "glm/glm.hpp"
-#include "engine/opengl/Mesh.hpp"
 
 #include "noise/NoiseFilter.hpp"
 #include "noise/SimpleNoiseFilter.hpp"
 #include "noise/NoiseSettings.hpp"
 
-#include "io/IOManager.hpp"
+#include "glm/glm.hpp"
 
-#include <vector>
-#include <random>
-#include <chrono>
+#include "engine/opengl/Mesh.hpp"
+#include "io/IOManager.hpp"
 
 namespace Ceres
 {
@@ -104,17 +101,25 @@ void Planet::update(ObserverFlag flag)
 		case ObserverFlag::RESOLUTION:
 		{
 			for (auto& face : _terrainFaces)
+			{
 				face.updateResolution(_resolution);
+			}
+			_planetSubject.updateResolution(_resolution);
+			break;
 		}
 		case ObserverFlag::COLOR:
 		{
 			generateColors();
+			break;
 		}
 		case ObserverFlag::MESH:
 		{
 			generateMesh();
+			break;
 		}
 	}
+
+
 }
 
 void Planet::updateNoiseLayersCount(int noiseLayersCount)
@@ -157,6 +162,7 @@ void Planet::reset()
 
 	_resolution = 64;
 
+	update(ObserverFlag::RESOLUTION);
 	update(ObserverFlag::COLOR);
 	update(ObserverFlag::MESH);
 }
@@ -181,8 +187,18 @@ void Planet::RandomGenerate()
 	_colorSettings->SetRandomColors(seed);
 
 	// Update Mesh
-	PlanetLab::Application::Get().Update(ObserverFlag::MESH);
-	PlanetLab::Application::Get().Update(ObserverFlag::COLOR);
+	// PlanetLab::Application::Get().Update(ObserverFlag::MESH);
+	// PlanetLab::Application::Get().Update(ObserverFlag::COLOR);
+}
+
+int Planet::getVerticesCount() const
+{
+	return _staticMesh.getVerticesCount();
+}
+
+int Planet::getFacesCount() const
+{
+	return (_resolution - 1) * (_resolution - 1) * 6;
 }
 
 } // ns Procedural Planet

@@ -13,18 +13,8 @@
 
 #include "ui/AppLog.hpp"
 
+#include "Ceres/Planet.hpp"
 
-namespace Ceres
-{
-	class Planet;
-
-	enum class ObserverFlag
-	{
-		RESOLUTION = 0,
-		COLOR,
-		MESH
-	};
-};
 
 namespace PlanetLab
 {

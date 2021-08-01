@@ -34,6 +34,8 @@ public:
 
 	void setVisibility(bool visibility) { _visibility = visibility;	}
 
+	int getVerticesCount() const;
+
 
 private:
 	void UpdateVBO();

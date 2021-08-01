@@ -62,6 +62,9 @@ public:
 
 	void Free();
 
+	int getVerticesCount() const { return _model->getVerticesCount();}
+
+
 private:
 	void SendUniforms();
 

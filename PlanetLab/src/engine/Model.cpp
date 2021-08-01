@@ -151,6 +151,17 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, bool IscBox)
     return Mesh(vertices, newMaterial, indices);
 }
 
+int Model::getVerticesCount() const
+{
+    int verticesCount = 0;
+    for (const auto& mesh : _meshes)
+    {
+        verticesCount += mesh->getVerticesCount();
+    }
+    return verticesCount;
+}
+
+
 
 /*
 * Free the memory of all meshes
