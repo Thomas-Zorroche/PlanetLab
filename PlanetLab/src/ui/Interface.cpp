@@ -213,6 +213,7 @@ void Interface::ShowSettingsWindow()
                 if (ImGui::Combo("FaceRenderMask", &(int&)_planet->getFaceRenderMask(), "All\0Top\0Bottom\0Left\0Right\0Front\0Back\0\0"))
                 {
                     Application::Get().Update(ObserverFlag::MESH);
+                    Application::Get().Update(ObserverFlag::FACERENDERMASK);
                 }
                 ImGui::PopItemWidth();
                 static glm::vec3 globalRot;

@@ -33,6 +33,7 @@ public:
 	void setColor(const Color& color);
 
 	void setVisibility(bool visibility) { _visibility = visibility;	}
+	bool getVisibility() const { return _visibility; }
 
 	int getVerticesCount() const;
 

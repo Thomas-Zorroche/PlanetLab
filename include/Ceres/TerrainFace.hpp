@@ -16,10 +16,8 @@ public:
 	
 	std::shared_ptr<PlanetLab::Mesh>& mesh() { return _mesh; }
 
-	void setVisibility(bool visibility) 
-	{ 
-		_mesh->setVisibility(visibility);
-	}
+	void setVisibility(bool visibility) { _mesh->setVisibility(visibility); }
+	bool getVisibility() const { return _mesh->getVisibility(); }
 
 	float maxElevation() const { return _maxElevation; }
 

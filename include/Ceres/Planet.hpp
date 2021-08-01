@@ -30,7 +30,8 @@ enum class ObserverFlag
 {
 	RESOLUTION = 0,
 	COLOR,
-	MESH
+	MESH,
+	FACERENDERMASK
 };
 
 
@@ -64,11 +65,21 @@ public:
 
 	PlanetSubject& getPlanetSubject() { return _planetSubject; }
 
+
 private:
 	void generatePlanet();
 	void generateMesh();
 	void generateColors();
 	void sendUniforms();
+
+
+/*
+* Signals
+* Do not use it. Use EMIT keyword.
+*/
+private:
+	void emitResolutionChanged(int resolution);
+
 
 private:
 	int _resolution;
@@ -86,5 +97,7 @@ private:
 
 	PlanetSubject _planetSubject;
 };
+
+#define EMIT_ResolutionChanged(resolution) emitResolutionChanged(resolution)
 
 } // ns Procedural Planet

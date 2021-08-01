@@ -156,7 +156,8 @@ int Model::getVerticesCount() const
     int verticesCount = 0;
     for (const auto& mesh : _meshes)
     {
-        verticesCount += mesh->getVerticesCount();
+        if (mesh->getVisibility())
+            verticesCount += mesh->getVerticesCount();
     }
     return verticesCount;
 }

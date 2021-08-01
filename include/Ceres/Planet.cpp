@@ -102,7 +102,8 @@ void Planet::update(ObserverFlag flag)
 			{
 				face.updateResolution(_resolution);
 			}
-			_planetSubject.updateResolution(_resolution);
+
+			EMIT_ResolutionChanged(_resolution);
 			break;
 		}
 		case ObserverFlag::COLOR:
@@ -113,6 +114,11 @@ void Planet::update(ObserverFlag flag)
 		case ObserverFlag::MESH:
 		{
 			generateMesh();
+			break;
+		}
+		case ObserverFlag::FACERENDERMASK:
+		{
+			EMIT_ResolutionChanged(_resolution);
 			break;
 		}
 	}
@@ -196,7 +202,19 @@ int Planet::getVerticesCount() const
 
 int Planet::getFacesCount() const
 {
-	return (_resolution - 1) * (_resolution - 1) * 6;
+	int visibleFacesCount = 0;
+	for (const TerrainFace& face : _terrainFaces)
+	{
+		if (face.getVisibility())
+			visibleFacesCount++;
+	}
+	return (_resolution - 1) * (_resolution - 1) * visibleFacesCount;
+}
+
+// SIGNALS
+void Planet::emitResolutionChanged(int resolution)
+{
+	_planetSubject.updateResolution(_resolution);
 }
 
 } // ns Procedural Planet
