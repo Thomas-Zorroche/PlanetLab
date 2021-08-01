@@ -187,8 +187,8 @@ void Planet::RandomGenerate()
 	_colorSettings->SetRandomColors(seed);
 
 	// Update Mesh
-	// PlanetLab::Application::Get().Update(ObserverFlag::MESH);
-	// PlanetLab::Application::Get().Update(ObserverFlag::COLOR);
+	update(ObserverFlag::MESH);
+	update(ObserverFlag::COLOR);
 }
 
 int Planet::getVerticesCount() const
