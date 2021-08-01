@@ -2,8 +2,6 @@
 #include "NoiseSettings.hpp"
 #include "PerlinNoise.hpp"
 
-#include <algorithm>    // std::max
-
 namespace Ceres
 {
 

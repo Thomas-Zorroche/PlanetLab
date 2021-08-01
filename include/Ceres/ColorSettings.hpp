@@ -3,9 +3,6 @@
 #include "engine/Color.hpp"
 #include "imgui/imgui_color_gradient.h"
 
-#include <memory>
-#include <vector>
-
 namespace PlanetLab
 {
 struct Color;

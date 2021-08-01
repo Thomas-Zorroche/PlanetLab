@@ -7,8 +7,6 @@
 #include "RigidNoiseFilter.hpp"
 #include "SimpleNoiseFilter.hpp"
 
-#include <memory>
-
 namespace Ceres
 {
 

@@ -1,13 +1,5 @@
 #pragma once
 
-#include "glm/glm.hpp"
-
-#include <unordered_map>
-#include <string>
-#include <vector>
-#include <memory>
-
-
 namespace PlanetLab
 {
 class ParameterBase;

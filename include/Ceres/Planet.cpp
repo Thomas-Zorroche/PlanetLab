@@ -4,8 +4,6 @@
 #include "noise/SimpleNoiseFilter.hpp"
 #include "noise/NoiseSettings.hpp"
 
-#include "glm/glm.hpp"
-
 #include "engine/opengl/Mesh.hpp"
 #include "io/IOManager.hpp"
 

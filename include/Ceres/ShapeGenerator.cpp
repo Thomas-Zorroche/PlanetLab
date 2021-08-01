@@ -1,7 +1,5 @@
 #include "ShapeGenerator.hpp"
 
-#include <iostream>
-
 #include "ShapeSettings.hpp"
 #include "noise/NoiseFilter.hpp"
 #include "noise/NoiseFilterFactory.hpp"

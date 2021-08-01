@@ -1,8 +1,6 @@
 ﻿#include "RigidNoiseFilter.hpp"
 #include "NoiseSettings.hpp"
 
-#include <algorithm>    // std::max
-
 namespace Ceres
 {
 

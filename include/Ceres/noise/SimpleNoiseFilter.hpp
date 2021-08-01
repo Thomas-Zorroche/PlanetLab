@@ -1,7 +1,6 @@
 #pragma once
 
 #include "NoiseFilter.hpp"
-#include <memory>
 
 namespace Ceres
 {
