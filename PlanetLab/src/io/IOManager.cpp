@@ -57,14 +57,14 @@ bool IOManager::saveAs(const std::string& outputFileName, std::shared_ptr<Planet
 	}
 
 	// Save color settings
-	ini["colorSettings"]["useOceanColor"] = std::to_string(planet->colorSettings()->GetUseOceanColor());
-	ini["colorSettings"]["oceanDepth"] = std::to_string(planet->colorSettings()->GetOceanDepth());
-	ini["colorSettings"]["oceanColor"] = writeColor(planet->colorSettings()->GetOceanColor());
-	ini["colorSettings"]["planetColor"] = writeColor(planet->colorSettings()->color());
-	ini["colorSettings"]["useLandmassRamp"] = std::to_string(planet->colorSettings()->GetUseLandmassRamp());
+	ini["colorSettings"]["useOceanColor"] = std::to_string(planet->colorSettings()->getUseOceanColor());
+	ini["colorSettings"]["oceanDepth"] = std::to_string(planet->colorSettings()->getOceanDepth());
+	ini["colorSettings"]["oceanColor"] = writeColor(planet->colorSettings()->getOceanColor());
+	ini["colorSettings"]["planetColor"] = writeColor(planet->colorSettings()->getLandmassColor());
+	ini["colorSettings"]["useLandmassRamp"] = std::to_string(planet->colorSettings()->getUseLandmassRamp());
 	
 	// Save Gradient Settings
-	const auto& marks = planet->colorSettings()->GetGradient().getMarks();
+	const auto& marks = planet->colorSettings()->getGradient().getMarks();
 	int marksCount = marks.size();
 	ini["gradientSettings"]["marksCount"] = std::to_string(marksCount);
 	int index = 1;
@@ -173,11 +173,11 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 	std::string& planetcolorStr = ini.get("colorsettings").get("planetcolor");
 	std::string& uselandmassrampStr = ini.get("colorsettings").get("uselandmassramp");
 
-	planet->colorSettings()->GetUseOceanColor() = std::atoi(useoceancolorStr.c_str());
-	planet->colorSettings()->GetOceanDepth() = std::atoi(oceandepthStr.c_str());
-	planet->colorSettings()->GetOceanColor() = parseColor(oceancolorStr);
-	planet->colorSettings()->color() = parseColor(planetcolorStr);
-	planet->colorSettings()->GetUseLandmassRamp() = std::atoi(oceandepthStr.c_str());
+	planet->colorSettings()->getUseOceanColor() = std::atoi(useoceancolorStr.c_str());
+	planet->colorSettings()->getOceanDepth() = std::atoi(oceandepthStr.c_str());
+	planet->colorSettings()->getOceanColor() = parseColor(oceancolorStr);
+	planet->colorSettings()->getLandmassColor() = parseColor(planetcolorStr);
+	planet->colorSettings()->getUseLandmassRamp() = std::atoi(oceandepthStr.c_str());
 
 	// Load Gradient values
 	std::string& marksCountStr = ini.get("gradientsettings").get("markscount");
@@ -220,9 +220,9 @@ void IOManager::setUnsavedValues()
 	}
 }
 
-PlanetLab::Color IOManager::parseColor(const std::string& vec3String)
+Ceres::Color IOManager::parseColor(const std::string& vec3String)
 {
-	if (vec3String == "") return PlanetLab::Color();
+	if (vec3String == "") return Ceres::Color();
 
 	std::vector<float> color;
 	std::string value;
@@ -232,7 +232,7 @@ PlanetLab::Color IOManager::parseColor(const std::string& vec3String)
 		color.push_back(std::atof(value.c_str()));
 	}
 
-	return PlanetLab::Color(color[0], color[1], color[2]);
+	return Ceres::Color(color[0], color[1], color[2]);
 }
 
 glm::vec3 IOManager::parseVec3(const std::string& vec3String)

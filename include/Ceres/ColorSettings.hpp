@@ -2,10 +2,10 @@
 
 #include "engine/Color.hpp"
 #include "imgui/imgui_color_gradient.h"
+#include "Color/Color.hpp"
 
 namespace PlanetLab
 {
-struct Color;
 class Shader;
 }
 
@@ -15,36 +15,40 @@ namespace Ceres
 class ColorSettings
 {
 public:
-	ColorSettings(const PlanetLab::Color& color = PlanetLab::Color());
-	
-	const PlanetLab::Color& color() const;
-	PlanetLab::Color& color();
+	ColorSettings(const Color& color = Color());
 
-	float GetOceanDepth() const { return _oceanDepth; }
-	float& GetOceanDepth() { return _oceanDepth; }
+	const Color& getLandmassColor() const { return _landmassColor; }
+	Color& getLandmassColor() { return _landmassColor; }
 
-	PlanetLab::Color GetOceanColor() const { return _oceanColor; }
-	PlanetLab::Color& GetOceanColor() { return _oceanColor; }
+	Color getOceanColor() const { return _oceanColor; }
+	Color& getOceanColor() { return _oceanColor; }
 
-	void SendUniforms(std::shared_ptr<PlanetLab::Shader>& shader);
+	float getOceanDepth() const { return _oceanDepth; }
+	float& getOceanDepth() { return _oceanDepth; }
 
-	ImGradient& GetGradient() { return _gradient; }
+	bool& getUseLandmassRamp() { return _useLandmassRamp; }
+	bool getUseLandmassRamp() const { return _useLandmassRamp; }
 
-	bool& GetUseLandmassRamp() { return _useLandmassRamp; }
-	bool GetUseLandmassRamp() const { return _useLandmassRamp; }
+	bool& getUseOceanColor() { return _useOceanColor; }
+	bool getUseOceanColor() const { return _useOceanColor; }
 
-	bool& GetUseOceanColor() { return _useOceanColor; }
-	bool GetUseOceanColor() const { return _useOceanColor; }
+	ImGradient& getGradient() { return _gradient; }
 
-	void SetRandomColors(std::uint32_t seed);
+	/// Sets random colors for landmass and ocean
+	void setRandomColors(std::uint32_t seed, unsigned int steps = 4);
 
+	/// Replace ColorRamp marks by parameters marks
 	void setColorMarks(const std::list<ImGradientMark>& marks);
 
+	/// Send all settings to parameter shader
+	void sendUniforms(std::shared_ptr<PlanetLab::Shader>& shader);
+
+	/// Reset all settings with default value
 	void reset();
 
 private:
 	// Landmass settigns
-	PlanetLab::Color _colorPlanet;
+	Color _landmassColor;
 	bool _useLandmassRamp = false;
 	const int _MAX_STEPS_COLOR = 5;
 	ImGradient _gradient = ImGradient(5);
@@ -52,7 +56,7 @@ private:
 	// Ocean settings
 	bool _useOceanColor = false;
 	float _oceanDepth = 0.0f;
-	PlanetLab::Color _oceanColor = PlanetLab::Color(0, 0, 1);
+	Color _oceanColor = Color(0, 0, 0.8);
 
 };
 

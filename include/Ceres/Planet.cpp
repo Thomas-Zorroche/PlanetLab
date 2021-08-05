@@ -5,7 +5,6 @@
 #include "noise/NoiseSettings.hpp"
 
 #include "engine/opengl/Mesh.hpp"
-#include "io/IOManager.hpp"
 
 namespace Ceres
 {
@@ -46,7 +45,7 @@ void Planet::sendUniforms()
 	auto shader = _staticMesh.GetShader();
 	shader->Bind();
 
-	_colorSettings->SendUniforms(shader);
+	_colorSettings->sendUniforms(shader);
 	shader->SetUniform1f("u_maxElevation", _maxElevation);
 
 	shader->Unbind();
@@ -80,7 +79,7 @@ void Planet::generateColors()
 {
 	for (TerrainFace& face : _terrainFaces)
 	{
-		face.mesh()->setColor(_colorSettings->color());
+		face.mesh()->setColor(_colorSettings->getLandmassColor());
 	}
 }
 
@@ -92,8 +91,6 @@ void Planet::generatePlanet()
 
 void Planet::update(ObserverFlag flag)
 {
-	PlanetLab::IOManager::get().setUnsavedValues();
-
 	switch (flag)
 	{
 		case ObserverFlag::RESOLUTION:
@@ -188,7 +185,7 @@ void Planet::RandomGenerate()
 	}
 
 	// Colors
-	_colorSettings->SetRandomColors(seed);
+	_colorSettings->setRandomColors(seed);
 
 	// Update Mesh
 	update(ObserverFlag::MESH);

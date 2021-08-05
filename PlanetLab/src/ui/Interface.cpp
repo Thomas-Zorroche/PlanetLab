@@ -294,33 +294,33 @@ void Interface::ShowSettingsWindow()
 
                 if (ImGui::TreeNode("Landmass"))
                 {
-                    if (!_color->GetUseLandmassRamp())
+                    if (!_color->getUseLandmassRamp())
                     {
-                        if (ImGui::ColorEdit3("Color", (float*)&(_color->color())))
+                        if (ImGui::ColorEdit3("Color", (float*)&(_color->getLandmassColor())))
                         {
                             Application::Get().Update(ObserverFlag::COLOR);
                         }
                     }
 
-                    ImGui::Checkbox("Use Color Ramp", &_color->GetUseLandmassRamp());
+                    ImGui::Checkbox("Use Color Ramp", &_color->getUseLandmassRamp());
 
-                    if (_color->GetUseLandmassRamp())
+                    if (_color->getUseLandmassRamp())
                     {
                         static ImGradientMark* draggingMark = nullptr;
                         static ImGradientMark* selectedMark = nullptr;
-                        ImGui::GradientEditor(&_color->GetGradient(), draggingMark, selectedMark);
+                        ImGui::GradientEditor(&_color->getGradient(), draggingMark, selectedMark);
                     }
                     ImGui::TreePop();
                 }
 
                 if (ImGui::TreeNode("Ocean"))
                 {
-                    ImGui::Checkbox("Use a different color for ocean", &_color->GetUseOceanColor());
+                    ImGui::Checkbox("Use a different color for ocean", &_color->getUseOceanColor());
 
-                    if (_color->GetUseOceanColor())
+                    if (_color->getUseOceanColor())
                     {
-                        ImGui::SliderFloat("Depth", &_planet->colorSettings()->GetOceanDepth(), 0.0f, 10.0f);
-                        ImGui::ColorEdit3("Color", (float*)&_planet->colorSettings()->GetOceanColor());
+                        ImGui::SliderFloat("Depth", &_planet->colorSettings()->getOceanDepth(), 0.0f, 10.0f);
+                        ImGui::ColorEdit3("Color", (float*)&_planet->colorSettings()->getOceanColor());
                     }
                     ImGui::TreePop();
                 }

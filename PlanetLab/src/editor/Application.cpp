@@ -96,6 +96,7 @@ void Application::GenerateUpdateQueue(bool onRelease)
 {
     if (!_updatesQueue.empty()/* && (onRelease && _updateMode == UpdateMode::OnRelease) || !onRelease*/)
     {
+        IOManager::get().setUnsavedValues();
         for (const auto& flag : _updatesQueue)
         {
             _planet->update(flag);
