@@ -31,7 +31,9 @@ public:
 	std::vector<std::shared_ptr<NoiseLayer> > noiseLayers();
 	std::shared_ptr<NoiseLayer> noiseLayer(unsigned int index);
 
-	void addLayer(const std::shared_ptr<NoiseLayer>& layer);
+	std::shared_ptr<NoiseLayer> getLastLayer() const { return _noiseLayers.back(); }
+
+	void addLayer(const std::shared_ptr<NoiseLayer>& layer = std::make_shared<NoiseLayer>());
 	void removeLastLayer();
 	void removeLayer(unsigned int index);
 	void removeAllLayers();

@@ -1,10 +1,5 @@
 #pragma once
 
-namespace PlanetLab
-{
-class ParameterBase;
-using ParametersMap = std::unordered_map < std::string, std::shared_ptr<ParameterBase> >;
-}
 
 namespace Ceres
 {
@@ -15,62 +10,31 @@ enum class FilterType
 	Rigid
 };
 
-class NoiseSettings
+struct NoiseSettings
 {
-public:
+	enum FilterType filterType = FilterType::Simple;
 
-public:
-	NoiseSettings();
+	// Simple filter type settings
 
-	void Display();
+	float strength = 1.0f;
+	
+	float baseRoughness = 1.0f;
+	
+	float roughness = 2.0f;
 
-	float strength() const;
-	float& strength();
+	glm::vec3 center = glm::vec3(0, 0, 0);
 
-	float baseRoughness() const;
-	float& baseRoughness();
+	int layersCount = 1;
+	/// Amplitude will be half with each layer
+	float persistence = 0.5f; 
 
-	float roughness() const;
-	float& roughness();
+	float minValue = 0.0f;
 
-	glm::vec3 center() const;
-	glm::vec3& center();
 
-	int layersCount() const;
-	int& layersCount();
+	// Rigid filter type settings
 
-	float persistence() const;
-	float& persistence();
-
-	float minValue() const;
-	float& minValue();
-
-	float weightMultiplier() const;
-	float& weightMultiplier();
-
-	FilterType& GetFilterType();
-
-private:
-	friend const std::shared_ptr<PlanetLab::ParameterBase>& GetParameterByName(const PlanetLab::ParametersMap& parameters, const std::string& name);
-
-private:
-	enum FilterType _filterType = FilterType::Simple;
-
-	PlanetLab::ParametersMap _parameters;
-	std::vector<std::string> _parametersNames; // liste triée
-
-	// Simple
-	float _strength = 1.0f;
-	float _baseRoughness = 1.0f;
-	float _roughness = 2.0f;
-	glm::vec3 _center = glm::vec3(0, 0, 0);
-	int _layersCount = 1;
-	float _persistence = 0.5f; // Amplitude will be half with each layer
-	float _minValue = 0.0f;
-
-	// Rigid
-	float _weightMultiplier = 0.5;
+	float weightMultiplier = 0.5;
 };
 
-}	// ns proceduralPlanet
+}	// ns Ceres
 

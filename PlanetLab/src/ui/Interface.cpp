@@ -154,13 +154,17 @@ void  Interface::ShowMenuBar(GLFWwindow* window)
                 {
                     if (ImGui::MenuItem(paths[i].c_str()))
                     {
-                        _planet->reset();
                         if (!IOManager::get().open(paths[i], _planet))
                         {
                             Application::Get().AppendLog(std::string("Error IO :: cannot open file " + paths[i]).c_str());
                         }
                         else
                         {
+                            _noiseSettingsParameters.clear();
+                            const auto layersCount = _planet->shapeSettings()->noiseLayers().size();
+                            for (size_t i = 0; i < layersCount; i++)
+                                _noiseSettingsParameters.push_back(_planet->shapeSettings()->noiseLayer(i)->noiseSettings());
+
                             Application::Get().AppendLog("File has been opened");
                         }
                     }
@@ -240,7 +244,7 @@ void Interface::ShowSettingsWindow()
                 int noiseLayersCount = _shape->noiseLayers().size();
                 if (ImGui::SliderInt("Count", &noiseLayersCount, 0, 5))
                 {
-                    _planet->updateNoiseLayersCount(noiseLayersCount);
+                    updateNoiseLayersCount(noiseLayersCount);
                     Application::Get().Update(ObserverFlag::MESH);
                 }
 
@@ -258,7 +262,7 @@ void Interface::ShowSettingsWindow()
                         if (ImGui::TreeNode("Noise Settings"))
                         {
                             ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
-                            if (ImGui::Combo("Filter Type", &(int&)layer->noiseSettings()->GetFilterType(), "Simple\0Rigid\0\0"))
+                            if (ImGui::Combo("Filter Type", &(int&)layer->noiseSettings()->filterType, "Simple\0Rigid\0\0"))
                             {
                                 _planet->shapeGenerator()->updateFilterType(layerCountNode);
                                 Application::Get().Update(ObserverFlag::MESH);
@@ -272,10 +276,8 @@ void Interface::ShowSettingsWindow()
                                 Application::Get().Update(ObserverFlag::MESH);
                             }
 
-                            /*
-                            * Display All the Noise Settings
-                            */
-                            layer->noiseSettings()->Display();
+                            // Display filter noise settings
+                            _noiseSettingsParameters[layerCountNode].display();
 
 
                             ImGui::TreePop();
@@ -542,6 +544,31 @@ void Interface::saveFile()
 void Interface::newFile()
 {
     _newFileOpen = true;
+}
+
+void Interface::updateNoiseLayersCount(int noiseLayersCountUpdated)
+{
+    int layersCountDifference = noiseLayersCountUpdated - _planet->shapeSettings()->noiseLayers().size();
+
+    if (layersCountDifference == 0)
+        return;
+
+    if (layersCountDifference > 0)
+    {
+        for (size_t i = 0; i < layersCountDifference; i++)
+            _planet->addNoiseLayer();
+
+        // Add a noiseSettingsParamater
+        _noiseSettingsParameters.push_back(NoiseSettingsParameters(_planet->shapeSettings()->getLastLayer()->noiseSettings()));
+    }
+    else
+    {
+        for (size_t i = 0; i < abs(layersCountDifference); i++)
+            _planet->removeLastNoiseLayer();
+        
+        // Remove the noiseSettingsParamater linked with last layer to be removed
+        _noiseSettingsParameters.pop_back();
+    }
 }
 
 void Interface::free()

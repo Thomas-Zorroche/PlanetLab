@@ -50,8 +50,6 @@ public:
 
 	void update(ObserverFlag flag);
 
-	void updateNoiseLayersCount(int noiseLayersCount);
-
 	void reset();
 
 	void Rotate(const glm::vec3& angles);
@@ -64,6 +62,11 @@ public:
 	int getFacesCount() const;
 
 	PlanetSubject& getPlanetSubject() { return _planetSubject; }
+
+	void addNoiseLayer(unsigned int count = 1);
+
+	void removeLastNoiseLayer();
+
 
 
 private:

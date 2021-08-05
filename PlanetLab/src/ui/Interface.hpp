@@ -11,6 +11,8 @@
 
 #include "Ceres/Planet.hpp"
 
+#include "editor/NoiseSettingsParameters.h"
+
 
 namespace Ceres
 {
@@ -82,6 +84,8 @@ private:
 
 	void ShowUpdateItem();
 
+	void updateNoiseLayersCount(int noiseLayersCountUpdated);
+
 	void updateStatistics();
 
 private:
@@ -114,6 +118,8 @@ private:
 	MeshStatistics _statistics;
 
 	std::unique_ptr<UiObserver> _observer = nullptr;
+
+	std::vector<NoiseSettingsParameters> _noiseSettingsParameters;
 };
 
 void prettyPrintNumber(int number, std::string& str);

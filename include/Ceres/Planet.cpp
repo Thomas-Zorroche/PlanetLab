@@ -3,6 +3,7 @@
 #include "noise/NoiseFilter.hpp"
 #include "noise/SimpleNoiseFilter.hpp"
 #include "noise/NoiseSettings.hpp"
+#include "noise/NoiseFilterFactory.hpp"
 
 #include "engine/opengl/Mesh.hpp"
 
@@ -119,35 +120,22 @@ void Planet::update(ObserverFlag flag)
 			break;
 		}
 	}
-
-
 }
 
-void Planet::updateNoiseLayersCount(int noiseLayersCount)
+void Planet::addNoiseLayer(unsigned int count)
 {
-	int layersDiffCount = noiseLayersCount - _shapeSettings->noiseLayers().size();
-
-	// Add layers and filters
-	if (layersDiffCount > 0)
+	for (size_t i = 0; i < count; i++)
 	{
-		for (size_t i = 0; i < layersDiffCount; i++)
-		{
-			auto layer = std::make_shared<NoiseLayer>();
-			std::shared_ptr<NoiseFilter> filter = std::make_shared<SimpleNoiseFilter>(layer->noiseSettings());
+		auto layer = std::make_shared<NoiseLayer>();
+		_shapeSettings->addLayer(layer);
+		_shapeGenerator->addFilter(NoiseFilterFactory::CreateNoiseFilter(layer->noiseSettings()));
+	}
+}
 
-			_shapeSettings->addLayer(layer);
-			_shapeGenerator->addFilter(filter);
-		}
-	}
-	// Remove layers and filters
-	else
-	{
-		for (size_t i = 0; i < abs(layersDiffCount); i++)
-		{
-			_shapeSettings->removeLastLayer();
-			_shapeGenerator->removeLastFilter();
-		}
-	}
+void Planet::removeLastNoiseLayer()
+{
+	_shapeSettings->removeLastLayer();
+	_shapeGenerator->removeLastFilter();
 }
 
 void Planet::reset()

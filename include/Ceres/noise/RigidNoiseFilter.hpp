@@ -5,7 +5,7 @@
 namespace Ceres
 {
 
-class NoiseSettings;
+struct NoiseSettings;
 
 class RigidNoiseFilter : public NoiseFilter
 {
