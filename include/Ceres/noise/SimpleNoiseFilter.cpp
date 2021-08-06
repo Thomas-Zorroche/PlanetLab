@@ -1,17 +1,14 @@
 #include "SimpleNoiseFilter.hpp"
 #include "NoiseSettings.hpp"
-#include "PerlinNoise.hpp"
 
 namespace Ceres
 {
 
 SimpleNoiseFilter::SimpleNoiseFilter(const std::shared_ptr<NoiseSettings>& settings, std::uint32_t seed)
 	: NoiseFilter(settings, seed)
-{
+{}
 
-}
-
-float SimpleNoiseFilter::Evaluate(const glm::vec3& point) const
+float SimpleNoiseFilter::evaluate(const glm::vec3& point) const
 {
 	float noiseValue = 0;
 
@@ -32,4 +29,4 @@ float SimpleNoiseFilter::Evaluate(const glm::vec3& point) const
 	return noiseValue * _settings->strength;
 }
 
-}	// ns proceduralPlanet
+}	// ns Ceres

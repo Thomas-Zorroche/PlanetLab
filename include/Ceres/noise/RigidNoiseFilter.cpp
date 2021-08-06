@@ -6,11 +6,9 @@ namespace Ceres
 
 RigidNoiseFilter::RigidNoiseFilter(const std::shared_ptr<NoiseSettings>& settings, std::uint32_t seed)
 	: NoiseFilter(settings, seed)
-{
+{}
 
-}
-
-float RigidNoiseFilter::Evaluate(const glm::vec3& point) const
+float RigidNoiseFilter::evaluate(const glm::vec3& point) const
 {
 	float noiseValue = 0;
 
@@ -35,4 +33,4 @@ float RigidNoiseFilter::Evaluate(const glm::vec3& point) const
 	return noiseValue * _settings->strength;
 }
 
-}	// ns proceduralPlanet
+}	// ns Ceres

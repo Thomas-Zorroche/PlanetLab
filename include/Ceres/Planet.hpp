@@ -15,6 +15,9 @@
 namespace Ceres
 {
 
+/**
+* @brief Which face will be rendered
+*/
 enum class FaceRenderMask
 {
 	All = 0,
@@ -35,46 +38,62 @@ enum class ObserverFlag
 };
 
 
+/**
+* @brief Ceres Planet Class
+*/
 class Planet
 {
 public:
+	/// Defautl resolution of 64
 	Planet(int resolution = 64);
 
-	void draw();
+	// Accessors
 
-	std::shared_ptr<ShapeSettings> shapeSettings() { return _shapeSettings; }
-	std::shared_ptr<ColorSettings> colorSettings() { return _colorSettings; }
-	std::shared_ptr<ShapeGenerator> shapeGenerator() { return _shapeGenerator; }
+	const std::shared_ptr<ShapeSettings>& getShapeSettings() const { return _shapeSettings; }
+	std::shared_ptr<ShapeSettings> getShapeSettings() { return _shapeSettings; }
 
-	int& resolution() { return _resolution; }
+	const std::shared_ptr<ColorSettings>& getColorSettings() const { return _colorSettings; }
+	std::shared_ptr<ColorSettings> getColorSettings() { return _colorSettings; }
 
-	void update(ObserverFlag flag);
+	const std::shared_ptr<ShapeGenerator>& getShapeGenerator() const { return _shapeGenerator; }
+	std::shared_ptr<ShapeGenerator> getShapeGenerator() { return _shapeGenerator; }
 
-	void reset();
-
-	void Rotate(const glm::vec3& angles);
+	int getResolution() const { return _resolution; }
+	int& getResolution() { return _resolution; }
 
 	FaceRenderMask& getFaceRenderMask() { return _faceRenderMask; }
 
-	void RandomGenerate();
-
+	PlanetSubject& getPlanetSubject() { return _planetSubject; }
+	
 	int getVerticesCount() const;
 	int getFacesCount() const;
 
-	PlanetSubject& getPlanetSubject() { return _planetSubject; }
+	// Public methods
 
+	/// Draw static mesh planet
+	void draw();
+	/// Update planet depending given flag
+	void update(ObserverFlag flag);
+	/// Reset all planet settings with default values
+	void reset();
+	/// Rotate planet by given angle
+	void rotate(const glm::vec3& angles);
+	/// Change randomly ONLY seed and colors
+	void generateRandomPlanet();
+	/// Add noise layer and filter
 	void addNoiseLayer(unsigned int count = 1);
-
+	/// Remove last noise layer and filter
 	void removeLastNoiseLayer();
 
-
-
 private:
+	/// Generate planet mesh and colors
 	void generatePlanet();
+	/// Generate planet static mesh
 	void generateMesh();
+	/// Generate planet colors
 	void generateColors();
+	/// Send colors settings uniforms and max elevation value
 	void sendUniforms();
-
 
 /*
 * Signals
@@ -85,22 +104,34 @@ private:
 
 
 private:
+	/// Resolution fo planet, amount of subdivisions per face
 	int _resolution;
 
+	/// Contains radius and noise settings
 	std::shared_ptr<ShapeSettings> _shapeSettings;
+
+	/// Contains ocean and landmass colors 
 	std::shared_ptr<ColorSettings> _colorSettings;
+
+	/// Responsible to apply noise on the shape
 	std::shared_ptr<ShapeGenerator> _shapeGenerator;
 
+	/// All 6 faces that form the sphere
 	TerrainFace _terrainFaces[6];
+
+	/// Planet static mesh
 	PlanetLab::StaticMesh _staticMesh;
 
+	/// Which face will be rendered
 	FaceRenderMask _faceRenderMask = FaceRenderMask::All;
 
+	/// Max elevation form the ground
 	float _maxElevation = 0.0f;
 
+	/// Subject of the Observer pattern
 	PlanetSubject _planetSubject;
 };
 
 #define EMIT_ResolutionChanged(resolution) emitResolutionChanged(resolution)
 
-} // ns Procedural Planet
+} // ns Ceres

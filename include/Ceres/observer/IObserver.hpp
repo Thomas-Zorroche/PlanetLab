@@ -3,6 +3,9 @@
 namespace Ceres
 {
 
+/**
+* @brief Interface for Observer object in Observer pattern
+*/
 class IObserver 
 {
 public:

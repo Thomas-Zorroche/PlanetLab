@@ -7,23 +7,18 @@ namespace Ceres
 
 ShapeSettings::ShapeSettings(float radius)
 	: _planetRadius(radius),
-	_noiseLayers(std::vector<std::shared_ptr<NoiseLayer> > ()) {}
+	_noiseLayers(std::vector<std::shared_ptr<NoiseLayer> > ()) 
+{}
 
-float& ShapeSettings::planetRadius() 
-{ 
-	return _planetRadius; 
-}
-float ShapeSettings::planetRadius() const 
-{ 
-	return _planetRadius; 
-}
 
-std::vector<std::shared_ptr<NoiseLayer> > ShapeSettings::noiseLayers()
-{ 
-	return _noiseLayers; 
+const std::shared_ptr<NoiseLayer>& ShapeSettings::getNoiseLayer(unsigned int index) const
+{
+	if (index > _noiseLayers.size())
+		return nullptr;
+	return _noiseLayers[index];
 }
 
-std::shared_ptr<NoiseLayer> ShapeSettings::noiseLayer(unsigned int index)
+std::shared_ptr<NoiseLayer> ShapeSettings::getNoiseLayer(unsigned int index)
 {
 	if (index > _noiseLayers.size())
 		return nullptr;
@@ -55,14 +50,5 @@ void ShapeSettings::removeAllLayers()
 	}
 }
 
-
-/*
-* Noise Layer
-*/
-NoiseLayer::NoiseLayer(const std::shared_ptr<NoiseSettings>& settings)
-	: _noiseSettings(settings), _enabled(true)
-{
-
-}
 
 }	// ns proceduralPlanet

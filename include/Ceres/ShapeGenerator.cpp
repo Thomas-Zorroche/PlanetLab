@@ -9,7 +9,7 @@ namespace Ceres
 
 ShapeGenerator::ShapeGenerator(const std::shared_ptr<ShapeSettings>& shapeSettings)
 	: _settings(shapeSettings), 
-	_noiseFilters(std::vector<std::shared_ptr<NoiseFilter> >(_settings->noiseLayers().size(), nullptr))
+	_noiseFilters(std::vector<std::shared_ptr<NoiseFilter> >(_settings->getNoiseLayers().size(), nullptr))
 {
 
 }
@@ -21,8 +21,8 @@ float ShapeGenerator::calculateUnscaledElevation(const glm::vec3& pointOnUnitSph
 
 	if (_noiseFilters.size() > 0)
 	{
-		firstLayerValue = _noiseFilters[0]->Evaluate(pointOnUnitSphere);
-		if (_settings->noiseLayer(0)->enabled())
+		firstLayerValue = _noiseFilters[0]->evaluate(pointOnUnitSphere);
+		if (_settings->getNoiseLayer(0)->isEnabled())
 		{
 			elevation = firstLayerValue;
 		}
@@ -30,10 +30,10 @@ float ShapeGenerator::calculateUnscaledElevation(const glm::vec3& pointOnUnitSph
 
 	for (size_t i = 1; i < _noiseFilters.size(); i++)
 	{
-		if (_settings->noiseLayer(i)->enabled())
+		if (_settings->getNoiseLayer(i)->isEnabled())
 		{
-			float mask = (_settings->noiseLayer(i)->useFirstLayerAsMask()) ? firstLayerValue : 1;
-			elevation += _noiseFilters[i]->Evaluate(pointOnUnitSphere) * mask;
+			float mask = (_settings->getNoiseLayer(i)->isUsingFirstLayerAsMask()) ? firstLayerValue : 1;
+			elevation += _noiseFilters[i]->evaluate(pointOnUnitSphere) * mask;
 		}
 	}
 	return elevation;
@@ -46,12 +46,12 @@ float ShapeGenerator::getScaledElevation(float unscaledElevation) const
 	return elevation;
 }
 
-std::vector<std::shared_ptr<NoiseFilter> > ShapeGenerator::noiseFilters()
+std::vector<std::shared_ptr<NoiseFilter> > ShapeGenerator::getNoiseFilters()
 {
 	return _noiseFilters;
 }
 
-std::shared_ptr<NoiseFilter> ShapeGenerator::noiseFilter(unsigned int index) const
+std::shared_ptr<NoiseFilter> ShapeGenerator::getNoiseFilter(unsigned int index) const
 {
 	if (index >= _noiseFilters.size())
 		return nullptr;
@@ -86,12 +86,11 @@ void ShapeGenerator::updateFilterType(std::uint32_t index)
 {
 	if (index >= _noiseFilters.size()) 
 	{
-		std::cout << "Error: index out of bounds\n";
+		CERES_ERROR("Update Filter Tpye: index out of bounds");
+		return;
 	}
-	else 
-	{
-		_noiseFilters[index] = NoiseFilterFactory::CreateNoiseFilter(_settings->noiseLayer(index)->noiseSettings());
-	}
+
+	_noiseFilters[index] = NoiseFilterFactory::createNoiseFilter(_settings->getNoiseLayer(index)->getNoiseSettings());
 }
 
 }	// ns Ceres

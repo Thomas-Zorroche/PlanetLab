@@ -10,10 +10,15 @@
 namespace Ceres
 {
 
+/**
+* @brief Factory for creating Noise Filter based on it type
+*/
 class NoiseFilterFactory
 {
 public:
-	static std::shared_ptr<NoiseFilter> CreateNoiseFilter(const std::shared_ptr<NoiseSettings>& settings)
+
+	/// Create NoiseFilter linked with a noise settings
+	static std::shared_ptr<NoiseFilter> createNoiseFilter(const std::shared_ptr<NoiseSettings>& settings)
 	{
 		switch (settings->filterType)
 		{

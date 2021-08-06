@@ -42,8 +42,8 @@ void Interface::init(Window& window)
     _planet = Application::Get().GetPlanet();
     _observer = std::make_unique<UiObserver>(_planet->getPlanetSubject());
 
-    _shape = _planet->shapeSettings();
-    _color = _planet->colorSettings();
+    _shape = _planet->getShapeSettings();
+    _color = _planet->getColorSettings();
 
     // Init windows sizes
     _WIDTH = window.Width();
@@ -161,9 +161,9 @@ void  Interface::ShowMenuBar(GLFWwindow* window)
                         else
                         {
                             _noiseSettingsParameters.clear();
-                            const auto layersCount = _planet->shapeSettings()->noiseLayers().size();
+                            const auto layersCount = _planet->getShapeSettings()->getNoiseLayers().size();
                             for (size_t i = 0; i < layersCount; i++)
-                                _noiseSettingsParameters.push_back(_planet->shapeSettings()->noiseLayer(i)->noiseSettings());
+                                _noiseSettingsParameters.push_back(_planet->getShapeSettings()->getNoiseLayer(i)->getNoiseSettings());
 
                             Application::Get().AppendLog("File has been opened");
                         }
@@ -209,7 +209,7 @@ void Interface::ShowSettingsWindow()
             {
                 ShowUpdateItem();
 
-                if (ImGui::SliderInt("Resolution", &_planet->resolution(), 4, 256))
+                if (ImGui::SliderInt("Resolution", &_planet->getResolution(), 4, 256))
                 {
                     Application::Get().Update(ObserverFlag::RESOLUTION);
                 }
@@ -223,7 +223,7 @@ void Interface::ShowSettingsWindow()
                 static glm::vec3 globalRot;
                 if (ImGui::SliderFloat3("Euler Rotation", (float*)&globalRot, 0.0f, 360.0f))
                 {
-                    _planet->Rotate(globalRot);
+                    _planet->rotate(globalRot);
                 }
 
                 ImGui::Separator();
@@ -231,7 +231,7 @@ void Interface::ShowSettingsWindow()
                 // Changer le seed, les couleurs, et ajoute un epsilon au valeur 
                 if (ImGui::Button("Generate Random"))
                 {
-                    _planet->RandomGenerate();
+                    _planet->generateRandomPlanet();
                 }
 
                 ImGui::EndTabItem();
@@ -241,7 +241,7 @@ void Interface::ShowSettingsWindow()
             {
                 ShowUpdateItem();
 
-                int noiseLayersCount = _shape->noiseLayers().size();
+                int noiseLayersCount = _shape->getNoiseLayers().size();
                 if (ImGui::SliderInt("Count", &noiseLayersCount, 0, 5))
                 {
                     updateNoiseLayersCount(noiseLayersCount);
@@ -249,12 +249,12 @@ void Interface::ShowSettingsWindow()
                 }
 
                 int layerCountNode = 0;
-                for (auto& layer : _shape->noiseLayers())
+                for (auto& layer : _shape->getNoiseLayers())
                 {
                     std::string titleNode("Noise Layer " + std::to_string(layerCountNode));
                     if (ImGui::TreeNode(titleNode.c_str()))
                     {
-                        if (ImGui::Checkbox("Enabled", &layer->enabled()))
+                        if (ImGui::Checkbox("Enabled", &layer->isEnabled()))
                         {
                             Application::Get().Update(ObserverFlag::MESH);
                         }
@@ -262,17 +262,17 @@ void Interface::ShowSettingsWindow()
                         if (ImGui::TreeNode("Noise Settings"))
                         {
                             ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
-                            if (ImGui::Combo("Filter Type", &(int&)layer->noiseSettings()->filterType, "Simple\0Rigid\0\0"))
+                            if (ImGui::Combo("Filter Type", &(int&)layer->getNoiseSettings()->filterType, "Simple\0Rigid\0\0"))
                             {
-                                _planet->shapeGenerator()->updateFilterType(layerCountNode);
+                                _planet->getShapeGenerator()->updateFilterType(layerCountNode);
                                 Application::Get().Update(ObserverFlag::MESH);
                             }
                             ImGui::PopItemWidth();
 
 
-                            if (ImGui::InputInt("Seed", &(int&)_planet->shapeGenerator()->noiseFilter(layerCountNode)->Seed()))
+                            if (ImGui::InputInt("Seed", &(int&)_planet->getShapeGenerator()->getNoiseFilter(layerCountNode)->getSeed()))
                             {
-                                _planet->shapeGenerator()->noiseFilter(layerCountNode)->Reseed();
+                                _planet->getShapeGenerator()->getNoiseFilter(layerCountNode)->reseed();
                                 Application::Get().Update(ObserverFlag::MESH);
                             }
 
@@ -321,8 +321,8 @@ void Interface::ShowSettingsWindow()
 
                     if (_color->getUseOceanColor())
                     {
-                        ImGui::SliderFloat("Depth", &_planet->colorSettings()->getOceanDepth(), 0.0f, 10.0f);
-                        ImGui::ColorEdit3("Color", (float*)&_planet->colorSettings()->getOceanColor());
+                        ImGui::SliderFloat("Depth", &_planet->getColorSettings()->getOceanDepth(), 0.0f, 10.0f);
+                        ImGui::ColorEdit3("Color", (float*)&_planet->getColorSettings()->getOceanColor());
                     }
                     ImGui::TreePop();
                 }
@@ -548,7 +548,7 @@ void Interface::newFile()
 
 void Interface::updateNoiseLayersCount(int noiseLayersCountUpdated)
 {
-    int layersCountDifference = noiseLayersCountUpdated - _planet->shapeSettings()->noiseLayers().size();
+    int layersCountDifference = noiseLayersCountUpdated - _planet->getShapeSettings()->getNoiseLayers().size();
 
     if (layersCountDifference == 0)
         return;
@@ -559,7 +559,7 @@ void Interface::updateNoiseLayersCount(int noiseLayersCountUpdated)
             _planet->addNoiseLayer();
 
         // Add a noiseSettingsParamater
-        _noiseSettingsParameters.push_back(NoiseSettingsParameters(_planet->shapeSettings()->getLastLayer()->noiseSettings()));
+        _noiseSettingsParameters.push_back(NoiseSettingsParameters(_planet->getShapeSettings()->getLastLayer()->getNoiseSettings()));
     }
     else
     {

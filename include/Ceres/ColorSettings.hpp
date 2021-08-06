@@ -12,6 +12,9 @@ class Shader;
 namespace Ceres
 {
 
+/**
+* @brief Contains all color settings for a Ceres Planet (landmass and oceans)
+*/
 class ColorSettings
 {
 public:
@@ -47,15 +50,28 @@ public:
 	void reset();
 
 private:
+	// =====================================
 	// Landmass settigns
-	Color _landmassColor;
-	bool _useLandmassRamp = false;
-	const int _MAX_STEPS_COLOR = 5;
-	ImGradient _gradient = ImGradient(5);
+	// =====================================
 
+	/// Color of planet lands
+	Color _landmassColor;
+	/// Wheter to use a color ramp for landmass color
+	bool _useLandmassRamp = false;
+	/// Max steps in the color ramp
+	const int _MAX_STEPS_COLOR = 5;
+	/// ImGUI Color ramp object
+	ImGradient _gradient = ImGradient(5);
+	
+	// =====================================
 	// Ocean settings
+	// =====================================
+
+	/// Whether to use a different color for oceans
 	bool _useOceanColor = false;
+	/// Amount of depth in ocean
 	float _oceanDepth = 0.0f;
+	/// Ocean color
 	Color _oceanColor = Color(0, 0, 0.8);
 
 };

@@ -24,12 +24,12 @@ Planet::Planet(int resolution)
 		TerrainFace(_shapeGenerator, resolution, glm::vec3( 0,  0,  1))  // BACK
 	},
 	_staticMesh({ 
-		_terrainFaces[0].mesh(), 
-		_terrainFaces[1].mesh(),
-		_terrainFaces[2].mesh(),
-		_terrainFaces[3].mesh(),
-		_terrainFaces[4].mesh(),
-		_terrainFaces[5].mesh(),
+		_terrainFaces[0].getMesh(), 
+		_terrainFaces[1].getMesh(),
+		_terrainFaces[2].getMesh(),
+		_terrainFaces[3].getMesh(),
+		_terrainFaces[4].getMesh(),
+		_terrainFaces[5].getMesh(),
 	}, PlanetLab::TransformLayout(glm::vec3(0)), "Planet")
 {
 	generatePlanet();
@@ -52,7 +52,6 @@ void Planet::sendUniforms()
 	shader->Unbind();
 }
 
-/* Generate Fonctions */
 void Planet::generateMesh()
 {
 	std::size_t i = 0;
@@ -63,9 +62,9 @@ void Planet::generateMesh()
 		{
 			face.setVisibility(true);
 			face.constructMesh();
-			if (face.maxElevation() > _maxElevation)
+			if (face.getMaxElevation() > _maxElevation)
 			{
-				_maxElevation = face.maxElevation();
+				_maxElevation = face.getMaxElevation();
 			}
 		}
 		else
@@ -80,7 +79,7 @@ void Planet::generateColors()
 {
 	for (TerrainFace& face : _terrainFaces)
 	{
-		face.mesh()->setColor(_colorSettings->getLandmassColor());
+		face.getMesh()->setColor(_colorSettings->getLandmassColor());
 	}
 }
 
@@ -128,7 +127,7 @@ void Planet::addNoiseLayer(unsigned int count)
 	{
 		auto layer = std::make_shared<NoiseLayer>();
 		_shapeSettings->addLayer(layer);
-		_shapeGenerator->addFilter(NoiseFilterFactory::CreateNoiseFilter(layer->noiseSettings()));
+		_shapeGenerator->addFilter(NoiseFilterFactory::createNoiseFilter(layer->getNoiseSettings()));
 	}
 }
 
@@ -156,20 +155,20 @@ void Planet::reset()
 	update(ObserverFlag::MESH);
 }
 
-void Planet::Rotate(const glm::vec3& angles)
+void Planet::rotate(const glm::vec3& angles)
 {
 	_staticMesh.Rotate(angles);
 }
 
-void Planet::RandomGenerate()
+void Planet::generateRandomPlanet()
 {
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 	std::default_random_engine generator(seed);
 
 	// Reseed
-	for (std::size_t i = 0; i < _shapeGenerator->noiseFilters().size(); i++)
+	for (std::size_t i = 0; i < _shapeGenerator->getNoiseFilters().size(); i++)
 	{
-		_shapeGenerator->noiseFilter(i)->Reseed(seed);
+		_shapeGenerator->getNoiseFilter(i)->reseed(seed);
 	}
 
 	// Colors
@@ -202,7 +201,7 @@ void Planet::emitResolutionChanged(int resolution)
 	_planetSubject.updateResolution(_resolution);
 }
 
-} // ns Procedural Planet
+} // ns Ceres
 
 
 

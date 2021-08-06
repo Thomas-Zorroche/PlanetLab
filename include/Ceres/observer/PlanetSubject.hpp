@@ -11,8 +11,8 @@ class PlanetSubject : public ISubject {
 public:
     virtual ~PlanetSubject() {}
 
-    // The subscription management methods.
 	void attach(IObserver* observer) override;
+
     void detach(IObserver* observer) override;
 
     void notify() override;

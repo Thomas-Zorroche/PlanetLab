@@ -3,37 +3,27 @@
 namespace Ceres
 {
 
-NoiseFilter::NoiseFilter(
-	const std::shared_ptr<NoiseSettings>& settings,
-	std::uint32_t seed
-)
+NoiseFilter::NoiseFilter(const std::shared_ptr<NoiseSettings>& settings, std::uint32_t seed)
 	: _seed(seed),
 	_noise(siv::PerlinNoise(seed)),
 	_settings(settings)
-{
+{}
 
-}
-
-void NoiseFilter::Reseed(std::uint32_t seed)
+void NoiseFilter::reseed(std::uint32_t seed)
 {
 	_noise.reseed(seed);
 	_seed = seed;
 }
 
-void NoiseFilter::Reseed()
+void NoiseFilter::reseed()
 {
 	_noise.reseed(_seed);
 }
 
-std::uint32_t& NoiseFilter::Seed()
-{
-	return _seed;
-}
-
-void NoiseFilter::SetSettings(const std::shared_ptr<NoiseSettings>& settings)
+void NoiseFilter::setSettings(const std::shared_ptr<NoiseSettings>& settings)
 {
 	_settings = settings;
 }
 
-}	// ns proceduralPlanet
+}	// ns Ceres
 
