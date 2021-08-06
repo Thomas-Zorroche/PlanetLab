@@ -10,9 +10,6 @@
 #include "engine/ResourceManager.hpp"
 #include "ui/Interface.hpp"
 
-#include <vector>
-#include <memory>
-
 
 namespace PlanetLab
 {

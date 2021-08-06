@@ -3,11 +3,6 @@
 #include "engine/Model.hpp"
 #include "opengl/Shader.h"
 
-#include <string>
-#include <memory>
-#include <functional>
-#include <vector>
-
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -66,6 +61,9 @@ public:
 	unsigned int GetVAO() const { return _model->GetVAO(); }
 
 	void Free();
+
+	int getVerticesCount() const { return _model->getVerticesCount();}
+
 
 private:
 	void SendUniforms();

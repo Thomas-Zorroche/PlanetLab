@@ -5,24 +5,36 @@
 #include "glm/glm.hpp"
 #include "engine/Color.hpp"
 #include <GLFW/glfw3.h>
-#include "ceres/Planet.hpp"
 #include "engine/SpriteSheet.hpp"
 
-#include <memory>
-#include <string>
+#include "UiObserver.hpp"
+
+#include "Ceres/Planet.hpp"
+
+#include "editor/NoiseSettingsParameters.h"
+
 
 namespace Ceres
 {
-	class NoiseSettings;
-	class ShapeSettings;
-	class ColorSettings;
+class NoiseSettings;
+class ShapeSettings;
+class ColorSettings;
 }
 
 namespace PlanetLab
 {
-	class Window;
-	class Camera;
-	class Application;
+class Window;
+class Camera;
+class Application;
+
+
+
+struct MeshStatistics
+{
+	std::string verticesCount = "";
+	std::string facesCount = "";
+	std::string trianglesCount= "";
+};
 
 
 class Interface
@@ -56,6 +68,8 @@ public:
 	void ShowSettings();
 	void ShowTerminal();
 
+	void onResolutionUpdate(int resolution);
+
 
 private:
 	Interface() = default;
@@ -69,6 +83,10 @@ private:
 	void ShowNewSceneWindow();
 
 	void ShowUpdateItem();
+
+	void updateNoiseLayersCount(int noiseLayersCountUpdated);
+
+	void updateStatistics();
 
 private:
 	Framebuffer _fbo = Framebuffer();
@@ -96,6 +114,14 @@ private:
 
 	float _WIDTH;
 	float _HEIGHT;
+
+	MeshStatistics _statistics;
+
+	std::unique_ptr<UiObserver> _observer = nullptr;
+
+	std::vector<NoiseSettingsParameters> _noiseSettingsParameters;
 };
 
-}	// ns Ui
+void prettyPrintNumber(int number, std::string& str);
+
+}	

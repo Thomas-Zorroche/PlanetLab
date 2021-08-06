@@ -4,20 +4,10 @@
 namespace Ceres
 {
 
-ColorSettings::ColorSettings(const PlanetLab::Color& color)
-	: _colorPlanet(color) {}
+ColorSettings::ColorSettings(const Color& color)
+	: _landmassColor(color) {}
 
-const PlanetLab::Color& ColorSettings::color() const
-{ 
-	return _colorPlanet; 
-}
-
-PlanetLab::Color& ColorSettings::color()
-{ 
-	return _colorPlanet; 
-}
-
-void ColorSettings::SendUniforms(std::shared_ptr<PlanetLab::Shader>& shader)
+void ColorSettings::sendUniforms(std::shared_ptr<PlanetLab::Shader>& shader)
 {
 	// Ocean
 	if (_useOceanColor)
@@ -49,10 +39,9 @@ void ColorSettings::SendUniforms(std::shared_ptr<PlanetLab::Shader>& shader)
 	{
 		shader->SetUniform1i("u_colorStepCount", 0);
 	}
-
 }
 
-void ColorSettings::SetRandomColors(std::uint32_t seed)
+void ColorSettings::setRandomColors(std::uint32_t seed, unsigned int steps)
 {
 	_useLandmassRamp = true;
 	_useOceanColor = true;
@@ -61,7 +50,7 @@ void ColorSettings::SetRandomColors(std::uint32_t seed)
 	std::default_random_engine generator(seed);
 	std::uniform_real_distribution<float> random(0, 1);
 
-	for (std::size_t i = 0; i < 4; i++)	// TODO Max random colors variable
+	for (std::size_t i = 0; i < steps; i++)
 	{
 		auto pos = random(generator);
 		ImColor color(
@@ -72,7 +61,7 @@ void ColorSettings::SetRandomColors(std::uint32_t seed)
 		_gradient.addMark(pos, color);
 	}
 
-	_oceanColor = PlanetLab::Color(
+	_oceanColor = Color(
 		random(generator),
 		random(generator),
 		random(generator)
@@ -94,15 +83,14 @@ void ColorSettings::setColorMarks(const std::list<ImGradientMark>& marks)
 
 void ColorSettings::reset()
 {
-	_colorPlanet = PlanetLab::Color();
+	_landmassColor = Color();
 	_useLandmassRamp = false;
 
 	_useOceanColor = false;
 	_oceanDepth = 0.0f;
-	_oceanColor = PlanetLab::Color(0, 0, 1);
+	_oceanColor = Color(0, 0, 1);
 
 	_gradient.reset();
-
 }
 
 }	// ns Ceres

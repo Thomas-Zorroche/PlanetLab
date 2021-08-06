@@ -9,13 +9,10 @@
 
 #include "io/IOManager.hpp"
 
-#include <memory>
-
 namespace PlanetLab
 {
 
 Scene::Scene()
-	: _gizmo(2, 0.005)
 {
 	// Procedural Planet
 	_planet = std::make_shared<Ceres::Planet>();

@@ -1,10 +1,5 @@
 #include "Mesh.hpp"
-#include "common.hpp"
-#include "Shader.h"
 #include "Texture.h"
-#include <string>
-#include <iostream>
-#include "engine/Material.hpp"
 #include "engine/ResourceManager.hpp"
 
 namespace PlanetLab
@@ -37,7 +32,6 @@ void Mesh::SetupMesh(bool generateBuffers)
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
     glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(ShapeVertex), &_vertices[0], GL_DYNAMIC_DRAW);
 
     if (!_indices.empty())
@@ -51,49 +45,52 @@ void Mesh::SetupMesh(bool generateBuffers)
     }
 
     // Vertex attribute pointers
-    // vertex Positions
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(ShapeVertex), (void*)0);
-    // vertex normals
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(ShapeVertex), (void*)offsetof(ShapeVertex, normal));
-    // vertex texture coords
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(ShapeVertex), (void*)offsetof(ShapeVertex, texCoords));
+    if (generateBuffers)
+    {
+        // vertex Positions
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(ShapeVertex), (void*)0);
+        // vertex normals
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(ShapeVertex), (void*)offsetof(ShapeVertex, normal));
+        // vertex texture coords
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(ShapeVertex), (void*)offsetof(ShapeVertex, texCoords));
+    }
 
     glBindVertexArray(0);
 }
 
 void Mesh::Draw(std::shared_ptr<Shader>& shader) const
 {
-    if (_visibility)
+    if (!_visibility)
+        return;
+
+    shader->Bind();
+
+    _material->SendMaterialUniform(shader);
+
+    // Textures 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    if (_material->TextureCount() > 0)
     {
-        shader->Bind();
-
-        _material->SendMaterialUniform(shader);
-
-        // Textures 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        if (_material->TextureCount() > 0)
-        {
-            glActiveTexture(GL_TEXTURE0); 
-            glBindTexture(GL_TEXTURE_2D, _material->GetParameterTexture(0));
-        }
-
-        // draw mesh
-        glBindVertexArray(VAO);
-        if (_indices.empty())
-            glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
-        else
-            glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-
-        shader->Unbind();
-        glActiveTexture(GL_TEXTURE0);
-        glDisable(GL_BLEND);
+        glActiveTexture(GL_TEXTURE0); 
+        glBindTexture(GL_TEXTURE_2D, _material->GetParameterTexture(0));
     }
+
+    // draw mesh
+    glBindVertexArray(VAO);
+    if (_indices.empty())
+        glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
+    else
+        glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+
+    shader->Unbind();
+    glActiveTexture(GL_TEXTURE0);
+    glDisable(GL_BLEND);
 }
 
 void Mesh::UpdateGeometry(const std::vector<ShapeVertex>& vertices, const std::vector<unsigned int>& indices)
@@ -117,7 +114,6 @@ void Mesh::UpdateGeometry(const std::vector<ShapeVertex>& vertices, const std::v
     {
         SetupMesh(false);
     }
-
 }
 
 void Mesh::UpdateVBO()
@@ -187,6 +183,11 @@ glm::vec3 Mesh::calculateSurfaceNormal(const glm::vec3& A, const glm::vec3& B, c
     glm::vec3 v(C - A);
 
     return glm::normalize(glm::cross(u, v));
+}
+
+int Mesh::getVerticesCount() const
+{
+    return _vertices.size();
 }
 
 

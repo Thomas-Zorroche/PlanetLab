@@ -1,49 +1,49 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-
-#include "noise/NoiseSettings.hpp"
+#include "noise/NoiseLayer.hpp"
 
 namespace Ceres
 {
 
-class NoiseLayer
-{
-public:
-	NoiseLayer(const std::shared_ptr<NoiseSettings>& settings = std::make_shared<NoiseSettings>());
 
-	std::shared_ptr<NoiseSettings>& noiseSettings() { return _noiseSettings; }
-	bool enabled() const { return _enabled; }
-	bool& enabled() { return _enabled; }
-	bool useFirstLayerAsMask() const { return _useFirstLayerAsMask; }
-
-private:
-	bool _enabled;
-	bool _useFirstLayerAsMask = true;
-	std::shared_ptr<NoiseSettings> _noiseSettings;
-};
-
+/**
+ * @brief Contains radius and noise layers (settings)
+ */
 class ShapeSettings
 {
 public:
 	ShapeSettings(float radius = 1.0f);
-	float& planetRadius();
-	float planetRadius() const;
 
-	std::vector<std::shared_ptr<NoiseLayer> > noiseLayers();
-	std::shared_ptr<NoiseLayer> noiseLayer(unsigned int index);
+	// Accessors
 
-	void addLayer(const std::shared_ptr<NoiseLayer>& layer);
+	float getPlanetRadius() const { return _planetRadius; }
+	float& planetRadius() { return _planetRadius; }
+
+	const std::vector<std::shared_ptr<NoiseLayer> >& getNoiseLayers() const { return _noiseLayers; }
+	std::vector<std::shared_ptr<NoiseLayer> >& getNoiseLayers() { return _noiseLayers; }
+
+	const std::shared_ptr<NoiseLayer>& getNoiseLayer(unsigned int index) const;
+	std::shared_ptr<NoiseLayer> getNoiseLayer(unsigned int index);
+
+	const std::shared_ptr<NoiseLayer>& getLastLayer() const { return _noiseLayers.back(); }
+	std::shared_ptr<NoiseLayer> getLastLayer() { return _noiseLayers.back(); }
+
+	// Layers
+
+	void addLayer(const std::shared_ptr<NoiseLayer>& layer = std::make_shared<NoiseLayer>());
+
 	void removeLastLayer();
+
 	void removeLayer(unsigned int index);
+
 	void removeAllLayers();
 
 private:
 	float _planetRadius;
+
 	std::vector<std::shared_ptr<NoiseLayer> > _noiseLayers;
 };
 
-}	// ns proceduralPlanet
+}	// ns Ceres
 
 

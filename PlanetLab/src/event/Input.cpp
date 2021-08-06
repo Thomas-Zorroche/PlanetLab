@@ -2,7 +2,6 @@
 #include "editor/Application.hpp"
 
 #include <GLFW/glfw3.h>
-#include <iostream>
 
 namespace PlanetLab
 {

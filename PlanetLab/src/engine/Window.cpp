@@ -1,6 +1,5 @@
-#include "Window.hpp"
 
-#include <iostream>
+#include "Window.hpp"
 #include <string.h>
 
 namespace PlanetLab
@@ -9,7 +8,6 @@ namespace PlanetLab
 Window::Window(int argc, char** argv)
 {
     HandleArgs(argc, argv);
-
 }
 
 int Window::Init()
@@ -32,7 +30,7 @@ int Window::Init()
     /* Initialize glad: load all OpenGL function pointers */
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        std::cout << "Failed to initialize GLAD" << std::endl;
+        PLANETLAB_ERROR("Failed to initialize GLAD");
         return 0;
     }
 
@@ -46,16 +44,12 @@ int Window::Init()
 */
 void Window::HandleArgs(int argc, char** argv)
 {
-    InitLogLevel("-none");
-    InitScreenSize("-hd");
-
     for (size_t i = 1; i < (size_t)argc; i++)
     {
-        if (strcmp(argv[i], "-none") == 0 || strcmp(argv[i], "-info") == 0 || strcmp(argv[i], "-warning") == 0)
-            InitLogLevel(argv[i]);
-        else if (strcmp(argv[i], "-hd") == 0 || strcmp(argv[i], "-fhd") == 0)
+        if (strcmp(argv[i], "-hd") == 0 || strcmp(argv[i], "-fhd") == 0)
             InitScreenSize(argv[i]);
     }
+    PLANETLAB_INFO("Initialize Window ({}, {})", _width, _height);
 }
 
 void Window::InitScreenSize(char* size)
@@ -72,21 +66,5 @@ void Window::InitScreenSize(char* size)
     }
 }
 
-/*
-* ===============================================================
-* Utility Functions
-* ===============================================================
-*/
-void InitLogLevel(char* level)
-{
-    if (strcmp(level, "-info") == 0)
-        PlanetLab::Log::Get().SetLevel(PlanetLab::LogLevel::INFO);
-    else if (strcmp(level, "-warning") == 0)
-        PlanetLab::Log::Get().SetLevel(PlanetLab::LogLevel::WARNING);
-    else if (strcmp(level, "-error") == 0)
-        PlanetLab::Log::Get().SetLevel(PlanetLab::LogLevel::ERROR);
-    else
-        PlanetLab::Log::Get().SetLevel(PlanetLab::LogLevel::NONE);
-}
 
-}   // ns editor
+} // ns editor

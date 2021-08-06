@@ -55,10 +55,15 @@ void mainloop(Window& windowObject)
         // Render scene here
         Interface::Get().bindFbo();
         scene.Draw(Interface::Get().viewportHeight());
+        Interface::Get().unbindFbo();
 
         // Render Interface
-        Interface::Get().unbindFbo();
         Interface::Get().draw(window);
+
+        if (Application::Get().GetUpdateMode() == UpdateMode::Auto || Application::Get().IsReadyToGenerate())
+        {
+            Application::Get().GenerateUpdateQueue();
+        }
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -80,6 +85,9 @@ Application* Application::s_instance = nullptr;
 Application::Application(int argc, char** argv)
 {
     s_instance = this;
+    
+    PlanetLab::Log::init(argc, argv);
+
     _window = std::make_unique<Window>(argc, argv);
     _editor = std::make_unique<EditorSettings>();
 }
@@ -88,6 +96,7 @@ void Application::GenerateUpdateQueue(bool onRelease)
 {
     if (!_updatesQueue.empty()/* && (onRelease && _updateMode == UpdateMode::OnRelease) || !onRelease*/)
     {
+        IOManager::get().setUnsavedValues();
         for (const auto& flag : _updatesQueue)
         {
             _planet->update(flag);

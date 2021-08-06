@@ -1,9 +1,5 @@
 # pragma once 
 
-#include <vector>
-#include <string>
-#include <memory>
-
 #include "opengl/Mesh.hpp"
 #include "opengl/Texture.h"
 #include "opengl/Shader.h"
@@ -36,6 +32,8 @@ public:
 	unsigned int GetVAO() const { return _meshes[0]->GetVAO(); }
 
 	void Free();
+
+	int getVerticesCount() const;
 
 private:
 	std::vector<std::shared_ptr<Mesh> > _meshes;

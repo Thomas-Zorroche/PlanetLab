@@ -1,10 +1,7 @@
 #include "TerrainFace.hpp"
-#include <vector>
 
 namespace Ceres
 {
-
-glm::vec3 calculateSurfaceNormal(const glm::vec3& A, const glm::vec3& B, const glm::vec3& C);
 
 TerrainFace::TerrainFace(const std::shared_ptr<ShapeGenerator>& shapeGenerator, int resolution, const glm::vec3& localUp)
 	: _mesh(std::make_shared<PlanetLab::Mesh>()),
@@ -17,14 +14,13 @@ TerrainFace::TerrainFace(const std::shared_ptr<ShapeGenerator>& shapeGenerator, 
 
 }
 
-/* Contruct a grid mesh for the face */
+
 void TerrainFace::constructMesh()
 {
 	std::vector<PlanetLab::ShapeVertex> vertices(_resolution * _resolution);
 	std::vector<unsigned int> indices((_resolution - 1) * (_resolution - 1) * 6); 
 	int triIndex = 0;
 	_maxElevation = 0;
-
 
 	// fill vertices and indices arrays
 	for (size_t y = 0; y < _resolution; y++)
@@ -73,5 +69,5 @@ void TerrainFace::updateResolution(int resolution)
 	constructMesh();
 }
 
-}	// ns proceduralPlanet
+}	// ns Ceres
 

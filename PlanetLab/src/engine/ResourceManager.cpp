@@ -1,13 +1,6 @@
 #include "engine/ResourceManager.hpp"
 #include "Log.hpp"
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <unordered_map> 
-#include <vector> 
-#include <string> 
-
 #include "stb_image.h"
 #include "opengl/Texture.h"
 #include "engine/Material.hpp"
@@ -57,8 +50,7 @@ Texture ResourceManager::LoadTexture(const std::string& path, TextureType type)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	if (PlanetLab::Log::Get().Level() >= PlanetLab::LogLevel::INFO)
-		std::cout << "[Resource Manager] : loaded texture: " << path << std::endl;
+	PLANETLAB_INFO("Loaded texture: {}", path);
 	
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer);
 
@@ -84,13 +76,13 @@ std::vector<unsigned short> ResourceManager::LoadHeightmap(const std::string& pa
 	// Fill imageData in order to retrieve pixel color later
 	std::vector<unsigned short> imageData(localBuffer, localBuffer + height * height);
 	
-	if (PlanetLab::Log::Get().Level() >= PlanetLab::LogLevel::INFO)
-		std::cout << "[Resource Manager] : loaded texture: " << path << std::endl;
+	std::cout << "[Resource Manager] : loaded texture: " << path << std::endl;
 
 	stbi_image_free(localBuffer);
 
 	return imageData;
 }
+
 
 unsigned int ResourceManager::LoadCubemap(const std::vector<std::string>& faces) const
 {
@@ -100,9 +92,10 @@ unsigned int ResourceManager::LoadCubemap(const std::vector<std::string>& faces)
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
 	int width, height, BPP;
+	std::string path = "";
 	for (unsigned int i = 0; i < faces.size(); i++)
 	{
-		std::string path = "res/img/skybox/" + faces[i];
+		path = "res/img/skybox/" + faces[i];
 		unsigned char* data = stbi_load(path.c_str(), &width, &height, &BPP, 4);
 		if (data)
 		{
@@ -123,8 +116,7 @@ unsigned int ResourceManager::LoadCubemap(const std::vector<std::string>& faces)
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-	if (PlanetLab::Log::Get().Level() >= PlanetLab::LogLevel::INFO)
-		std::cout << "[Resource Manager] : loaded skybox" << std::endl;
+	std::cout << "[Resource Manager] : loaded skybox" << std::endl;
 
 	return textureID;
 }

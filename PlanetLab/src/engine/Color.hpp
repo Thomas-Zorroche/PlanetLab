@@ -1,8 +1,9 @@
 #pragma once
 
 #include "glm/glm.hpp"
-#include <algorithm>
-#include <random>
+
+#include "Ceres/Color/Color.hpp"
+
 
 namespace PlanetLab
 {
@@ -11,16 +12,10 @@ struct Color
 {
     float r, g, b;
 
-    /* Constructors */
-    Color(float red, float green, float blue)
-        : r(clamp(red)), g(clamp(green)), b(clamp(blue)) {}
-
-    Color(const glm::vec3& vector)
-        : r(clamp(vector.r)), g(clamp(vector.g)), b(clamp(vector.b)) {}
-
-    Color(float value = 0.8f)
-        : r(clamp(value)), g(clamp(value)), b(clamp(value)) {}
-
+    Color(float red, float green, float blue);
+    Color(const glm::vec3& vector);
+    Color(float value = 0.8f);
+    Color(const Ceres::Color& color);
 
     float clamp(float value) { return std::clamp(value, 0.0f, 1.0f); }
 

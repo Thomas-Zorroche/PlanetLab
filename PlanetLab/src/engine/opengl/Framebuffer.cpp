@@ -1,7 +1,6 @@
 #include "Framebuffer.hpp"
 
 #include <glad/glad.h>
-#include <iostream>
 
 namespace PlanetLab
 {
@@ -63,6 +62,7 @@ void Framebuffer::free()
 {
     glDeleteFramebuffers(1, &_id);
     glDeleteTextures(1, &_textureID);
+    glDeleteRenderbuffers(1, &_rboID);
 }
 
 }

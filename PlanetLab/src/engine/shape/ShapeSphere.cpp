@@ -1,3 +1,4 @@
+#include "common.hpp"
 #include "ShapeSphere.hpp"
 #include "glm/glm.hpp"
 

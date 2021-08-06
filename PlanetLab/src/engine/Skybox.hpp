@@ -1,9 +1,5 @@
  #pragma once
 
-#include <vector>
-#include <string>
-#include <memory>
-
 #include "engine/ResourceManager.hpp"
 #include "opengl/Mesh.hpp"
 #include "common.hpp"

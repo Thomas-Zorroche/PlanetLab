@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-#include <iostream>
-#include <string>
-#include <variant>
-
 #include "ceres/noise/NoiseSettings.hpp"
 #include "editor/Application.hpp"
 
@@ -14,8 +10,6 @@
 
 namespace PlanetLab
 {
-
-using ParameterType = std::variant<float, int, bool, glm::vec3>;
 
 /*
 * Abstract Parameter Class
@@ -29,9 +23,6 @@ public:
 	virtual ~ParameterBase() {}
 
 	Ceres::FilterType GetType() const { return _type; };
-
-	//ParameterType GetValue() const { return _value; }
-	//ParameterType& GetValue() { return _value; }
 
 	virtual void Display() = 0;
 
@@ -124,6 +115,6 @@ private:
 	float _max;
 };
 
-}   // ns editor
+}
 
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "ui/gizmo/Gizmo.hpp"
 
 namespace Ceres 
@@ -35,7 +33,7 @@ private:
 	std::shared_ptr<Ceres::Planet> _planet = nullptr;
 	std::shared_ptr<BackgroundGradient> _backgroundPlane = nullptr;
 
-	Gizmo _gizmo;
+	Gizmo _gizmo = Gizmo(2, 0.005);
 };
 
 } // ns Editor

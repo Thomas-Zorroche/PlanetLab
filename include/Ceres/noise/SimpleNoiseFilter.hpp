@@ -1,22 +1,27 @@
 #pragma once
 
 #include "NoiseFilter.hpp"
-#include <memory>
 
 namespace Ceres
 {
 
-class NoiseSettings;
+struct NoiseSettings;
 
+/**
+ * @brief Simple base noise filter
+ */
 class SimpleNoiseFilter : public NoiseFilter
 {
 public:
-	SimpleNoiseFilter(
-		const std::shared_ptr<NoiseSettings>& settings = nullptr,
-		std::uint32_t seed = 1
-	);
+	SimpleNoiseFilter(const std::shared_ptr<NoiseSettings>& settings = nullptr, std::uint32_t seed = 1);
 
-	float Evaluate(const glm::vec3& point) const override;
+	/**
+	 * @brief Return the noise value at the given point in 3D space
+	 *
+	 * @param point 3D point on unit sphere
+	 * @return noise value
+	 */
+	float evaluate(const glm::vec3& point) const override;
 };
 
-}	// ns proceduralPlanet
+}	// ns Ceres

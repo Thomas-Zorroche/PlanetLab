@@ -1,13 +1,11 @@
 #include "ui/Interface.hpp"
 
 #include "engine/opengl/Framebuffer.hpp"
-
 #include "engine/Window.hpp"
 #include "engine/Renderer.hpp"
+#include "engine/lighting/LightManager.hpp"
 #include "editor/Application.hpp"
 #include "event/Input.hpp"
-
-#include "engine/lighting/LightManager.hpp"
 
 #include "ceres/Planet.hpp"
 #include "ceres/ShapeSettings.hpp"
@@ -18,10 +16,10 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui_color_gradient.h"
 
 #include "io/IOManager.hpp"
 
-#include "imgui/imgui_color_gradient.h"
 
 namespace PlanetLab
 {
@@ -42,8 +40,10 @@ void Interface::init(Window& window)
 
     // Init shared pointers
     _planet = Application::Get().GetPlanet();
-    _shape = _planet->shapeSettings();
-    _color = _planet->colorSettings();
+    _observer = std::make_unique<UiObserver>(_planet->getPlanetSubject());
+
+    _shape = _planet->getShapeSettings();
+    _color = _planet->getColorSettings();
 
     // Init windows sizes
     _WIDTH = window.Width();
@@ -54,6 +54,7 @@ void Interface::init(Window& window)
 
     _fbo.resize(_viewportWidth, _viewportHeight);
 
+    updateStatistics();
 }
 
 void Interface::draw(GLFWwindow* window)
@@ -115,10 +116,7 @@ void Interface::draw(GLFWwindow* window)
         }
 
 
-        if (Application::Get().GetUpdateMode() == UpdateMode::Auto || Application::Get().IsReadyToGenerate())
-        {
-            Application::Get().GenerateUpdateQueue();
-        }
+
 
         /* Pop up Windows */
         if (_saveFileOpen) ShowSaveAsWindow();
@@ -156,13 +154,17 @@ void  Interface::ShowMenuBar(GLFWwindow* window)
                 {
                     if (ImGui::MenuItem(paths[i].c_str()))
                     {
-                        _planet->reset();
                         if (!IOManager::get().open(paths[i], _planet))
                         {
                             Application::Get().AppendLog(std::string("Error IO :: cannot open file " + paths[i]).c_str());
                         }
                         else
                         {
+                            _noiseSettingsParameters.clear();
+                            const auto layersCount = _planet->getShapeSettings()->getNoiseLayers().size();
+                            for (size_t i = 0; i < layersCount; i++)
+                                _noiseSettingsParameters.push_back(_planet->getShapeSettings()->getNoiseLayer(i)->getNoiseSettings());
+
                             Application::Get().AppendLog("File has been opened");
                         }
                     }
@@ -207,7 +209,7 @@ void Interface::ShowSettingsWindow()
             {
                 ShowUpdateItem();
 
-                if (ImGui::SliderInt("Resolution", &_planet->resolution(), 4, 256))
+                if (ImGui::SliderInt("Resolution", &_planet->getResolution(), 4, 256))
                 {
                     Application::Get().Update(ObserverFlag::RESOLUTION);
                 }
@@ -215,12 +217,13 @@ void Interface::ShowSettingsWindow()
                 if (ImGui::Combo("FaceRenderMask", &(int&)_planet->getFaceRenderMask(), "All\0Top\0Bottom\0Left\0Right\0Front\0Back\0\0"))
                 {
                     Application::Get().Update(ObserverFlag::MESH);
+                    Application::Get().Update(ObserverFlag::FACERENDERMASK);
                 }
                 ImGui::PopItemWidth();
                 static glm::vec3 globalRot;
                 if (ImGui::SliderFloat3("Euler Rotation", (float*)&globalRot, 0.0f, 360.0f))
                 {
-                    _planet->Rotate(globalRot);
+                    _planet->rotate(globalRot);
                 }
 
                 ImGui::Separator();
@@ -228,7 +231,7 @@ void Interface::ShowSettingsWindow()
                 // Changer le seed, les couleurs, et ajoute un epsilon au valeur 
                 if (ImGui::Button("Generate Random"))
                 {
-                    _planet->RandomGenerate();
+                    _planet->generateRandomPlanet();
                 }
 
                 ImGui::EndTabItem();
@@ -238,20 +241,20 @@ void Interface::ShowSettingsWindow()
             {
                 ShowUpdateItem();
 
-                int noiseLayersCount = _shape->noiseLayers().size();
+                int noiseLayersCount = _shape->getNoiseLayers().size();
                 if (ImGui::SliderInt("Count", &noiseLayersCount, 0, 5))
                 {
-                    _planet->updateNoiseLayersCount(noiseLayersCount);
+                    updateNoiseLayersCount(noiseLayersCount);
                     Application::Get().Update(ObserverFlag::MESH);
                 }
 
                 int layerCountNode = 0;
-                for (auto& layer : _shape->noiseLayers())
+                for (auto& layer : _shape->getNoiseLayers())
                 {
                     std::string titleNode("Noise Layer " + std::to_string(layerCountNode));
                     if (ImGui::TreeNode(titleNode.c_str()))
                     {
-                        if (ImGui::Checkbox("Enabled", &layer->enabled()))
+                        if (ImGui::Checkbox("Enabled", &layer->isEnabled()))
                         {
                             Application::Get().Update(ObserverFlag::MESH);
                         }
@@ -259,24 +262,22 @@ void Interface::ShowSettingsWindow()
                         if (ImGui::TreeNode("Noise Settings"))
                         {
                             ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
-                            if (ImGui::Combo("Filter Type", &(int&)layer->noiseSettings()->GetFilterType(), "Simple\0Rigid\0\0"))
+                            if (ImGui::Combo("Filter Type", &(int&)layer->getNoiseSettings()->filterType, "Simple\0Rigid\0\0"))
                             {
-                                _planet->shapeGenerator()->updateFilterType(layerCountNode);
+                                _planet->getShapeGenerator()->updateFilterType(layerCountNode);
                                 Application::Get().Update(ObserverFlag::MESH);
                             }
                             ImGui::PopItemWidth();
 
 
-                            if (ImGui::InputInt("Seed", &(int&)_planet->shapeGenerator()->noiseFilter(layerCountNode)->Seed()))
+                            if (ImGui::InputInt("Seed", &(int&)_planet->getShapeGenerator()->getNoiseFilter(layerCountNode)->getSeed()))
                             {
-                                _planet->shapeGenerator()->noiseFilter(layerCountNode)->Reseed();
+                                _planet->getShapeGenerator()->getNoiseFilter(layerCountNode)->reseed();
                                 Application::Get().Update(ObserverFlag::MESH);
                             }
 
-                            /*
-                            * Display All the Noise Settings
-                            */
-                            layer->noiseSettings()->Display();
+                            // Display filter noise settings
+                            _noiseSettingsParameters[layerCountNode].display();
 
 
                             ImGui::TreePop();
@@ -295,33 +296,33 @@ void Interface::ShowSettingsWindow()
 
                 if (ImGui::TreeNode("Landmass"))
                 {
-                    if (!_color->GetUseLandmassRamp())
+                    if (!_color->getUseLandmassRamp())
                     {
-                        if (ImGui::ColorEdit3("Color", (float*)&(_color->color())))
+                        if (ImGui::ColorEdit3("Color", (float*)&(_color->getLandmassColor())))
                         {
                             Application::Get().Update(ObserverFlag::COLOR);
                         }
                     }
 
-                    ImGui::Checkbox("Use Color Ramp", &_color->GetUseLandmassRamp());
+                    ImGui::Checkbox("Use Color Ramp", &_color->getUseLandmassRamp());
 
-                    if (_color->GetUseLandmassRamp())
+                    if (_color->getUseLandmassRamp())
                     {
                         static ImGradientMark* draggingMark = nullptr;
                         static ImGradientMark* selectedMark = nullptr;
-                        ImGui::GradientEditor(&_color->GetGradient(), draggingMark, selectedMark);
+                        ImGui::GradientEditor(&_color->getGradient(), draggingMark, selectedMark);
                     }
                     ImGui::TreePop();
                 }
 
                 if (ImGui::TreeNode("Ocean"))
                 {
-                    ImGui::Checkbox("Use a different color for ocean", &_color->GetUseOceanColor());
+                    ImGui::Checkbox("Use a different color for ocean", &_color->getUseOceanColor());
 
-                    if (_color->GetUseOceanColor())
+                    if (_color->getUseOceanColor())
                     {
-                        ImGui::SliderFloat("Depth", &_planet->colorSettings()->GetOceanDepth(), 0.0f, 10.0f);
-                        ImGui::ColorEdit3("Color", (float*)&_planet->colorSettings()->GetOceanColor());
+                        ImGui::SliderFloat("Depth", &_planet->getColorSettings()->getOceanDepth(), 0.0f, 10.0f);
+                        ImGui::ColorEdit3("Color", (float*)&_planet->getColorSettings()->getOceanColor());
                     }
                     ImGui::TreePop();
                 }
@@ -379,6 +380,7 @@ void Interface::ShowViewportWindow()
 {
     if (ImGui::Begin("Renderer"))
     {
+        // 3D Viewport
         ImVec2 wsize = ImGui::GetWindowSize();
         ImGui::Image((ImTextureID)_fbo.id(), wsize, ImVec2(0, 1), ImVec2(1, 0));
         _viewportWidth = wsize.x;
@@ -386,6 +388,22 @@ void Interface::ShowViewportWindow()
         _fbo.resize(_viewportWidth, _viewportHeight);
         Renderer::Get().ComputeProjectionMatrix();
 
+        // Statistics
+        if (true)   // TODO Replace by a button
+        {
+            ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBackground
+                | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
+            ImGui::SetNextWindowPos(ImVec2(25, 50));
+            ImGui::SetNextWindowSize(ImVec2(150, 80));
+            if (ImGui::Begin("Statistics", false, window_flags))
+            {
+                ImGui::Text("Vertices  %s", _statistics.verticesCount.c_str());
+                ImGui::Text("Faces     %s", _statistics.facesCount.c_str());
+                ImGui::Text("Triangles %s", _statistics.trianglesCount.c_str());
+                ImGui::Text("Fps       %.1f", ImGui::GetIO().Framerate);
+            }
+            ImGui::End();
+        }
 
         // Loading Wheel
         if (Application::Get().GetLoading())
@@ -528,6 +546,31 @@ void Interface::newFile()
     _newFileOpen = true;
 }
 
+void Interface::updateNoiseLayersCount(int noiseLayersCountUpdated)
+{
+    int layersCountDifference = noiseLayersCountUpdated - _planet->getShapeSettings()->getNoiseLayers().size();
+
+    if (layersCountDifference == 0)
+        return;
+
+    if (layersCountDifference > 0)
+    {
+        for (size_t i = 0; i < layersCountDifference; i++)
+            _planet->addNoiseLayer();
+
+        // Add a noiseSettingsParamater
+        _noiseSettingsParameters.push_back(NoiseSettingsParameters(_planet->getShapeSettings()->getLastLayer()->getNoiseSettings()));
+    }
+    else
+    {
+        for (size_t i = 0; i < abs(layersCountDifference); i++)
+            _planet->removeLastNoiseLayer();
+        
+        // Remove the noiseSettingsParamater linked with last layer to be removed
+        _noiseSettingsParameters.pop_back();
+    }
+}
+
 void Interface::free()
 {
     //Shutdown ImGUI
@@ -547,6 +590,31 @@ void Interface::bindFbo()
 void Interface::unbindFbo()
 {
     _fbo.unbind();
+}
+
+void Interface::updateStatistics()
+{
+    prettyPrintNumber(_planet->getVerticesCount(), _statistics.verticesCount);
+    prettyPrintNumber(_planet->getFacesCount(), _statistics.facesCount);
+    prettyPrintNumber(_planet->getFacesCount() * 2, _statistics.trianglesCount);
+}
+
+void Interface::onResolutionUpdate(int resolution)
+{
+    updateStatistics();
+}
+
+
+// Turn 1451862 into 1 451 862
+// TODO: stock in variable and call this onVerticesChange
+void prettyPrintNumber(int number, std::string& str)
+{
+    str = std::to_string(number);
+    str.reserve(str.length() + str.length() / 3);
+
+    for (int i = 0, j = 3 - str.length() % 3; i < str.length(); ++i, ++j)
+        if (i != 0 && j % 3 == 0)
+            str.insert(i++, 1, ' ');
 }
 
 };  // ns editor

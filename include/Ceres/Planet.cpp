@@ -1,16 +1,11 @@
 #include "Planet.hpp"
-#include "glm/glm.hpp"
-#include "engine/opengl/Mesh.hpp"
 
 #include "noise/NoiseFilter.hpp"
 #include "noise/SimpleNoiseFilter.hpp"
 #include "noise/NoiseSettings.hpp"
+#include "noise/NoiseFilterFactory.hpp"
 
-#include "io/IOManager.hpp"
-
-#include <vector>
-#include <random>
-#include <chrono>
+#include "engine/opengl/Mesh.hpp"
 
 namespace Ceres
 {
@@ -29,12 +24,12 @@ Planet::Planet(int resolution)
 		TerrainFace(_shapeGenerator, resolution, glm::vec3( 0,  0,  1))  // BACK
 	},
 	_staticMesh({ 
-		_terrainFaces[0].mesh(), 
-		_terrainFaces[1].mesh(),
-		_terrainFaces[2].mesh(),
-		_terrainFaces[3].mesh(),
-		_terrainFaces[4].mesh(),
-		_terrainFaces[5].mesh(),
+		_terrainFaces[0].getMesh(), 
+		_terrainFaces[1].getMesh(),
+		_terrainFaces[2].getMesh(),
+		_terrainFaces[3].getMesh(),
+		_terrainFaces[4].getMesh(),
+		_terrainFaces[5].getMesh(),
 	}, PlanetLab::TransformLayout(glm::vec3(0)), "Planet")
 {
 	generatePlanet();
@@ -51,13 +46,12 @@ void Planet::sendUniforms()
 	auto shader = _staticMesh.GetShader();
 	shader->Bind();
 
-	_colorSettings->SendUniforms(shader);
+	_colorSettings->sendUniforms(shader);
 	shader->SetUniform1f("u_maxElevation", _maxElevation);
 
 	shader->Unbind();
 }
 
-/* Generate Fonctions */
 void Planet::generateMesh()
 {
 	std::size_t i = 0;
@@ -68,9 +62,9 @@ void Planet::generateMesh()
 		{
 			face.setVisibility(true);
 			face.constructMesh();
-			if (face.maxElevation() > _maxElevation)
+			if (face.getMaxElevation() > _maxElevation)
 			{
-				_maxElevation = face.maxElevation();
+				_maxElevation = face.getMaxElevation();
 			}
 		}
 		else
@@ -85,7 +79,7 @@ void Planet::generateColors()
 {
 	for (TerrainFace& face : _terrainFaces)
 	{
-		face.mesh()->setColor(_colorSettings->color());
+		face.getMesh()->setColor(_colorSettings->getLandmassColor());
 	}
 }
 
@@ -97,51 +91,50 @@ void Planet::generatePlanet()
 
 void Planet::update(ObserverFlag flag)
 {
-	PlanetLab::IOManager::get().setUnsavedValues();
-
 	switch (flag)
 	{
 		case ObserverFlag::RESOLUTION:
 		{
 			for (auto& face : _terrainFaces)
+			{
 				face.updateResolution(_resolution);
+			}
+
+			EMIT_ResolutionChanged(_resolution);
+			break;
 		}
 		case ObserverFlag::COLOR:
 		{
 			generateColors();
+			break;
 		}
 		case ObserverFlag::MESH:
 		{
 			generateMesh();
+			break;
+		}
+		case ObserverFlag::FACERENDERMASK:
+		{
+			EMIT_ResolutionChanged(_resolution);
+			break;
 		}
 	}
 }
 
-void Planet::updateNoiseLayersCount(int noiseLayersCount)
+void Planet::addNoiseLayer(unsigned int count)
 {
-	int layersDiffCount = noiseLayersCount - _shapeSettings->noiseLayers().size();
-
-	// Add layers and filters
-	if (layersDiffCount > 0)
+	for (size_t i = 0; i < count; i++)
 	{
-		for (size_t i = 0; i < layersDiffCount; i++)
-		{
-			auto layer = std::make_shared<NoiseLayer>();
-			std::shared_ptr<NoiseFilter> filter = std::make_shared<SimpleNoiseFilter>(layer->noiseSettings());
+		auto layer = std::make_shared<NoiseLayer>();
+		_shapeSettings->addLayer(layer);
+		_shapeGenerator->addFilter(NoiseFilterFactory::createNoiseFilter(layer->getNoiseSettings()));
+	}
+}
 
-			_shapeSettings->addLayer(layer);
-			_shapeGenerator->addFilter(filter);
-		}
-	}
-	// Remove layers and filters
-	else
-	{
-		for (size_t i = 0; i < abs(layersDiffCount); i++)
-		{
-			_shapeSettings->removeLastLayer();
-			_shapeGenerator->removeLastFilter();
-		}
-	}
+void Planet::removeLastNoiseLayer()
+{
+	_shapeSettings->removeLastLayer();
+	_shapeGenerator->removeLastFilter();
 }
 
 void Planet::reset()
@@ -157,35 +150,58 @@ void Planet::reset()
 
 	_resolution = 64;
 
+	update(ObserverFlag::RESOLUTION);
 	update(ObserverFlag::COLOR);
 	update(ObserverFlag::MESH);
 }
 
-void Planet::Rotate(const glm::vec3& angles)
+void Planet::rotate(const glm::vec3& angles)
 {
 	_staticMesh.Rotate(angles);
 }
 
-void Planet::RandomGenerate()
+void Planet::generateRandomPlanet()
 {
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 	std::default_random_engine generator(seed);
 
 	// Reseed
-	for (std::size_t i = 0; i < _shapeGenerator->noiseFilters().size(); i++)
+	for (std::size_t i = 0; i < _shapeGenerator->getNoiseFilters().size(); i++)
 	{
-		_shapeGenerator->noiseFilter(i)->Reseed(seed);
+		_shapeGenerator->getNoiseFilter(i)->reseed(seed);
 	}
 
 	// Colors
-	_colorSettings->SetRandomColors(seed);
+	_colorSettings->setRandomColors(seed);
 
 	// Update Mesh
-	PlanetLab::Application::Get().Update(ObserverFlag::MESH);
-	PlanetLab::Application::Get().Update(ObserverFlag::COLOR);
+	update(ObserverFlag::MESH);
+	update(ObserverFlag::COLOR);
 }
 
-} // ns Procedural Planet
+int Planet::getVerticesCount() const
+{
+	return _staticMesh.getVerticesCount();
+}
+
+int Planet::getFacesCount() const
+{
+	int visibleFacesCount = 0;
+	for (const TerrainFace& face : _terrainFaces)
+	{
+		if (face.getVisibility())
+			visibleFacesCount++;
+	}
+	return (_resolution - 1) * (_resolution - 1) * visibleFacesCount;
+}
+
+// SIGNALS
+void Planet::emitResolutionChanged(int resolution)
+{
+	_planetSubject.updateResolution(_resolution);
+}
+
+} // ns Ceres
 
 
 

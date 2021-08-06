@@ -91,11 +91,7 @@ set(LIBS ${LIBS} GLAD)
 
 # ///////////////////////////////////////////////////
 # CERES
-file(GLOB CERES_SOURCES 
-  "${CMAKE_SOURCE_DIR}/include/Ceres/*.hpp"
-  "${CMAKE_SOURCE_DIR}/include/Ceres/*.cpp"
-  "${CMAKE_SOURCE_DIR}/include/Ceres/noise/*.cpp"
-  "${CMAKE_SOURCE_DIR}/include/Ceres/noise/*.hpp")
+file(GLOB_RECURSE CERES_SOURCES ${CMAKE_SOURCE_DIR}/include/Ceres/*)
 add_library(CERES ${CERES_SOURCES})
 set_property(TARGET CERES PROPERTY CXX_STANDARD 17)
 set(LIBS ${LIBS} CERES)
@@ -148,3 +144,41 @@ VS_RegisterFiles("${CERES_SOURCES}")
 file(COPY ${CMAKE_SOURCE_DIR}/PlanetLab/res
   DESTINATION ${CMAKE_BINARY_DIR})
 
+# /////////////////////////////////////////////////////////////////////////////
+# ////////////////////////// PRECOMPILED HEADERS //////////////////////////////
+# /////////////////////////////////////////////////////////////////////////////
+
+set(PCH_TARGET     
+  # Libraries
+    <glm/vec2.hpp>
+    <glm/vec3.hpp>
+
+  # std
+    <iostream>
+    <random>
+    <memory>
+    <chrono>
+    <algorithm>
+    <functional>
+    <thread>
+    <utility>
+    <filesystem>
+
+  # Data Structures
+    <vector>
+    <string>
+    <array>
+    <map>
+    <set>
+    <list>
+    <unordered_map>
+    <queue>
+    <fstream>
+    <sstream>
+
+  # PlanetLab
+    PlanetLab/src/Log.hpp
+)
+
+target_precompile_headers(CERES PRIVATE ${PCH_TARGET})
+target_precompile_headers(${PROJECT_NAME} PRIVATE ${PCH_TARGET})

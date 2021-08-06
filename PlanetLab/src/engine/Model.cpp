@@ -7,8 +7,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include <iostream>
-#include <memory>
 #include "stb_image.h"
 
 namespace PlanetLab
@@ -152,6 +150,18 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, bool IscBox)
     // return a mesh object created from the extracted mesh data
     return Mesh(vertices, newMaterial, indices);
 }
+
+int Model::getVerticesCount() const
+{
+    int verticesCount = 0;
+    for (const auto& mesh : _meshes)
+    {
+        if (mesh->getVisibility())
+            verticesCount += mesh->getVerticesCount();
+    }
+    return verticesCount;
+}
+
 
 
 /*

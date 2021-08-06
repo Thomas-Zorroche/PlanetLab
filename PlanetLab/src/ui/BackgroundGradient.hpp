@@ -3,7 +3,6 @@
 #include "engine/Color.hpp"
 #include "engine/opengl/Mesh.hpp"
 #include "engine/opengl/Shader.h"
-#include <memory>
 
 namespace PlanetLab
 {
