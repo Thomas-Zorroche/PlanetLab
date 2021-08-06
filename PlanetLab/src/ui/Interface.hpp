@@ -6,6 +6,8 @@
 #include "engine/Color.hpp"
 #include <GLFW/glfw3.h>
 #include "engine/SpriteSheet.hpp"
+#include "engine/opengl/Texture.h"
+#include "engine/ResourceManager.hpp"
 
 #include "UiObserver.hpp"
 
@@ -70,6 +72,8 @@ public:
 
 	void onResolutionUpdate(int resolution);
 
+	void disableLaunchScreen() { _launchScreenOpen = false; }
+
 
 private:
 	Interface() = default;
@@ -81,6 +85,7 @@ private:
 	void ShowLogWindow();
 	void ShowSaveAsWindow();
 	void ShowNewSceneWindow();
+	void ShowLaunchScreen();
 
 	void ShowUpdateItem();
 
@@ -96,7 +101,7 @@ private:
 	bool _settingsOpen = true;
 	bool _terminalOpen = true;
 	bool _dockspaceOpen = true;
-
+	bool _launchScreenOpen = true;
 
 	char _bufferSaveLocation[20];
 	int _sliderSpeed = 100;
@@ -120,6 +125,8 @@ private:
 	std::unique_ptr<UiObserver> _observer = nullptr;
 
 	std::vector<NoiseSettingsParameters> _noiseSettingsParameters;
+
+	Texture _launchScreen = ResourceManager::Get().LoadTexture("res/img/launch_screen_0_8.png");
 };
 
 void prettyPrintNumber(int number, std::string& str);

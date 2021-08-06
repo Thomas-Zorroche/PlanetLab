@@ -28,6 +28,7 @@ using namespace Ceres;
 
 using namespace PlanetLab;
 
+
 void Interface::init(Window& window)
 {
     // Initialize ImGui
@@ -115,8 +116,8 @@ void Interface::draw(GLFWwindow* window)
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
 
-
-
+        // Display launch screen
+        if (_launchScreenOpen) ShowLaunchScreen();
 
         /* Pop up Windows */
         if (_saveFileOpen) ShowSaveAsWindow();
@@ -136,7 +137,20 @@ void Interface::draw(GLFWwindow* window)
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void  Interface::ShowMenuBar(GLFWwindow* window)
+
+void Interface::ShowLaunchScreen()
+{
+    ImGuiWindowFlags window_flags_launch_screen = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBackground
+        | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
+    ImGui::SetNextWindowPos(ImVec2((_WIDTH - _launchScreen.Width()) * 0.5, (_HEIGHT - _launchScreen.Height()) * 0.5));
+    if (ImGui::Begin("LaunchScreen", &_launchScreenOpen, window_flags_launch_screen))
+    {
+        ImGui::Image((ImTextureID)_launchScreen.Id(), ImVec2(1280, 480), ImVec2(0, 0), ImVec2(1, 1));
+    }
+    ImGui::End();
+}
+
+void Interface::ShowMenuBar(GLFWwindow* window)
 {
     if (ImGui::BeginMenuBar())
     {

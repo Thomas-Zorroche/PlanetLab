@@ -20,7 +20,6 @@ namespace PlanetLab
 void mainloop(Window& windowObject)
 {
     GLFWwindow* window = windowObject.GetNativeWindow();
-    //IOManager::get().setWindowPtr(window);
 
     // Load all the 
     ResourceManager::Get().LoadAllShaders();
