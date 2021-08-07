@@ -574,8 +574,8 @@ void Interface::ShowLogWindow()
 
 void Interface::ShowSaveAsWindow()
 {
-    ImGui::SetNextWindowPos(ImVec2((_WIDTH / 2.0) - 150, (_HEIGHT / 2.0) - 50));
-    ImGui::SetNextWindowSize(ImVec2(300, 100));
+    ImGui::SetNextWindowPos(ImVec2((_WIDTH * 0.5) - 150, (_HEIGHT * 0.5) - 60));
+    ImGui::SetNextWindowSize(ImVec2(300, 120));
     if (ImGui::Begin("Save File"))
     {
         ImGui::Text("Save as ");
