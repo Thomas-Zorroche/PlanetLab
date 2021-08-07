@@ -63,10 +63,6 @@ void Interface::init(Window& window)
     io.Fonts->AddFontFromFileTTF("res/fonts/OpenSans/OpenSans-Bold.ttf", 18.0f);
     io.FontDefault = io.Fonts->AddFontFromFileTTF("res/fonts/OpenSans/OpenSans-Regular.ttf", 18.0f);
 
-    // Setup main style
-    ImGuiStyle& style = ImGui::GetStyle();
-    auto framePadding = style.FramePadding;
-    style.FramePadding = ImVec2(5, 5);
 }
 
 
@@ -122,11 +118,17 @@ void Interface::draw(GLFWwindow* window)
             ImGui::PopStyleVar(2);
 
         // DockSpace
+        ImGuiIO& io = ImGui::GetIO();
+        ImGuiStyle& style = ImGui::GetStyle();
+        float minWinSize = style.WindowMinSize.x;
+        style.WindowMinSize.x = 370.0f;
         if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
         {
             ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
+
+        style.WindowMinSize.x = minWinSize;
 
         // Display launch screen
         if (_launchScreenOpen) ShowLaunchScreen();
@@ -500,26 +502,27 @@ void Interface::ShowViewportWindow()
     if (ImGui::Begin("Renderer"))
     {
         // 3D Viewport
-        ImVec2 wsize = ImGui::GetWindowSize();
+        ImVec2 wsize = ImGui::GetContentRegionAvail();
         ImGui::Image((ImTextureID)_fbo.id(), wsize, ImVec2(0, 1), ImVec2(1, 0));
         _viewportWidth = wsize.x;
         _viewportHeight = wsize.y;
         _fbo.resize(_viewportWidth, _viewportHeight);
         Renderer::Get().ComputeProjectionMatrix();
 
+
         // Statistics
         if (true)   // TODO Replace by a button
         {
             ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBackground
                 | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
-            ImGui::SetNextWindowPos(ImVec2(25, 80));
-            ImGui::SetNextWindowSize(ImVec2(150, 80));
+            ImGui::SetNextWindowPos(ImVec2(40, 80));
+            ImGui::SetNextWindowSize(ImVec2(150, 100));
             if (ImGui::Begin("Statistics", false, window_flags))
             {
-                ImGui::Text("Vertices  %s", _statistics.verticesCount.c_str());
-                ImGui::Text("Faces     %s", _statistics.facesCount.c_str());
-                ImGui::Text("Triangles %s", _statistics.trianglesCount.c_str());
-                ImGui::Text("Fps       %.1f", ImGui::GetIO().Framerate);
+                ImGui::Text("Vertices    %s", _statistics.verticesCount.c_str());
+                ImGui::Text("Faces        %s", _statistics.facesCount.c_str());
+                ImGui::Text("Triangles  %s", _statistics.trianglesCount.c_str());
+                ImGui::Text("Fps            %.1f", ImGui::GetIO().Framerate);
             }
             ImGui::End();
         }
