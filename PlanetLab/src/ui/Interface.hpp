@@ -74,6 +74,7 @@ public:
 
 	void disableLaunchScreen() { _launchScreenOpen = false; }
 
+	void setDarkThemeMode();
 
 private:
 	Interface() = default;
@@ -87,8 +88,8 @@ private:
 	void ShowNewSceneWindow();
 	void ShowLaunchScreen();
 
-	void ShowUpdateItem();
-
+	void drawUpdateModeItem();
+	
 	void updateNoiseLayersCount(int noiseLayersCountUpdated);
 
 	void updateStatistics();

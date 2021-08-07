@@ -17,7 +17,7 @@ int Window::Init()
         return 0;
 
     /* Create a windowed mode window and its OpenGL context */
-    _glfw_Window = glfwCreateWindow((int)_width, (int)_height, "Procedural Planets New Scene", NULL, NULL);
+    _glfw_Window = glfwCreateWindow((int)_width, (int)_height, "PlanetLab New Scene", NULL, NULL);
     if (!_glfw_Window)
     {
         glfwTerminate();

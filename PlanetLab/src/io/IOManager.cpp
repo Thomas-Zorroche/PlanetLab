@@ -206,11 +206,11 @@ void IOManager::updateTitleWindow()
 {
 	if (_unsavedValues && _currentFileSaved)
 	{
-		Application::Get().updateTitle(std::string("Procedural Planets * " + _currentFileName));
+		Application::Get().updateTitle(std::string("PlanetLab * " + _currentFileName));
 	}
 	else
 	{
-		Application::Get().updateTitle(std::string("Procedural Planets " + _currentFileName));
+		Application::Get().updateTitle(std::string("PlanetLab " + _currentFileName));
 	}
 }
 

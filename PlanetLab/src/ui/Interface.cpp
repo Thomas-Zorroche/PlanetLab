@@ -42,7 +42,6 @@ void Interface::init(Window& window)
     // Init shared pointers
     _planet = Application::Get().GetPlanet();
     _observer = std::make_unique<UiObserver>(_planet->getPlanetSubject());
-
     _shape = _planet->getShapeSettings();
     _color = _planet->getColorSettings();
 
@@ -56,7 +55,20 @@ void Interface::init(Window& window)
     _fbo.resize(_viewportWidth, _viewportHeight);
 
     updateStatistics();
+
+    // Setup theme
+    setDarkThemeMode();
+
+    // Setup fonts
+    io.Fonts->AddFontFromFileTTF("res/fonts/OpenSans/OpenSans-Bold.ttf", 18.0f);
+    io.FontDefault = io.Fonts->AddFontFromFileTTF("res/fonts/OpenSans/OpenSans-Regular.ttf", 18.0f);
+
+    // Setup main style
+    ImGuiStyle& style = ImGui::GetStyle();
+    auto framePadding = style.FramePadding;
+    style.FramePadding = ImVec2(5, 5);
 }
+
 
 void Interface::draw(GLFWwindow* window)
 {
@@ -142,10 +154,10 @@ void Interface::ShowLaunchScreen()
 {
     ImGuiWindowFlags window_flags_launch_screen = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBackground
         | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
-    ImGui::SetNextWindowPos(ImVec2((_WIDTH - _launchScreen.Width()) * 0.5, (_HEIGHT - _launchScreen.Height()) * 0.5));
+    ImGui::SetNextWindowPos(ImVec2((_WIDTH - _launchScreen.Width() * 0.5) * 0.5, (_HEIGHT - _launchScreen.Height() * 0.5) * 0.5));
     if (ImGui::Begin("LaunchScreen", &_launchScreenOpen, window_flags_launch_screen))
     {
-        ImGui::Image((ImTextureID)_launchScreen.Id(), ImVec2(1280, 480), ImVec2(0, 0), ImVec2(1, 1));
+        ImGui::Image((ImTextureID)_launchScreen.Id(), ImVec2(1280 * 0.5, 480 * 0.5), ImVec2(0, 0), ImVec2(1, 1));
     }
     ImGui::End();
 }
@@ -212,21 +224,45 @@ void Interface::ShowMenuBar(GLFWwindow* window)
     }
 }
 
+void Interface::drawUpdateModeItem()
+{
+    ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
+    ImGui::Combo("Update Mode", &(int&)Application::Get().GetUpdateMode(), "Auto\0On Release\0On Generate\0\0");
+    ImGui::PopItemWidth();
+    if (Application::Get().GetUpdateMode() == UpdateMode::OnGenerate)
+    {
+        ImGui::SameLine();
+        if (ImGui::Button("Generate"))
+        {
+            Application::Get().SetReadyToGenerate(true);
+        }
+    }
+    ImGui::Separator();
+}
+
 void Interface::ShowSettingsWindow()
 {
+    ImGuiIO& io = ImGui::GetIO();
+    auto boldFont = io.Fonts->Fonts[0];
+
     if (ImGui::Begin("Procedural Planets Settings"))
     {
-        ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+        ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_FittingPolicyResizeDown;
         if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
         {
+            // Planet Settings
+            // ***********************************************************************
+            ImGui::PushFont(boldFont);
             if (ImGui::BeginTabItem("Planet"))
             {
-                ShowUpdateItem();
+                ImGui::PushFont(nullptr);
 
+                drawUpdateModeItem();
                 if (ImGui::SliderInt("Resolution", &_planet->getResolution(), 4, 256))
                 {
                     Application::Get().Update(ObserverFlag::RESOLUTION);
                 }
+
                 ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
                 if (ImGui::Combo("FaceRenderMask", &(int&)_planet->getFaceRenderMask(), "All\0Top\0Bottom\0Left\0Right\0Front\0Back\0\0"))
                 {
@@ -234,6 +270,7 @@ void Interface::ShowSettingsWindow()
                     Application::Get().Update(ObserverFlag::FACERENDERMASK);
                 }
                 ImGui::PopItemWidth();
+
                 static glm::vec3 globalRot;
                 if (ImGui::SliderFloat3("Euler Rotation", (float*)&globalRot, 0.0f, 360.0f))
                 {
@@ -242,18 +279,21 @@ void Interface::ShowSettingsWindow()
 
                 ImGui::Separator();
 
-                // Changer le seed, les couleurs, et ajoute un epsilon au valeur 
                 if (ImGui::Button("Generate Random"))
-                {
                     _planet->generateRandomPlanet();
-                }
-
                 ImGui::EndTabItem();
+                ImGui::PopFont();
             }
+            ImGui::PopFont();
 
+            
+            // Noise Settings
+            // ***********************************************************************
+            ImGui::PushFont(boldFont);
             if (ImGui::BeginTabItem("Noise"))
             {
-                ShowUpdateItem();
+                ImGui::PushFont(nullptr);
+                drawUpdateModeItem();
 
                 int noiseLayersCount = _shape->getNoiseLayers().size();
                 if (ImGui::SliderInt("Count", &noiseLayersCount, 0, 5))
@@ -300,22 +340,27 @@ void Interface::ShowSettingsWindow()
                         ImGui::Separator();
                     }
                     layerCountNode++;
+                    
                 }
                 ImGui::EndTabItem();
+                ImGui::PopFont();
             }
+            ImGui::PopFont();
 
+            // Material Settings
+            // ***********************************************************************
+            ImGui::PushFont(boldFont);
             if (ImGui::BeginTabItem("Material"))
             {
-                ShowUpdateItem();
+                ImGui::PushFont(nullptr);
+                drawUpdateModeItem();
 
                 if (ImGui::TreeNode("Landmass"))
                 {
                     if (!_color->getUseLandmassRamp())
                     {
                         if (ImGui::ColorEdit3("Color", (float*)&(_color->getLandmassColor())))
-                        {
                             Application::Get().Update(ObserverFlag::COLOR);
-                        }
                     }
 
                     ImGui::Checkbox("Use Color Ramp", &_color->getUseLandmassRamp());
@@ -342,11 +387,18 @@ void Interface::ShowSettingsWindow()
                 }
 
                 ImGui::EndTabItem();
+                ImGui::PopFont();
             }
+            ImGui::PopFont();
 
+            // World Settings
+            // ***********************************************************************
+            ImGui::PushFont(boldFont);
             if (ImGui::BeginTabItem("World"))
             {
-                ShowUpdateItem();
+                ImGui::PushFont(nullptr);
+                drawUpdateModeItem();
+
                 static bool useWorldGradient = true;
                 ImGui::ColorEdit3("World Color", (float*)&(Application::Get().GetBackgroundColor()));
                 ImGui::SliderFloat("Sun", &LightManager::Get().GetLight()->Intensity(), 0.0f, 1.0f);
@@ -357,38 +409,31 @@ void Interface::ShowSettingsWindow()
                 }
 
                 ImGui::EndTabItem();
+                ImGui::PopFont();
             }
+            ImGui::PopFont();
 
+            // Overlays Settings
+            // ***********************************************************************
+            ImGui::PushFont(boldFont);
             if (ImGui::BeginTabItem("Overlays"))
             {
+                ImGui::PushFont(nullptr);
+
                 ImGui::Checkbox("Wireframe Mode", &Application::Get().GetEditor().GetWireframePtr());
                 ImGui::Checkbox("Show Axis", &Application::Get().GetEditor().GetAxisPtr());
                 ImGui::EndTabItem();
+                ImGui::PopFont();
             }
+            ImGui::PopFont();
+
             ImGui::EndTabBar();
         }
-
-
-
     }
     ImGui::End(); // Settings
 }
 
-void Interface::ShowUpdateItem()
-{
-    ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
-    ImGui::Combo("Update Mode", &(int&)Application::Get().GetUpdateMode(), "Auto\0On Release\0On Generate\0\0");
-    ImGui::PopItemWidth();
-    if (Application::Get().GetUpdateMode() == UpdateMode::OnGenerate)
-    {
-        ImGui::SameLine();
-        if (ImGui::Button("Generate"))
-        {
-            Application::Get().SetReadyToGenerate(true);
-        }
-    }
-    ImGui::Separator();
-}
+
 
 void Interface::ShowViewportWindow()
 {
@@ -585,6 +630,8 @@ void Interface::updateNoiseLayersCount(int noiseLayersCountUpdated)
     }
 }
 
+
+
 void Interface::free()
 {
     //Shutdown ImGUI
@@ -629,6 +676,56 @@ void prettyPrintNumber(int number, std::string& str)
     for (int i = 0, j = 3 - str.length() % 3; i < str.length(); ++i, ++j)
         if (i != 0 && j % 3 == 0)
             str.insert(i++, 1, ' ');
+}
+
+void Interface::setDarkThemeMode()
+{
+    // Setup main colors
+    const ImVec4 blue = ImVec4{ 0.164, 0.640, 0.625, 1.0f };
+    const ImVec4 green = ImVec4{ 0.156, 0.686, 0.474, 1.0f };
+
+    const ImVec4 darkPurple = ImVec4{ 0.117, 0.109, 0.137, 1.0f };
+    const ImVec4 purple = ImVec4{ 0.196, 0.172, 0.227, 1.0f };
+    const ImVec4 lightPurple = ImVec4{ 0.305, 0.262, 0.356, 1.0f };
+
+
+
+    auto& colors = ImGui::GetStyle().Colors;
+    colors[ImGuiCol_WindowBg] = darkPurple;
+
+    // Headers
+    colors[ImGuiCol_Header] = ImVec4{ 0.380, 0.772, 0.733, 1.0f };
+    colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+    colors[ImGuiCol_HeaderActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+
+    // Buttons
+    colors[ImGuiCol_Button] = green;
+    colors[ImGuiCol_ButtonHovered] = blue;
+    colors[ImGuiCol_ButtonActive] = blue;
+
+    // Frame Components BG
+    colors[ImGuiCol_FrameBg] = purple;
+    colors[ImGuiCol_FrameBgHovered] = lightPurple;
+    colors[ImGuiCol_FrameBgActive] = lightPurple;
+
+    // Tabs
+    colors[ImGuiCol_Tab] = green;
+    colors[ImGuiCol_TabHovered] = blue;
+    colors[ImGuiCol_TabActive] = blue;
+    colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+    colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+
+    // Title
+    colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+    colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+    colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+
+    // Slider
+    colors[ImGuiCol_SliderGrab] = green;
+    colors[ImGuiCol_SliderGrabActive] = blue;
+
+    // Checkbox
+    colors[ImGuiCol_CheckMark] = green;
 }
 
 };  // ns editor

@@ -119,6 +119,7 @@ file(GLOB_RECURSE MY_SOURCES ${CMAKE_SOURCE_DIR}/PlanetLab/src/*)
 file(GLOB_RECURSE MY_SHADERS ${CMAKE_SOURCE_DIR}/PlanetLab/res/shaders/*)
 file(GLOB_RECURSE MY_MODELS ${CMAKE_SOURCE_DIR}/PlanetLab/res/models/*)
 file(GLOB_RECURSE MY_SCENES ${CMAKE_SOURCE_DIR}/PlanetLab/res/scene/*)
+file(GLOB_RECURSE MY_FONTS ${CMAKE_SOURCE_DIR}/PlanetLab/res/fonts/*)
 
 # Create target executable
 add_executable(${PROJECT_NAME}
