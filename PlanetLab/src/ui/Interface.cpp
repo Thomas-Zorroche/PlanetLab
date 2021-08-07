@@ -487,12 +487,17 @@ void Interface::ShowSettingsWindow()
 
                 drawParameter("", []()
                 {
-                    ImGui::Checkbox("Wireframe Mode", &Application::Get().GetEditor().GetWireframePtr());
+                    ImGui::Checkbox("Wireframe Mode", &Application::Get().GetEditor().IsWireframeVisible());
                 });
 
                 drawParameter("", []()
                 {
-                    ImGui::Checkbox("Show Axis", &Application::Get().GetEditor().GetAxisPtr());
+                    ImGui::Checkbox("Show Axis", &Application::Get().GetEditor().IsAxisVisible());
+                });
+
+                drawParameter("", []()
+                {
+                    ImGui::Checkbox("Show Statistics", &Application::Get().GetEditor().IsStatsVisible());
                 });
 
                 ImGui::EndTabItem();
@@ -523,7 +528,7 @@ void Interface::ShowViewportWindow()
 
 
         // Statistics
-        if (true)   // TODO Replace by a button
+        if (Application::Get().GetEditor().IsStatsVisible())
         {
             ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBackground
                 | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
