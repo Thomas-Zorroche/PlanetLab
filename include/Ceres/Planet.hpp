@@ -61,6 +61,9 @@ public:
 	int getResolution() const { return _resolution; }
 	int& getResolution() { return _resolution; }
 
+	float getRotationSpeed() const { return _rotationSpeed; }
+	float& getRotationSpeed() { return _rotationSpeed; }
+
 	FaceRenderMask& getFaceRenderMask() { return _faceRenderMask; }
 
 	PlanetSubject& getPlanetSubject() { return _planetSubject; }
@@ -130,6 +133,9 @@ private:
 
 	/// Subject of the Observer pattern
 	PlanetSubject _planetSubject;
+
+	/// Planet's spin 
+	float _rotationSpeed = 0.05f;
 };
 
 #define EMIT_ResolutionChanged(resolution) emitResolutionChanged(resolution)

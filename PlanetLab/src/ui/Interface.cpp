@@ -308,6 +308,11 @@ void Interface::ShowSettingsWindow()
                     }
                 });
 
+                drawParameter("Rotation Speed", [&planet = _planet]()
+                {
+                    ImGui::SliderFloat("##Rotation Speed", &planet->getRotationSpeed(), 0.0f, 0.5f);
+                });
+
                 ImGui::Separator();
 
                 drawParameter("", [&planet = _planet]()
