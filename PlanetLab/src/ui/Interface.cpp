@@ -62,7 +62,6 @@ void Interface::init(Window& window)
     // Setup fonts
     io.Fonts->AddFontFromFileTTF("res/fonts/OpenSans/OpenSans-Bold.ttf", 18.0f);
     io.FontDefault = io.Fonts->AddFontFromFileTTF("res/fonts/OpenSans/OpenSans-Regular.ttf", 18.0f);
-
 }
 
 
@@ -284,6 +283,13 @@ void Interface::ShowSettingsWindow()
                 ImGui::PushFont(nullptr);
 
                 drawUpdateModeItem();
+
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.9f, 0.3f, 0.1f, 1.0f });
+                drawParameter("", [&planet = _planet]()
+                {
+                    ImGui::Text("Warning: depending on your computer,\nresolution above 128 could slow down the application.");
+                });
+                ImGui::PopStyleColor();
 
                 drawParameter("Resolution", [&planet = _planet]()
                 {
