@@ -71,6 +71,8 @@ public:
 	int getVerticesCount() const;
 	int getFacesCount() const;
 
+	void setScaleOnLoading(bool scale) { _scaleOnLoading = scale; }
+
 	// Public methods
 
 	/// Draw static mesh planet
@@ -136,6 +138,15 @@ private:
 
 	/// Planet's spin 
 	float _rotationSpeed = 0.05f;
+
+	/// Whether to scale on loading
+	bool _scaleOnLoading = false;
+	
+	/// Amount of animation scale on loading planet
+	float _scaleLoadingAmount = 0.1f;
+
+	/// Speed of scale loading animation 
+	float _scaleLoadingSpeed = 0.02f;
 };
 
 #define EMIT_ResolutionChanged(resolution) emitResolutionChanged(resolution)

@@ -87,6 +87,7 @@ private:
 	float _lastFrameDuration = 0.0f;
 
 	bool _loading = false;
+
 	bool _readyToGenerate = false; // TODO : remove this
 
 	AppLog _log;

@@ -77,6 +77,11 @@ void StaticMesh::Scale(float alpha)
 	_modelMatrix = _modelMatrix * glm::scale(glm::mat4(1.0f), glm::vec3(alpha));
 }
 
+void StaticMesh::SetScale(float alpha)
+{
+	_modelMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(alpha));
+}
+
 void StaticMesh::Scale(const glm::vec3& vector)
 {
 	_modelMatrix = _modelMatrix * glm::scale(glm::mat4(1.0f), vector);

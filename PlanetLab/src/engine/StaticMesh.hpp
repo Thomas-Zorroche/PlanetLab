@@ -54,6 +54,7 @@ public:
 	std::shared_ptr<Shader>& GetShader() { return _shader; }
 
 	void Translate(const glm::vec3& delta);
+	void SetScale(float alpha);
 	void Scale(float alpha);
 	void Scale(const glm::vec3& vector);
 	void Rotate(const glm::vec3& alpha);

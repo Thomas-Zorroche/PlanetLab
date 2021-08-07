@@ -17,6 +17,7 @@ Scene::Scene()
 	// Procedural Planet
 	_planet = std::make_shared<Ceres::Planet>();
 	Application::Get().AppendPlanet(_planet);
+	_planet->setScaleOnLoading(true);
 
 	// Background Gradient (Simple Plane placed on camera far plane)
 	_backgroundPlane = std::make_shared<BackgroundGradient>();

@@ -37,7 +37,15 @@ Planet::Planet(int resolution)
 
 void Planet::draw()
 {
+	if (_scaleOnLoading && _scaleLoadingAmount < 1)
+	{
+		_scaleLoadingAmount += _scaleLoadingSpeed;
+		_staticMesh.SetScale(_scaleLoadingAmount);
+	}
+
+	// Planet spin
 	rotate(glm::vec3(0, _rotationSpeed, 0));
+
 	sendUniforms();
 	_staticMesh.Draw();
 }
@@ -150,6 +158,8 @@ void Planet::reset()
 	_colorSettings->reset();
 
 	_resolution = 64;
+
+	_scaleLoadingAmount = 0.0f;
 
 	update(ObserverFlag::RESOLUTION);
 	update(ObserverFlag::COLOR);
