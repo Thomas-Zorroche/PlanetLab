@@ -271,7 +271,7 @@ void Interface::ShowSettingsWindow()
     ImGuiIO& io = ImGui::GetIO();
     auto boldFont = io.Fonts->Fonts[0];
 
-    if (ImGui::Begin("Procedural Planets Settings"))
+    if (ImGui::Begin("Settings"))
     {
         ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_FittingPolicyResizeDown;
         if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
@@ -491,6 +491,7 @@ void Interface::ShowSettingsWindow()
 
             ImGui::EndTabBar();
         }
+
     }
     ImGui::End(); // Settings
 }
@@ -745,7 +746,7 @@ void Interface::setDarkThemeMode()
 {
     // Setup main colors
     const ImVec4 lightGreen = ImVec4{ 0, 0.8, 0.478, 1.0f };
-    const ImVec4 green = ImVec4{ 0.156, 0.686, 0.474, 1.0f };
+    const ImVec4 green = ImVec4{ 0.149, 0.509, 0.415, 1.0f };
 
     const ImVec4 darkPurple = ImVec4{ 0.117, 0.109, 0.137, 1.0f };
     const ImVec4 purple = ImVec4{ 0.196, 0.172, 0.227, 1.0f };
