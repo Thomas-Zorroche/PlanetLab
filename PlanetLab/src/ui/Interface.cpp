@@ -149,6 +149,28 @@ void Interface::draw(GLFWwindow* window)
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
+template <typename UIFonction>
+static void drawParameter(const std::string& name, UIFonction uiFonction)
+{
+    if (!name.empty())
+    {
+        float posX = (ImGui::GetCursorPosX() + (ImGui::GetColumnWidth() * 0.4) - ImGui::CalcTextSize(name.c_str()).x
+            - ImGui::GetScrollX() - 2 * ImGui::GetStyle().ItemSpacing.x);
+        if (posX > ImGui::GetCursorPosX())
+            ImGui::SetCursorPosX(posX);
+
+        ImGui::AlignTextToFramePadding();
+        ImGui::Text(name.c_str()); ImGui::SameLine();
+    }
+
+    ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.55f);
+    ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.4);
+    
+    uiFonction();
+
+    ImGui::PopItemWidth();
+}
+
 
 void Interface::ShowLaunchScreen()
 {
@@ -226,18 +248,20 @@ void Interface::ShowMenuBar(GLFWwindow* window)
 
 void Interface::drawUpdateModeItem()
 {
-    ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
-    ImGui::Combo("Update Mode", &(int&)Application::Get().GetUpdateMode(), "Auto\0On Release\0On Generate\0\0");
-    ImGui::PopItemWidth();
-    if (Application::Get().GetUpdateMode() == UpdateMode::OnGenerate)
+    drawParameter("Update Mode", []()
     {
-        ImGui::SameLine();
-        if (ImGui::Button("Generate"))
+        ImGui::Combo("##Update Mode", &(int&)Application::Get().GetUpdateMode(), "Auto\0On Release\0On Generate\0\0");
+    });
+
+    drawParameter("", []()
+    {
+        if (Application::Get().GetUpdateMode() == UpdateMode::OnGenerate)
         {
-            Application::Get().SetReadyToGenerate(true);
+            if (ImGui::Button("Generate"))
+                Application::Get().SetReadyToGenerate(true);
         }
-    }
-    ImGui::Separator();
+        ImGui::Separator();
+    });
 }
 
 void Interface::ShowSettingsWindow()
@@ -258,29 +282,35 @@ void Interface::ShowSettingsWindow()
                 ImGui::PushFont(nullptr);
 
                 drawUpdateModeItem();
-                if (ImGui::SliderInt("Resolution", &_planet->getResolution(), 4, 256))
-                {
-                    Application::Get().Update(ObserverFlag::RESOLUTION);
-                }
 
-                ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
-                if (ImGui::Combo("FaceRenderMask", &(int&)_planet->getFaceRenderMask(), "All\0Top\0Bottom\0Left\0Right\0Front\0Back\0\0"))
+                drawParameter("Resolution", [&planet = _planet]()
                 {
-                    Application::Get().Update(ObserverFlag::MESH);
-                    Application::Get().Update(ObserverFlag::FACERENDERMASK);
-                }
-                ImGui::PopItemWidth();
+                    if (ImGui::SliderInt("##Resolution", &planet->getResolution(), 4, 256))
+                    {
+                        Application::Get().Update(ObserverFlag::RESOLUTION);
+                    }
+                });
 
-                static glm::vec3 globalRot;
-                if (ImGui::SliderFloat3("Euler Rotation", (float*)&globalRot, 0.0f, 360.0f))
+                drawParameter("FaceRenderMask", [&planet = _planet]()
                 {
-                    _planet->rotate(globalRot);
-                }
+                    if (ImGui::Combo("##FaceRenderMask", &(int&)planet->getFaceRenderMask(), "All\0Top\0Bottom\0Left\0Right\0Front\0Back\0\0"))
+                    {
+                        Application::Get().Update(ObserverFlag::MESH);
+                        Application::Get().Update(ObserverFlag::FACERENDERMASK);
+                    }
+                });
 
                 ImGui::Separator();
 
-                if (ImGui::Button("Generate Random"))
-                    _planet->generateRandomPlanet();
+                drawParameter("", [&planet = _planet]()
+                {
+                    if (ImGui::Button("Generate Random"))
+                    {
+                        planet->generateRandomPlanet();
+                    }
+                });
+
+
                 ImGui::EndTabItem();
                 ImGui::PopFont();
             }
@@ -295,49 +325,55 @@ void Interface::ShowSettingsWindow()
                 ImGui::PushFont(nullptr);
                 drawUpdateModeItem();
 
-                int noiseLayersCount = _shape->getNoiseLayers().size();
-                if (ImGui::SliderInt("Count", &noiseLayersCount, 0, 5))
+                drawParameter("Count", [&planet = _planet]()
                 {
-                    updateNoiseLayersCount(noiseLayersCount);
-                    Application::Get().Update(ObserverFlag::MESH);
-                }
+                    int noiseLayersCount = planet->getShapeSettings()->getNoiseLayers().size();
+                    if (ImGui::SliderInt("##Count", &noiseLayersCount, 0, 5))
+                    {
+                        Interface::Get().updateNoiseLayersCount(noiseLayersCount);
+                        Application::Get().Update(ObserverFlag::MESH);
+                    }
+                });
 
                 int layerCountNode = 0;
                 for (auto& layer : _shape->getNoiseLayers())
                 {
-                    std::string titleNode("Noise Layer " + std::to_string(layerCountNode));
+                    ImGui::Separator();
+
+                    std::string titleNode = "Noise Layer " + std::to_string(layerCountNode + 1);
                     if (ImGui::TreeNode(titleNode.c_str()))
                     {
-                        if (ImGui::Checkbox("Enabled", &layer->isEnabled()))
+                        drawParameter("", [&planet = _planet, &layer]()
                         {
-                            Application::Get().Update(ObserverFlag::MESH);
-                        }
-
-                        if (ImGui::TreeNode("Noise Settings"))
-                        {
-                            ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
-                            if (ImGui::Combo("Filter Type", &(int&)layer->getNoiseSettings()->filterType, "Simple\0Rigid\0\0"))
+                            if (ImGui::Checkbox("Enabled", &layer->isEnabled()))
                             {
-                                _planet->getShapeGenerator()->updateFilterType(layerCountNode);
                                 Application::Get().Update(ObserverFlag::MESH);
                             }
-                            ImGui::PopItemWidth();
+                        });
 
-
-                            if (ImGui::InputInt("Seed", &(int&)_planet->getShapeGenerator()->getNoiseFilter(layerCountNode)->getSeed()))
+                        drawParameter("FilterType", [&planet = _planet, &layer, &layerCountNode]()
+                        {
+                            if (ImGui::Combo("##Filter Type", &(int&)layer->getNoiseSettings()->filterType, "Simple\0Rigid\0\0"))
                             {
-                                _planet->getShapeGenerator()->getNoiseFilter(layerCountNode)->reseed();
+                                planet->getShapeGenerator()->updateFilterType(layerCountNode);
                                 Application::Get().Update(ObserverFlag::MESH);
                             }
+                        });
 
-                            // Display filter noise settings
-                            _noiseSettingsParameters[layerCountNode].display();
+                        drawParameter("Seed", [&planet = _planet, &layer, &layerCountNode]()
+                        {
+                            if (ImGui::InputInt("##Seed", &(int&)planet->getShapeGenerator()->getNoiseFilter(layerCountNode)->getSeed()))
+                            {
+                                planet->getShapeGenerator()->getNoiseFilter(layerCountNode)->reseed();
+                                Application::Get().Update(ObserverFlag::MESH);
+                            }
+                        });
 
+                        // Display filter noise settings
+                        _noiseSettingsParameters[layerCountNode].display();
 
-                            ImGui::TreePop();
-                        }
                         ImGui::TreePop();
-                        ImGui::Separator();
+
                     }
                     layerCountNode++;
                     
@@ -346,6 +382,7 @@ void Interface::ShowSettingsWindow()
                 ImGui::PopFont();
             }
             ImGui::PopFont();
+
 
             // Material Settings
             // ***********************************************************************
@@ -359,11 +396,17 @@ void Interface::ShowSettingsWindow()
                 {
                     if (!_color->getUseLandmassRamp())
                     {
-                        if (ImGui::ColorEdit3("Color", (float*)&(_color->getLandmassColor())))
-                            Application::Get().Update(ObserverFlag::COLOR);
+                        drawParameter("Color", [&color = _color]()
+                        {
+                            if (ImGui::ColorEdit3("##Color", (float*)&(color->getLandmassColor())))
+                                Application::Get().Update(ObserverFlag::COLOR);
+                        });
                     }
 
-                    ImGui::Checkbox("Use Color Ramp", &_color->getUseLandmassRamp());
+                    drawParameter("", [&color = _color]()
+                    {
+                        ImGui::Checkbox("Use Color Ramp", &color->getUseLandmassRamp());
+                    });
 
                     if (_color->getUseLandmassRamp())
                     {
@@ -376,12 +419,22 @@ void Interface::ShowSettingsWindow()
 
                 if (ImGui::TreeNode("Ocean"))
                 {
-                    ImGui::Checkbox("Use a different color for ocean", &_color->getUseOceanColor());
+                    drawParameter("", [&color = _color]()
+                    {
+                        ImGui::Checkbox("Use a different color for ocean", &color->getUseOceanColor());
+                    });
 
                     if (_color->getUseOceanColor())
                     {
-                        ImGui::SliderFloat("Depth", &_planet->getColorSettings()->getOceanDepth(), 0.0f, 10.0f);
-                        ImGui::ColorEdit3("Color", (float*)&_planet->getColorSettings()->getOceanColor());
+                        drawParameter("Depth", [&color = _color]()
+                        {
+                            ImGui::SliderFloat("##Depth", &color->getOceanDepth(), 0.0f, 10.0f);
+                        });
+
+                        drawParameter("Color", [&color = _color]()
+                        {
+                            ImGui::ColorEdit3("##Color", (float*)&color->getOceanColor());
+                        });
                     }
                     ImGui::TreePop();
                 }
@@ -399,7 +452,6 @@ void Interface::ShowSettingsWindow()
                 ImGui::PushFont(nullptr);
                 drawUpdateModeItem();
 
-                static bool useWorldGradient = true;
                 ImGui::ColorEdit3("World Color", (float*)&(Application::Get().GetBackgroundColor()));
                 ImGui::SliderFloat("Sun", &LightManager::Get().GetLight()->Intensity(), 0.0f, 1.0f);
                 static float ambientGlobal = 0.2f;
@@ -420,8 +472,16 @@ void Interface::ShowSettingsWindow()
             {
                 ImGui::PushFont(nullptr);
 
-                ImGui::Checkbox("Wireframe Mode", &Application::Get().GetEditor().GetWireframePtr());
-                ImGui::Checkbox("Show Axis", &Application::Get().GetEditor().GetAxisPtr());
+                drawParameter("", []()
+                {
+                    ImGui::Checkbox("Wireframe Mode", &Application::Get().GetEditor().GetWireframePtr());
+                });
+
+                drawParameter("", []()
+                {
+                    ImGui::Checkbox("Show Axis", &Application::Get().GetEditor().GetAxisPtr());
+                });
+
                 ImGui::EndTabItem();
                 ImGui::PopFont();
             }
@@ -452,7 +512,7 @@ void Interface::ShowViewportWindow()
         {
             ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBackground
                 | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
-            ImGui::SetNextWindowPos(ImVec2(25, 50));
+            ImGui::SetNextWindowPos(ImVec2(25, 80));
             ImGui::SetNextWindowSize(ImVec2(150, 80));
             if (ImGui::Begin("Statistics", false, window_flags))
             {
@@ -681,7 +741,7 @@ void prettyPrintNumber(int number, std::string& str)
 void Interface::setDarkThemeMode()
 {
     // Setup main colors
-    const ImVec4 blue = ImVec4{ 0.164, 0.640, 0.625, 1.0f };
+    const ImVec4 lightGreen = ImVec4{ 0, 0.8, 0.478, 1.0f };
     const ImVec4 green = ImVec4{ 0.156, 0.686, 0.474, 1.0f };
 
     const ImVec4 darkPurple = ImVec4{ 0.117, 0.109, 0.137, 1.0f };
@@ -700,8 +760,8 @@ void Interface::setDarkThemeMode()
 
     // Buttons
     colors[ImGuiCol_Button] = green;
-    colors[ImGuiCol_ButtonHovered] = blue;
-    colors[ImGuiCol_ButtonActive] = blue;
+    colors[ImGuiCol_ButtonHovered] = lightGreen;
+    colors[ImGuiCol_ButtonActive] = lightGreen;
 
     // Frame Components BG
     colors[ImGuiCol_FrameBg] = purple;
@@ -710,8 +770,8 @@ void Interface::setDarkThemeMode()
 
     // Tabs
     colors[ImGuiCol_Tab] = green;
-    colors[ImGuiCol_TabHovered] = blue;
-    colors[ImGuiCol_TabActive] = blue;
+    colors[ImGuiCol_TabHovered] = lightGreen;
+    colors[ImGuiCol_TabActive] = lightGreen;
     colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
     colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
 
@@ -722,7 +782,7 @@ void Interface::setDarkThemeMode()
 
     // Slider
     colors[ImGuiCol_SliderGrab] = green;
-    colors[ImGuiCol_SliderGrabActive] = blue;
+    colors[ImGuiCol_SliderGrabActive] = lightGreen;
 
     // Checkbox
     colors[ImGuiCol_CheckMark] = green;
