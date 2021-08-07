@@ -75,79 +75,105 @@ void Interface::draw(GLFWwindow* window)
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    static bool demo = false;
 
-    if (demo) ImGui::ShowDemoWindow(&demo);
+    static int drawCount = 0;
+    // True after first click detected by Input Handler
+    if (_launchScreenOpen && _lastFrameBeforeExitLaunchScreen)
+    {
+        drawCount++;
+        // Give time to ImGui to receive potential event from button 
+        // inside launch screen in ordrer to do some operation like new file or open file ...
+        // If 10 frames after the first click ImGui receive nothing, we can safely close launch screen.
+        // Usually, ImGui takes about 5~8 frames to detect the event.
+        if (drawCount > 10)
+            _readyToCloseLaunchScreen = true;
+    }
+
+    static bool demo = false;
+    if (demo)
+    {
+        ImGui::ShowDemoWindow(&demo);
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        return;
+    }
+
+    static bool opt_fullscreen = true;
+    static bool opt_padding = false;
+    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+
+    // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+    // because it would be confusing to have two docking targets within each others.
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+    if (opt_fullscreen)
+    {
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->WorkPos);
+        ImGui::SetNextWindowSize(viewport->WorkSize);
+        ImGui::SetNextWindowViewport(viewport->ID);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+    }
     else
     {
-
-        static bool opt_fullscreen = true;
-        static bool opt_padding = false;
-        static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
-        // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-        // because it would be confusing to have two docking targets within each others.
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-        if (opt_fullscreen)
-        {
-            const ImGuiViewport* viewport = ImGui::GetMainViewport();
-            ImGui::SetNextWindowPos(viewport->WorkPos);
-            ImGui::SetNextWindowSize(viewport->WorkSize);
-            ImGui::SetNextWindowViewport(viewport->ID);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-            window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-            window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-        }
-        else
-        {
-            dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-        }
-
-        if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-            window_flags |= ImGuiWindowFlags_NoBackground;
-
-        if (!opt_padding)
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("DockSpace Demo", &_dockspaceOpen, window_flags);
-        if (!opt_padding)
-            ImGui::PopStyleVar();
-
-        if (opt_fullscreen)
-            ImGui::PopStyleVar(2);
-
-        // DockSpace
-        ImGuiIO& io = ImGui::GetIO();
-        ImGuiStyle& style = ImGui::GetStyle();
-        float minWinSize = style.WindowMinSize.x;
-        style.WindowMinSize.x = 370.0f;
-        if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-        {
-            ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-        }
-
-        style.WindowMinSize.x = minWinSize;
-
-        // Display launch screen
-        if (_launchScreenOpen) ShowLaunchScreen();
-
-        /* Pop up Windows */
-        if (_saveFileOpen) ShowSaveAsWindow();
-        if (_newFileOpen) ShowNewSceneWindow();
-
-        /* Permanent Windows */
-        if (_settingsOpen) ShowSettingsWindow();
-        ShowViewportWindow();
-        if (_terminalOpen) ShowLogWindow();
-        ShowMenuBar(window);
-
-        ImGui::End(); // Main Window
+        dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
     }
+
+    if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+        window_flags |= ImGuiWindowFlags_NoBackground;
+
+    if (!opt_padding)
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+    ImGui::Begin("DockSpace Demo", &_dockspaceOpen, window_flags);
+    if (!opt_padding)
+        ImGui::PopStyleVar();
+
+    if (opt_fullscreen)
+        ImGui::PopStyleVar(2);
+
+    // DockSpace
+    ImGuiStyle& style = ImGui::GetStyle();
+    float minWinSize = style.WindowMinSize.x;
+    style.WindowMinSize.x = 370.0f;
+    if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+    {
+        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+    }
+
+    style.WindowMinSize.x = minWinSize;
+
+    // Display launch screen
+    static bool clickInsideLaunchScreen = false;
+    if (_launchScreenOpen) 
+        clickInsideLaunchScreen = ShowLaunchScreen();
+
+    /* Pop up Windows */
+    if (_saveFileOpen) 
+        ShowSaveAsWindow();
+    if (_newFileOpen) 
+        ShowNewSceneWindow();
+
+    /* Permanent Windows */
+    if (_settingsOpen)
+        ShowSettingsWindow();
+    if (_terminalOpen) 
+        ShowLogWindow();
+    ShowViewportWindow();
+    ShowMenuBar(window);
+
+    ImGui::End(); // Main Window
 
     // Render ImGUI
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    if (_launchScreenOpen && (clickInsideLaunchScreen || _readyToCloseLaunchScreen))
+    {
+        _launchScreenOpen = false;
+    }
 }
 
 template <typename UIFonction>
@@ -173,16 +199,57 @@ static void drawParameter(const std::string& name, UIFonction uiFonction)
 }
 
 
-void Interface::ShowLaunchScreen()
+bool Interface::ShowLaunchScreen()
 {
-    ImGuiWindowFlags window_flags_launch_screen = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBackground
+    ImGuiWindowFlags window_flags_launch_screen = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking
         | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
-    ImGui::SetNextWindowPos(ImVec2((_WIDTH - _launchScreen.Width() * 0.5) * 0.5, (_HEIGHT - _launchScreen.Height() * 0.5) * 0.5));
+    
+    ImGui::SetNextWindowPos(ImVec2((_WIDTH - _launchScreen.Width() * 0.5) * 0.5, (_HEIGHT - _launchScreen.Height()) * 0.5));
+    ImGui::SetNextWindowSize(ImVec2(1280 * 0.5, 480));
+    bool clickInside = false;
     if (ImGui::Begin("LaunchScreen", &_launchScreenOpen, window_flags_launch_screen))
     {
+        // Launch screen image
         ImGui::Image((ImTextureID)_launchScreen.Id(), ImVec2(1280 * 0.5, 480 * 0.5), ImVec2(0, 0), ImVec2(1, 1));
+        
+        ImGui::Separator();
+
+        ImGui::Text("New File");
+        if (ImGui::Button("General"))
+        {
+            IOManager::get().newFile();
+            _planet->reset();
+            Application::Get().AppendLog("New scene created");
+            clickInside = true;
+        }
+        
+        ImGui::Separator();
+
+        ImGui::Text("Recent Files");
+        auto paths = IOManager::get().getAllFilesFromFolder("res/scene/");
+        for (size_t i = 0; i < paths.size(); i++)
+        {
+            if (ImGui::Button(paths[i].c_str()))
+            {
+                if (!IOManager::get().open(paths[i], _planet))
+                {
+                    Application::Get().AppendLog(std::string("Error IO :: cannot open file " + paths[i]).c_str());
+                }
+                else
+                {
+                    _noiseSettingsParameters.clear();
+                    const auto layersCount = _planet->getShapeSettings()->getNoiseLayers().size();
+                    for (size_t i = 0; i < layersCount; i++)
+                        _noiseSettingsParameters.push_back(_planet->getShapeSettings()->getNoiseLayer(i)->getNoiseSettings());
+
+                    Application::Get().AppendLog("File has been opened");
+                }
+            }
+        }
+
     }
     ImGui::End();
+    return clickInside;
 }
 
 void Interface::ShowMenuBar(GLFWwindow* window)
@@ -273,7 +340,7 @@ void Interface::ShowSettingsWindow()
     if (ImGui::Begin("Settings"))
     {
         ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_FittingPolicyResizeDown;
-        if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
+        if (_planet->isVisible() && ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
         {
             // Planet Settings
             // ***********************************************************************

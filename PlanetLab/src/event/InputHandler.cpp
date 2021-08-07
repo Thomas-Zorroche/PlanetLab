@@ -135,7 +135,7 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
     CallbackPtr* callbackPtr = (CallbackPtr*)glfwGetWindowUserPointer(window);
     auto camera = callbackPtr->_camera;
 
-    static bool firstClick = false;;
+    static bool firstClick = false;
     if (!firstClick) {
         firstClick = true;
         Interface::Get().disableLaunchScreen();

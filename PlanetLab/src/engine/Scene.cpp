@@ -18,6 +18,8 @@ Scene::Scene()
 	_planet = std::make_shared<Ceres::Planet>();
 	Application::Get().AppendPlanet(_planet);
 	_planet->setScaleOnLoading(true);
+	_planet->setVisible(false);
+
 
 	// Background Gradient (Simple Plane placed on camera far plane)
 	_backgroundPlane = std::make_shared<BackgroundGradient>();
@@ -30,7 +32,9 @@ Scene::Scene()
 void Scene::Draw(float viewportHeight)
 {
 	_backgroundPlane->Draw(viewportHeight);
+
 	_planet->draw();
+
 	if (Application::Get().GetEditor().IsAxisVisible())
 		_gizmo.Draw();
 }

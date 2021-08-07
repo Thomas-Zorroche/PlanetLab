@@ -37,6 +37,9 @@ Planet::Planet(int resolution)
 
 void Planet::draw()
 {
+	if (!_visible)
+		return;
+
 	if (_scaleOnLoading && _scaleLoadingAmount < 1)
 	{
 		_scaleLoadingAmount += _scaleLoadingSpeed;
@@ -158,8 +161,8 @@ void Planet::reset()
 	_colorSettings->reset();
 
 	_resolution = 64;
-
 	_scaleLoadingAmount = 0.0f;
+	_visible = true;
 
 	update(ObserverFlag::RESOLUTION);
 	update(ObserverFlag::COLOR);

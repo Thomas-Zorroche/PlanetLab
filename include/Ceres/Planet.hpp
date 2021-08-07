@@ -65,13 +65,15 @@ public:
 	float& getRotationSpeed() { return _rotationSpeed; }
 
 	FaceRenderMask& getFaceRenderMask() { return _faceRenderMask; }
-
 	PlanetSubject& getPlanetSubject() { return _planetSubject; }
 	
 	int getVerticesCount() const;
 	int getFacesCount() const;
 
 	void setScaleOnLoading(bool scale) { _scaleOnLoading = scale; }
+
+	void setVisible(bool visible) { _visible = visible; }
+	bool isVisible() const { return _visible; }
 
 	// Public methods
 
@@ -111,6 +113,9 @@ private:
 private:
 	/// Resolution fo planet, amount of subdivisions per face
 	int _resolution;
+
+	/// Whether to draw the planet
+	bool _visible = true;
 
 	/// Contains radius and noise settings
 	std::shared_ptr<ShapeSettings> _shapeSettings;
