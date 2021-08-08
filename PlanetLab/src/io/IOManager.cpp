@@ -12,6 +12,7 @@ void IOManager::newFile()
 {
 	_currentFileSaved = false;
 	_currentFileName = "New Scene";
+	_unsavedValues = false;
 	updateTitleWindow();
 }
 
@@ -216,7 +217,7 @@ void IOManager::updateTitleWindow()
 
 void IOManager::setUnsavedValues()
 {
-	if (!_unsavedValues && _currentFileSaved)
+	if (!_unsavedValues)
 	{
 		_unsavedValues = true;
 		updateTitleWindow();

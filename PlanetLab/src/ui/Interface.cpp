@@ -62,6 +62,9 @@ void Interface::init(Window& window)
     // Setup fonts
     io.Fonts->AddFontFromFileTTF("res/fonts/OpenSans/OpenSans-Bold.ttf", 18.0f);
     io.FontDefault = io.Fonts->AddFontFromFileTTF("res/fonts/OpenSans/OpenSans-Regular.ttf", 18.0f);
+
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.FrameRounding = 5.0f;
 }
 
 
@@ -74,20 +77,6 @@ void Interface::draw(GLFWwindow* window)
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-
-
-    static int drawCount = 0;
-    // True after first click detected by Input Handler
-    if (_launchScreenOpen && _lastFrameBeforeExitLaunchScreen)
-    {
-        drawCount++;
-        // Give time to ImGui to receive potential event from button 
-        // inside launch screen in ordrer to do some operation like new file or open file ...
-        // If 10 frames after the first click ImGui receive nothing, we can safely close launch screen.
-        // Usually, ImGui takes about 5~8 frames to detect the event.
-        if (drawCount > 10)
-            _readyToCloseLaunchScreen = true;
-    }
 
     static bool demo = false;
     if (demo)
@@ -146,9 +135,8 @@ void Interface::draw(GLFWwindow* window)
     style.WindowMinSize.x = minWinSize;
 
     // Display launch screen
-    static bool clickInsideLaunchScreen = false;
     if (_launchScreenOpen) 
-        clickInsideLaunchScreen = ShowLaunchScreen();
+        ShowLaunchScreen();
 
     /* Pop up Windows */
     if (_saveFileOpen) 
@@ -169,11 +157,6 @@ void Interface::draw(GLFWwindow* window)
     // Render ImGUI
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    if (_launchScreenOpen && (clickInsideLaunchScreen || _readyToCloseLaunchScreen))
-    {
-        _launchScreenOpen = false;
-    }
 }
 
 template <typename UIFonction>
@@ -202,53 +185,94 @@ static void drawParameter(const std::string& name, UIFonction uiFonction)
 bool Interface::ShowLaunchScreen()
 {
     ImGuiWindowFlags window_flags_launch_screen = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking
-        | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
+        | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoMove;
+
+    ImGuiIO& io = ImGui::GetIO();
+    auto boldFont = io.Fonts->Fonts[0];
     
     ImGui::SetNextWindowPos(ImVec2((_WIDTH - _launchScreen.Width() * 0.5) * 0.5, (_HEIGHT - _launchScreen.Height()) * 0.5));
     ImGui::SetNextWindowSize(ImVec2(1280 * 0.5, 480));
     bool clickInside = false;
+    ImGuiStyle& style = ImGui::GetStyle();
+    float baseWindowRounding = style.WindowRounding;
+    style.WindowRounding = 6.0f;
+    style.WindowPadding = ImVec2(0.0f, 0.0f);
+    style.WindowBorderSize = 0.0f;
+    ImGui::SetNextWindowBgAlpha(0.85f);
     if (ImGui::Begin("LaunchScreen", &_launchScreenOpen, window_flags_launch_screen))
     {
         // Launch screen image
         ImGui::Image((ImTextureID)_launchScreen.Id(), ImVec2(1280 * 0.5, 480 * 0.5), ImVec2(0, 0), ImVec2(1, 1));
         
-        ImGui::Separator();
-
-        ImGui::Text("New File");
-        if (ImGui::Button("General"))
+        // Files Window
+        float windowWidth = ImGui::GetWindowContentRegionWidth();
+        ImVec2 toolbarSize(windowWidth, 200);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(20, 10));
+        if (ImGui::BeginChild("Recent Files", toolbarSize, false, ImGuiWindowFlags_AlwaysUseWindowPadding))
         {
-            IOManager::get().newFile();
-            _planet->reset();
-            Application::Get().AppendLog("New scene created");
-            clickInside = true;
-        }
-        
-        ImGui::Separator();
+            ImGui::PushFont(boldFont);
+            ImGui::Text("New File");
+            ImGui::PopFont();
 
-        ImGui::Text("Recent Files");
-        auto paths = IOManager::get().getAllFilesFromFolder("res/scene/");
-        for (size_t i = 0; i < paths.size(); i++)
-        {
-            if (ImGui::Button(paths[i].c_str()))
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor(0, 0, 0, 0));
+            if (ImGui::Button("General"))
             {
-                if (!IOManager::get().open(paths[i], _planet))
-                {
-                    Application::Get().AppendLog(std::string("Error IO :: cannot open file " + paths[i]).c_str());
-                }
-                else
-                {
-                    _noiseSettingsParameters.clear();
-                    const auto layersCount = _planet->getShapeSettings()->getNoiseLayers().size();
-                    for (size_t i = 0; i < layersCount; i++)
-                        _noiseSettingsParameters.push_back(_planet->getShapeSettings()->getNoiseLayer(i)->getNoiseSettings());
+                _launchScreenOpen = false;
+                IOManager::get().newFile();
+                _planet->reset();
+                Application::Get().AppendLog("New scene created");
+                clickInside = true;
+            }
+            ImGui::PopStyleColor();
 
-                    Application::Get().AppendLog("File has been opened");
+            //ImGui::Separator();
+
+            ImGui::PushFont(boldFont);
+            ImGui::Text("Recent Files");
+            ImGui::PopFont();
+
+            auto paths = IOManager::get().getAllFilesFromFolder("res/scene/");
+            for (size_t i = 0; i < paths.size(); i++)
+            {
+                ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor(0, 0, 0, 0) );
+                ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+                if (ImGui::Button(paths[i].c_str()))
+                {
+                    _launchScreenOpen = false;
+                    if (!IOManager::get().open(paths[i], _planet))
+                    {
+                        Application::Get().AppendLog(std::string("Error IO :: cannot open file " + paths[i]).c_str());
+                    }
+                    else
+                    {
+                        _noiseSettingsParameters.clear();
+                        const auto layersCount = _planet->getShapeSettings()->getNoiseLayers().size();
+                        for (size_t i = 0; i < layersCount; i++)
+                            _noiseSettingsParameters.push_back(_planet->getShapeSettings()->getNoiseLayer(i)->getNoiseSettings());
+
+                        Application::Get().AppendLog("File has been opened");
+                    }
                 }
+                ImGui::PopStyleColor();
             }
         }
+        ImGui::EndChild();
+        ImGui::PopStyleVar();
+
+        ImGui::Separator();
+
+        ImGui::SetCursorPosX((ImGui::GetWindowContentRegionWidth() * 0.5) - 0.5 * ImGui::CalcTextSize("  Close  ").x);
+        if (ImGui::BeginChild("Close"))
+        {
+            if (ImGui::Button("Close")) _launchScreenOpen = false;
+        }
+        ImGui::EndChild();
 
     }
     ImGui::End();
+
+    style.WindowRounding = baseWindowRounding;
     return clickInside;
 }
 
@@ -260,7 +284,17 @@ void Interface::ShowMenuBar(GLFWwindow* window)
         {
             if (ImGui::MenuItem("New", "Ctrl+N"))
             {
-                _newFileOpen = true;
+                if (IOManager::get().getUnsavedValues())
+                    _newFileOpen = true;
+                else
+                {
+                    if (_launchScreenOpen) 
+                        _launchScreenOpen = false;
+
+                    IOManager::get().newFile();
+                    _planet->reset();
+                    Application::Get().AppendLog("New scene created");
+                }
             }
 
             if (ImGui::BeginMenu("Open scene..."))
@@ -276,6 +310,9 @@ void Interface::ShowMenuBar(GLFWwindow* window)
                         }
                         else
                         {
+                            if (_launchScreenOpen)
+                                _launchScreenOpen = false;
+
                             _noiseSettingsParameters.clear();
                             const auto layersCount = _planet->getShapeSettings()->getNoiseLayers().size();
                             for (size_t i = 0; i < layersCount; i++)
@@ -289,16 +326,20 @@ void Interface::ShowMenuBar(GLFWwindow* window)
             }
 
             ImGui::Separator();
-
-            if (ImGui::MenuItem("Save", "Ctrl+S"))
+            if (!IOManager::get().getUnsavedValues())
             {
-                saveFile();
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.2, 0.2, 0.2, 0.8 });
+                ImGui::MenuItem("Save", "Ctrl+S");
+                ImGui::PopStyleColor();
+            }
+            else
+            {
+                if (ImGui::MenuItem("Save", "Ctrl+S"))
+                    saveFile();
             }
 
             if (ImGui::MenuItem("Save As..."))
-            {
                 _saveFileOpen = true;
-            }
 
             ImGui::Separator();
 
@@ -606,7 +647,7 @@ void Interface::ShowViewportWindow()
 
 
         // Statistics
-        if (Application::Get().GetEditor().IsStatsVisible())
+        if (Application::Get().GetEditor().IsStatsVisible() && _planet->isVisible())
         {
             ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBackground
                 | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
@@ -811,6 +852,13 @@ void Interface::unbindFbo()
     _fbo.unbind();
 }
 
+void Interface::setWindowSize(int width, int height)
+{
+    _WIDTH = width;
+    _HEIGHT = height;
+}
+
+
 void Interface::updateStatistics()
 {
     prettyPrintNumber(_planet->getVerticesCount(), _statistics.verticesCount);
@@ -838,6 +886,8 @@ void prettyPrintNumber(int number, std::string& str)
 
 void Interface::setDarkThemeMode()
 {
+    // NOTE: change colors with ImGui demo windows
+    
     // Setup main colors
     const ImVec4 lightGreen = ImVec4{ 0, 0.8, 0.478, 1.0f };
     const ImVec4 green = ImVec4{ 0.149, 0.509, 0.415, 1.0f };
@@ -845,8 +895,6 @@ void Interface::setDarkThemeMode()
     const ImVec4 darkPurple = ImVec4{ 0.117, 0.109, 0.137, 1.0f };
     const ImVec4 purple = ImVec4{ 0.196, 0.172, 0.227, 1.0f };
     const ImVec4 lightPurple = ImVec4{ 0.305, 0.262, 0.356, 1.0f };
-
-
 
     auto& colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_WindowBg] = darkPurple;

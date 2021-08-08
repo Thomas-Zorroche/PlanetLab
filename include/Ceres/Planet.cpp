@@ -10,8 +10,9 @@
 namespace Ceres
 {
 
-Planet::Planet(int resolution)
+Planet::Planet(int resolution, bool visible)
 	: _resolution(resolution),
+	_visible(visible),
 	_shapeSettings(std::make_shared<ShapeSettings>(1.0f /* radius */)),
 	_colorSettings(std::make_shared<ColorSettings>()),
 	_shapeGenerator(std::make_shared<ShapeGenerator>(_shapeSettings)),
@@ -32,7 +33,8 @@ Planet::Planet(int resolution)
 		_terrainFaces[5].getMesh(),
 	}, PlanetLab::TransformLayout(glm::vec3(0)), "Planet")
 {
-	generatePlanet();
+	if (_visible)
+		generatePlanet();
 }
 
 void Planet::draw()

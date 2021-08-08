@@ -19,6 +19,8 @@ void InputHandler::SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr)
 
     glfwSetWindowUserPointer(window, &callbackPtr);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+    glfwSetWindowSizeCallback(window, window_size_callback);
 }
 
 
@@ -135,12 +137,6 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
     CallbackPtr* callbackPtr = (CallbackPtr*)glfwGetWindowUserPointer(window);
     auto camera = callbackPtr->_camera;
 
-    static bool firstClick = false;
-    if (!firstClick) {
-        firstClick = true;
-        Interface::Get().disableLaunchScreen();
-    }
-
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
     {
         if (Input::IsKeyPressed(KeyCode::ALT))
@@ -155,6 +151,12 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
             Application::Get().SetReadyToGenerate(true);
     }
 }
+
+void window_size_callback(GLFWwindow* window, int width, int height)
+{
+    Interface::Get().setWindowSize(width, height);
+}
+
 
 }   // ns editor
 

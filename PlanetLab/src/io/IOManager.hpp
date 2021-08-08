@@ -36,6 +36,7 @@ public:
 	bool currentFileSaved() const { return _currentFileSaved; }
 	std::string currentFileName() const { return _currentFileName; }
 	void setUnsavedValues();
+	bool getUnsavedValues() const { return _unsavedValues; }
 
 	void updateTitleWindow();
 

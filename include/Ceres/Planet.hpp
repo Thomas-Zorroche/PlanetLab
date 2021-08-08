@@ -45,7 +45,7 @@ class Planet
 {
 public:
 	/// Defautl resolution of 64
-	Planet(int resolution = 64);
+	Planet(int resolution = 64, bool visible = true);
 
 	// Accessors
 
@@ -115,7 +115,7 @@ private:
 	int _resolution;
 
 	/// Whether to draw the planet
-	bool _visible = true;
+	bool _visible;
 
 	/// Contains radius and noise settings
 	std::shared_ptr<ShapeSettings> _shapeSettings;

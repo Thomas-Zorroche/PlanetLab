@@ -64,6 +64,7 @@ public:
 	void saveFile();
 	void newFile();
 
+	// TODO Re implement
 	void setLowSliderSpeed();
 	void setDefaultSliderSpeed();
 
@@ -72,9 +73,9 @@ public:
 
 	void onResolutionUpdate(int resolution);
 
-	void disableLaunchScreen() { _lastFrameBeforeExitLaunchScreen = true; }
-
 	void setDarkThemeMode();
+
+	void setWindowSize(int width, int height);
 
 private:
 	Interface() = default;
@@ -128,10 +129,6 @@ private:
 	std::vector<NoiseSettingsParameters> _noiseSettingsParameters;
 
 	Texture _launchScreen = ResourceManager::Get().LoadTexture("res/img/launch_screen_0_8.png");
-
-	bool _lastFrameBeforeExitLaunchScreen = false;
-
-	bool _readyToCloseLaunchScreen = false;
 };
 
 void prettyPrintNumber(int number, std::string& str);

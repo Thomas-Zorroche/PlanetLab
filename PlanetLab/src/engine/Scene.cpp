@@ -15,10 +15,9 @@ namespace PlanetLab
 Scene::Scene()
 {
 	// Procedural Planet
-	_planet = std::make_shared<Ceres::Planet>();
+	_planet = std::make_shared<Ceres::Planet>(64, false); // visible --> false
 	Application::Get().AppendPlanet(_planet);
 	_planet->setScaleOnLoading(true);
-	_planet->setVisible(false);
 
 	std::vector<std::string> facesSkybox
 	{
