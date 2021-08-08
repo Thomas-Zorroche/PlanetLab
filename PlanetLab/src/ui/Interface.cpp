@@ -64,7 +64,8 @@ void Interface::init(Window& window)
     io.FontDefault = io.Fonts->AddFontFromFileTTF("res/fonts/OpenSans/OpenSans-Regular.ttf", 18.0f);
 
     ImGuiStyle& style = ImGui::GetStyle();
-    style.FrameRounding = 5.0f;
+    style.FrameRounding = 4.0f;
+    style.GrabRounding = 3.0f;
 }
 
 
@@ -193,11 +194,9 @@ bool Interface::ShowLaunchScreen()
     ImGui::SetNextWindowPos(ImVec2((_WIDTH - _launchScreen.Width() * 0.5) * 0.5, (_HEIGHT - _launchScreen.Height()) * 0.5));
     ImGui::SetNextWindowSize(ImVec2(1280 * 0.5, 480));
     bool clickInside = false;
-    ImGuiStyle& style = ImGui::GetStyle();
-    float baseWindowRounding = style.WindowRounding;
-    style.WindowRounding = 6.0f;
-    style.WindowPadding = ImVec2(0.0f, 0.0f);
-    style.WindowBorderSize = 0.0f;
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::SetNextWindowBgAlpha(0.85f);
     if (ImGui::Begin("LaunchScreen", &_launchScreenOpen, window_flags_launch_screen))
     {
@@ -271,8 +270,8 @@ bool Interface::ShowLaunchScreen()
 
     }
     ImGui::End();
+    ImGui::PopStyleVar(3);
 
-    style.WindowRounding = baseWindowRounding;
     return clickInside;
 }
 
@@ -900,7 +899,7 @@ void Interface::setDarkThemeMode()
     colors[ImGuiCol_WindowBg] = darkPurple;
 
     // Headers
-    colors[ImGuiCol_Header] = ImVec4{ 0.380, 0.772, 0.733, 1.0f };
+    colors[ImGuiCol_Header] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
     colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
     colors[ImGuiCol_HeaderActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 
@@ -932,6 +931,10 @@ void Interface::setDarkThemeMode()
 
     // Checkbox
     colors[ImGuiCol_CheckMark] = green;
+
+    // Separator (on resize window)
+    colors[ImGuiCol_SeparatorHovered] = green;
+    colors[ImGuiCol_SeparatorActive] = lightGreen;
 }
 
 };  // ns editor
