@@ -19,10 +19,14 @@ public:
 	bool& IsAxisVisible() { return _showAxis; }
 	void SetAxisVisible(bool showAxis) { _showAxis = showAxis; }
 
-	// Axis
+	// Stats
 	bool IsStatsVisible() const { return _showStatistics; }
 	bool& IsStatsVisible() { return _showStatistics; }
 	void SetStatsVisible(bool showStats) { _showStatistics = showStats; }
+
+	// Skybox
+	bool isSkyboxDisplayed() const { return _skyboxDisplayed; }
+	bool& isSkyboxDisplayed() { return _skyboxDisplayed; }
 
 private:
 	bool _showWireframe = false;
@@ -30,6 +34,8 @@ private:
 	bool _showAxis = false;
 
 	bool _showStatistics = true;
+
+	bool _skyboxDisplayed = true;
 };
 
 }   // ns editor

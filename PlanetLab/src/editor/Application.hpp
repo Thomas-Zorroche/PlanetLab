@@ -55,9 +55,6 @@ public:
 
 	void AppendPlanet(const std::shared_ptr<Ceres::Planet>& planet) { _planet = planet; }
 
-	Color GetBackgroundColor() const { return _backgroundColor; }
-	Color& GetBackgroundColor() { return _backgroundColor; }
-
 	float GetLastFrameDuration() const { return _lastFrameDuration; }
 	void SetLastFrameDuration(float time) { _lastFrameDuration = time; }
 
@@ -81,8 +78,6 @@ private:
 
 	UpdateMode _updateMode = UpdateMode::Auto;
 	std::vector<Ceres::ObserverFlag> _updatesQueue;
-
-	Color _backgroundColor = Color(0.570, 0.598, 0.727);
 
 	float _lastFrameDuration = 0.0f;
 

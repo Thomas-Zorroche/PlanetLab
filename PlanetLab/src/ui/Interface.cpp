@@ -532,13 +532,24 @@ void Interface::ShowSettingsWindow()
                 ImGui::PushFont(nullptr);
                 drawUpdateModeItem();
 
-                ImGui::ColorEdit3("World Color", (float*)&(Application::Get().GetBackgroundColor()));
-                ImGui::SliderFloat("Sun", &LightManager::Get().GetLight()->Intensity(), 0.0f, 1.0f);
-                static float ambientGlobal = 0.2f;
-                if (ImGui::SliderFloat("Ambient Light", &ambientGlobal, 0.0f, 1.0f))
+                drawParameter("Sun", []()
                 {
-                    LightManager::Get().GetLight()->SetAmbient(ambientGlobal);
-                }
+                    ImGui::SliderFloat("##Sun", &LightManager::Get().GetLight()->Intensity(), 0.0f, 1.0f);
+                });
+
+                drawParameter("Ambient Light", []()
+                {
+                    static float ambientGlobal = 0.2f;
+                    if (ImGui::SliderFloat("Ambient Light##", &ambientGlobal, 0.0f, 1.0f))
+                    {
+                        LightManager::Get().GetLight()->SetAmbient(ambientGlobal);
+                    }                
+                });
+
+                drawParameter("", [&color = _color]()
+                {
+                    ImGui::Checkbox("Use Skybox", &Application::Get().GetEditor().isSkyboxDisplayed());
+                });
 
                 ImGui::EndTabItem();
                 ImGui::PopFont();

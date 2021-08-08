@@ -29,7 +29,7 @@ Scene::Scene()
 		"front.png",
 		"back.png"
 	};
-	_skybox = std::make_shared<Skybox>(facesSkybox);
+	_skybox = std::make_shared<Skybox>(facesSkybox, Application::Get().GetEditor().isSkyboxDisplayed());
 
 	// Load All Lights
 	LightManager::Get().LoadAllLights();
