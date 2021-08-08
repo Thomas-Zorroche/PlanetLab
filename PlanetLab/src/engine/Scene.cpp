@@ -1,8 +1,8 @@
 #include "engine/Scene.hpp"
 #include "engine/ResourceManager.hpp"
-#include "engine/Skybox.hpp"
 #include "ui/BackgroundGradient.hpp"
 #include "editor/Application.hpp"
+#include "engine/Skybox.hpp"
 
 #include "lighting/LightManager.hpp"
 #include "ceres/Planet.hpp"
@@ -20,9 +20,16 @@ Scene::Scene()
 	_planet->setScaleOnLoading(true);
 	_planet->setVisible(false);
 
-
-	// Background Gradient (Simple Plane placed on camera far plane)
-	_backgroundPlane = std::make_shared<BackgroundGradient>();
+	std::vector<std::string> facesSkybox
+	{
+		"right.png",
+		"left.png",
+		"top.png",
+		"bottom.png",
+		"front.png",
+		"back.png"
+	};
+	_skybox = std::make_shared<Skybox>(facesSkybox);
 
 	// Load All Lights
 	LightManager::Get().LoadAllLights();
@@ -31,7 +38,7 @@ Scene::Scene()
 
 void Scene::Draw(float viewportHeight)
 {
-	_backgroundPlane->Draw(viewportHeight);
+	_skybox->Draw();
 
 	_planet->draw();
 

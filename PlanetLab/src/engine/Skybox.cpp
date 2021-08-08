@@ -35,13 +35,14 @@ void Skybox::GenerateMesh()
     _mesh = std::make_shared<Mesh>(vertices, std::make_shared<Material>());
 }
 
-void Skybox::Draw(const std::shared_ptr<Fog>& fog)
+void Skybox::Draw()
 {
+    
     glDepthFunc(GL_LEQUAL);
     
-    SendUniforms(fog);
-
     _shader->Bind();
+    
+    SendUniforms();
 
     glBindVertexArray(_mesh->GetVAO());
     glActiveTexture(GL_TEXTURE0);
@@ -54,11 +55,10 @@ void Skybox::Draw(const std::shared_ptr<Fog>& fog)
     glDepthFunc(GL_LESS); 
 }
 
-void Skybox::SendUniforms(const std::shared_ptr<Fog>& fog)
+void Skybox::SendUniforms()
 {
-    _shader->Bind();
+
     Renderer::Get().SendTransMatrixUniforms(glm::mat4(1.0f), _shader, true);
-    _shader->Unbind();
 }
 
 

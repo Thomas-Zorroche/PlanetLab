@@ -25,7 +25,7 @@ public:
 	// Loads an image (if not cached) and generates an OpenGL texture.
 	Texture LoadTexture(const std::string& path, TextureType type = TextureType::DIFFUSE);
 	std::vector<unsigned short> LoadHeightmap(const std::string& path, TextureType type);
-	unsigned int LoadCubemap(const std::vector<std::string>& faces) const;
+	unsigned int LoadCubemap(const std::vector<std::string>& faces);
 
 	void LoadShader(const std::string& vertexShaderPath, 
 					const std::string& fragmentShaderPath,
@@ -56,6 +56,9 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<Shader>> _shaderCache;
 	std::unordered_map<std::string, std::shared_ptr<Model>> _modelCache;
 	std::unordered_map<std::string, std::shared_ptr<Material>> _materialCache;
+
+	GLuint _cubemapId = 0;
+	bool _cubemapGenerated = false;
 };
 
 }

@@ -587,7 +587,7 @@ void Interface::ShowViewportWindow()
     {
         // 3D Viewport
         ImVec2 wsize = ImGui::GetContentRegionAvail();
-        ImGui::Image((ImTextureID)_fbo.id(), wsize, ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::Image((ImTextureID)_fbo.getTextureId(), wsize, ImVec2(0, 1), ImVec2(1, 0));
         _viewportWidth = wsize.x;
         _viewportHeight = wsize.y;
         _fbo.resize(_viewportWidth, _viewportHeight);
