@@ -52,7 +52,7 @@ void Planet::draw()
 	rotate(glm::vec3(0, _rotationSpeed, 0));
 
 	sendUniforms();
-	_staticMesh.Draw();
+	_staticMesh.Draw(true, _hideSurface);
 }
 
 void Planet::sendUniforms()

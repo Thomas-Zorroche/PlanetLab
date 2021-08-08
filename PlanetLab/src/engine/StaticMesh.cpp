@@ -52,10 +52,13 @@ StaticMesh::StaticMesh(const std::vector<std::shared_ptr<Mesh>>& meshes, const T
 	Scale(_transformLayout.Scale());
 }
 
-void StaticMesh::Draw(bool hasWireframe)
+void StaticMesh::Draw(bool hasWireframe, bool hideSurface)
 {
 	SendUniforms();
-	_model->Draw(_shader);
+
+	if (!hideSurface)
+		_model->Draw(_shader);
+
 	if (hasWireframe && Application::Get().GetEditor().IsWireframeVisible())
 	{
 		auto shaderWireframe = ResourceManager::Get().GetShader("Wireframe");
@@ -65,6 +68,14 @@ void StaticMesh::Draw(bool hasWireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		_model->Draw(shaderWireframe);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+	if (hasWireframe && Application::Get().GetEditor().isPointsDisplayed())
+	{
+		auto shaderPoints = ResourceManager::Get().GetShader("Point");
+		shaderPoints->Bind();
+		Renderer::Get().SendTransMatrixUniforms(_modelMatrix, shaderPoints);
+		_model->DrawPoints(Application::Get().GetEditor().getSizePoints());
+		shaderPoints->Unbind();
 	}
 }
 

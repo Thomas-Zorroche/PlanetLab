@@ -258,6 +258,8 @@ void ResourceManager::LoadAllShaders()
 	ResourceManager::Get().LoadShader("res/shaders/Gizmo.vert", "res/shaders/Gizmo.frag", "Gizmo");
 	// Skybow Shader
 	ResourceManager::Get().LoadShader("res/shaders/Skybox.vert", "res/shaders/Skybox.frag", "Skybox");
+	// Point Shader
+	ResourceManager::Get().LoadShader("res/shaders/Point.vert", "res/shaders/Point.frag", "Point");
 
 }
 

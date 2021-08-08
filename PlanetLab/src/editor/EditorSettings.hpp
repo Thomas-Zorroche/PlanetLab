@@ -28,6 +28,14 @@ public:
 	bool isSkyboxDisplayed() const { return _skyboxDisplayed; }
 	bool& isSkyboxDisplayed() { return _skyboxDisplayed; }
 
+	// Skybox
+	bool isPointsDisplayed() const { return _pointsDisplayed; }
+	bool& isPointsDisplayed() { return _pointsDisplayed; }
+
+	int getSizePoints() const { return _sizePoints; }
+	int& getSizePoints() { return _sizePoints; }
+
+
 private:
 	bool _showWireframe = false;
 	
@@ -36,6 +44,10 @@ private:
 	bool _showStatistics = true;
 
 	bool _skyboxDisplayed = true;
+
+	bool _pointsDisplayed = false;
+
+	int _sizePoints = 1;
 };
 
 }   // ns editor

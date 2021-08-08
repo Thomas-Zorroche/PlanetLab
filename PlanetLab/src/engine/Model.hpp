@@ -27,6 +27,8 @@ public:
 
 	void Draw(std::shared_ptr<Shader>& shader);
 
+	void DrawPoints(int pointSize = 1) const;
+
 	// Retrieve mesh vao (when there is a single mesh in the model)
 	// Useful for particule system
 	unsigned int GetVAO() const { return _meshes[0]->GetVAO(); }

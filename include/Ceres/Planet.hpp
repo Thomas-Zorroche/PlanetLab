@@ -75,6 +75,9 @@ public:
 	void setVisible(bool visible) { _visible = visible; }
 	bool isVisible() const { return _visible; }
 
+	bool isSurfaceHidden() const { return _hideSurface; }
+	bool& isSurfaceHidden() { return _hideSurface; }
+
 	// Public methods
 
 	/// Draw static mesh planet
@@ -114,8 +117,11 @@ private:
 	/// Resolution fo planet, amount of subdivisions per face
 	int _resolution;
 
-	/// Whether to draw the planet
+	/// Whether to draw the planet (surface + wireframe)
 	bool _visible;
+
+	/// Whether to draw the surface
+	bool _hideSurface = false;
 
 	/// Contains radius and noise settings
 	std::shared_ptr<ShapeSettings> _shapeSettings;

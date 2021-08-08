@@ -420,6 +420,11 @@ void Interface::ShowSettingsWindow()
                     ImGui::SliderFloat("##Rotation Speed", &planet->getRotationSpeed(), 0.0f, 0.5f);
                 });
 
+                drawParameter("", [&planet = _planet]()
+                {
+                    ImGui::Checkbox("Hide Surface", &planet->isSurfaceHidden());
+                });
+
                 ImGui::Separator();
 
                 drawParameter("", [&planet = _planet]()
@@ -605,17 +610,30 @@ void Interface::ShowSettingsWindow()
 
                 drawParameter("", []()
                 {
-                    ImGui::Checkbox("Wireframe Mode", &Application::Get().GetEditor().IsWireframeVisible());
+                    ImGui::Checkbox("Display Wireframe", &Application::Get().GetEditor().IsWireframeVisible());
                 });
 
                 drawParameter("", []()
                 {
-                    ImGui::Checkbox("Show Axis", &Application::Get().GetEditor().IsAxisVisible());
+                    ImGui::Checkbox("Display Axis", &Application::Get().GetEditor().IsAxisVisible());
                 });
 
                 drawParameter("", []()
                 {
-                    ImGui::Checkbox("Show Statistics", &Application::Get().GetEditor().IsStatsVisible());
+                    ImGui::Checkbox("Display Statistics", &Application::Get().GetEditor().IsStatsVisible());
+                });
+
+                drawParameter("", []()
+                {
+                    ImGui::Checkbox("Display Points", &Application::Get().GetEditor().isPointsDisplayed());
+
+                    if (Application::Get().GetEditor().isPointsDisplayed())
+                    {
+                        drawParameter("Point Size", []()
+                        {
+                            ImGui::SliderInt("Point Size##", &Application::Get().GetEditor().getSizePoints(), 0, 10);
+                        });
+                    }
                 });
 
                 ImGui::EndTabItem();
