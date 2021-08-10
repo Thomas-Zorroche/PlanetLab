@@ -42,8 +42,6 @@ void Editor::init(Window& window)
     // Init shared pointers
     _planet = Application::Get().GetPlanet();
     _observer = std::make_unique<UiObserver>(_planet->getPlanetSubject());
-    _shape = _planet->getShapeSettings();
-    _color = _planet->getColorSettings();
 
     // Init windows sizes
     _WIDTH = window.Width();
@@ -455,7 +453,7 @@ void Editor::displaySettings()
                 });
 
                 int layerCountNode = 0;
-                for (auto& layer : _shape->getNoiseLayers())
+                for (auto& layer : _planet->getShapeSettings()->getNoiseLayers())
                 {
                     ImGui::Separator();
 
@@ -509,49 +507,50 @@ void Editor::displaySettings()
             ImGui::PushFont(boldFont);
             if (ImGui::BeginTabItem("Material"))
             {
+                auto& colorSettings = _planet->getColorSettings();
                 ImGui::PushFont(nullptr);
                 drawUpdateModeItem();
 
                 if (ImGui::TreeNode("Landmass"))
                 {
-                    if (!_color->getUseLandmassRamp())
+                    if (!colorSettings->getUseLandmassRamp())
                     {
-                        drawParameter("Color", [&color = _color]()
+                        drawParameter("Color", [&color = colorSettings]()
                         {
                             if (ImGui::ColorEdit3("##Color", (float*)&(color->getLandmassColor())))
                                 Application::Get().Update(ObserverFlag::COLOR);
                         });
                     }
 
-                    drawParameter("", [&color = _color]()
+                    drawParameter("", [&color = colorSettings]()
                     {
                         ImGui::Checkbox("Use Color Ramp", &color->getUseLandmassRamp());
                     });
 
-                    if (_color->getUseLandmassRamp())
+                    if (colorSettings->getUseLandmassRamp())
                     {
                         static ImGradientMark* draggingMark = nullptr;
                         static ImGradientMark* selectedMark = nullptr;
-                        ImGui::GradientEditor(&_color->getGradient(), draggingMark, selectedMark);
+                        ImGui::GradientEditor(&colorSettings->getGradient(), draggingMark, selectedMark);
                     }
                     ImGui::TreePop();
                 }
 
                 if (ImGui::TreeNode("Ocean"))
                 {
-                    drawParameter("", [&color = _color]()
+                    drawParameter("", [&color = colorSettings]()
                     {
                         ImGui::Checkbox("Use a different color for ocean", &color->getUseOceanColor());
                     });
 
-                    if (_color->getUseOceanColor())
+                    if (colorSettings->getUseOceanColor())
                     {
-                        drawParameter("Depth", [&color = _color]()
+                        drawParameter("Depth", [&color = colorSettings]()
                         {
                             ImGui::SliderFloat("##Depth", &color->getOceanDepth(), 0.0f, 10.0f);
                         });
 
-                        drawParameter("Color", [&color = _color]()
+                        drawParameter("Color", [&color = colorSettings]()
                         {
                             ImGui::ColorEdit3("##Color", (float*)&color->getOceanColor());
                         });
@@ -569,6 +568,8 @@ void Editor::displaySettings()
             ImGui::PushFont(boldFont);
             if (ImGui::BeginTabItem("World"))
             {
+                auto& colorSettings = _planet->getColorSettings();
+
                 ImGui::PushFont(nullptr);
                 drawUpdateModeItem();
 
@@ -586,7 +587,7 @@ void Editor::displaySettings()
                     }                
                 });
 
-                drawParameter("", [&color = _color, &editorSettings = _editorSettings]()
+                drawParameter("", [&color = colorSettings, &editorSettings = _editorSettings]()
                 {
                     ImGui::Checkbox("Use Skybox", &editorSettings->isSkyboxDisplayed());
                 });
@@ -878,8 +879,6 @@ void prettyPrintNumber(int number, std::string& str)
         if (i != 0 && j % 3 == 0)
             str.insert(i++, 1, ' ');
 }
-
-
 
 };  // ns editor
 

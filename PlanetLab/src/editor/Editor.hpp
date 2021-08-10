@@ -115,10 +115,6 @@ private:
 	float _sliderSpeed = 0.08;
 
 	std::shared_ptr<Ceres::Planet> _planet = nullptr;
-	// REMOVE THIS
-	std::shared_ptr<Ceres::ShapeSettings> _shape = nullptr;
-	std::shared_ptr<Ceres::ColorSettings> _color = nullptr;
-	// -----------
 
 	float _viewportWidth;
 	float _viewportHeight;
