@@ -32,13 +32,13 @@ NoiseSettingsParameters::NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSet
 	}
 {};
 
-void NoiseSettingsParameters::display()
+void NoiseSettingsParameters::display(float sliderSpeed)
 {
 	for (const auto& name : _parametersNames)
 	{
 		auto parameter = getParameterByName(_parameters, name);
 		if (parameter->GetType() == _filterType || parameter->GetType() == Ceres::FilterType::Simple)
-			parameter->Display();
+			parameter->Display(sliderSpeed);
 	}
 }
 

@@ -48,7 +48,7 @@ public:
 
 	Ceres::FilterType GetType() const { return _type; };
 
-	virtual void Display() = 0;
+	virtual void Display(float sliderSpeed = 0.1f) = 0;
 
 protected:
 	std::string _name;
@@ -65,11 +65,11 @@ public:
 	ParameterFloat(const std::string& name, Ceres::FilterType type, Ceres::ObserverFlag flag, float& value, float min, float max)
 		: ParameterBase(name, type, flag), _value(value), _min(min), _max(max) {};
 
-	void Display() override 
+	void Display(float sliderSpeed = 0.1f) override
 	{
-		_drawParameter(_name.c_str(), [&name = _name, &value = _value, &min = _min, &max = _max, &flag = _flag]()
+		_drawParameter(_name.c_str(), [&name = _name, &value = _value, &min = _min, &max = _max, &flag = _flag, sliderSpeed]()
 		{
-			if (ImGui::SliderFloat(("##" + name).c_str(), &value, min, max))
+			if (ImGui::DragFloat(("##" + name).c_str(), &value, sliderSpeed, min, max))
 			{
 				Application::Get().Update(flag);
 			}
@@ -89,7 +89,7 @@ public:
 		: ParameterBase(name, type, flag), _value(value), _min(min), _max(max) {};
 
 
-	void Display() override
+	void Display(float sliderSpeed = 0.1f) override
 	{
 		_drawParameter(_name.c_str(), [&name = _name, &value = _value, &min = _min, &max = _max, &flag = _flag]()
 		{
@@ -113,7 +113,7 @@ public:
 	ParameterBoolean(const std::string& name, Ceres::FilterType type, Ceres::ObserverFlag flag, bool value)
 		: ParameterBase(name, type, flag), _value(value) {};
 
-	void Display() override
+	void Display(float sliderSpeed = 0.1f) override
 	{
 		_drawParameter(_name.c_str(), [&name = _name, &value = _value, &flag = _flag]()
 		{
@@ -135,7 +135,7 @@ public:
 	ParameterVec3(const std::string& name, Ceres::FilterType type, Ceres::ObserverFlag flag, glm::vec3& value, float min, float max)
 		: ParameterBase(name, type, flag), _value(value), _min(min), _max(max) {};
 
-	void Display() override
+	void Display(float sliderSpeed = 0.1f) override
 	{
 		_drawParameter(_name.c_str(), [&name = _name, &value = _value, &min = _min, &max = _max, &flag = _flag]()
 		{

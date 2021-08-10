@@ -490,7 +490,7 @@ void Editor::displaySettings()
                         });
 
                         // Display filter noise settings
-                        _noiseSettingsParameters[layerCountNode].display();
+                        _noiseSettingsParameters[layerCountNode].display(_sliderSpeed);
 
                         ImGui::TreePop();
 

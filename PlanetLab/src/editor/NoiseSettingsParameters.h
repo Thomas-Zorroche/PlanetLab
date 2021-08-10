@@ -13,7 +13,7 @@ class NoiseSettingsParameters
 public:
 	NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSettings>& noiseSettings);
 
-	void display();
+	void display(float sliderSpedd = 0.1f);
 
 	void setFilterType(const Ceres::FilterType& filterType) { _filterType = filterType; }
 

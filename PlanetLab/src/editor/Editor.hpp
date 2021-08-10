@@ -67,11 +67,9 @@ public:
 
 	void openNewFilePopup() { _newFilePopupOpen = true; }
 
-	// TODO Re implement
-	void setLowSliderSpeed() { _sliderSpeed = 1; }
-	void setDefaultSliderSpeed() { _sliderSpeed = 100; }
-	// --------------------------
-
+	void setLowSliderSpeed() { _sliderSpeed = 0.001; }
+	void setDefaultSliderSpeed() { _sliderSpeed = 0.08; }
+	
 	void toggleDisplaySettings();
 	void toggleDisplayLog();
 
@@ -84,7 +82,7 @@ private:
 	~Editor() = default;
 
 	// ========================================================
-	// 	   Display Window Functions
+	// 	   Display Panel Functions
 	// ========================================================
 	void displayMenuBar(GLFWwindow* window);
 	void displaySettings();
@@ -93,7 +91,6 @@ private:
 	bool displayLaunchScreen();
 	void displaySaveAsPopup();
 	void displayNewScenePopup();
-
 	
 	void drawUpdateModeItem();
 	
@@ -114,14 +111,14 @@ private:
 	bool _launchScreenOpen = true;
 
 	char _bufferSaveLocation[20];
-	int _sliderSpeed = 100;
-	float _sliderSpeedDefault = 0.00005;
+
+	float _sliderSpeed = 0.08;
 
 	std::shared_ptr<Ceres::Planet> _planet = nullptr;
+	// REMOVE THIS
 	std::shared_ptr<Ceres::ShapeSettings> _shape = nullptr;
 	std::shared_ptr<Ceres::ColorSettings> _color = nullptr;
-
-	SpriteSheet _loadingWheel = SpriteSheet("res/img/LoadingSheet.png", 31);
+	// -----------
 
 	float _viewportWidth;
 	float _viewportHeight;
@@ -136,6 +133,7 @@ private:
 
 	std::vector<NoiseSettingsParameters> _noiseSettingsParameters;
 
+	SpriteSheet _loadingWheel = SpriteSheet("res/img/LoadingSheet.png", 31);
 	Texture _launchScreen = ResourceManager::Get().LoadTexture("res/img/launch_screen_0_8.png");
 };
 
