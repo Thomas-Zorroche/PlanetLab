@@ -476,11 +476,12 @@ void Interface::ShowSettingsWindow()
                             }
                         });
 
-                        drawParameter("FilterType", [&planet = _planet, &layer, &layerCountNode]()
+                        drawParameter("FilterType", [&planet = _planet, &layer, &layerCountNode, &noiseSettingsParameters = _noiseSettingsParameters]()
                         {
                             if (ImGui::Combo("##Filter Type", &(int&)layer->getNoiseSettings()->filterType, "Simple\0Rigid\0\0"))
                             {
                                 planet->getShapeGenerator()->updateFilterType(layerCountNode);
+                                noiseSettingsParameters[layerCountNode].setFilterType(layer->getNoiseSettings()->filterType);
                                 Application::Get().Update(ObserverFlag::MESH);
                             }
                         });

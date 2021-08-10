@@ -15,11 +15,13 @@ public:
 
 	void display();
 
+	void setFilterType(const Ceres::FilterType& filterType) { _filterType = filterType; }
+
 private:
 	friend const std::shared_ptr<ParameterBase>& getParameterByName(const ParametersMap& parameters, const std::string& name);
 
 private:
-	Ceres::FilterType _filterType;
+	Ceres::FilterType _filterType = Ceres::FilterType::Simple;
 
 	ParametersMap _parameters;
 
