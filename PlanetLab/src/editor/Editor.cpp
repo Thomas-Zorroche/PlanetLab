@@ -1,4 +1,4 @@
-#include "ui/Interface.hpp"
+#include "editor/Editor.hpp"
 
 #include "engine/opengl/Framebuffer.hpp"
 #include "engine/Window.hpp"
@@ -29,7 +29,7 @@ using namespace Ceres;
 using namespace PlanetLab;
 
 
-void Interface::init(Window& window)
+void Editor::init(Window& window)
 {
     // Initialize ImGui
     IMGUI_CHECKVERSION();
@@ -57,7 +57,7 @@ void Interface::init(Window& window)
     updateStatistics();
 
     // Setup theme
-    setDarkThemeMode();
+    _editorSettings->setDarkThemeMode();
 
     // Setup fonts
     io.Fonts->AddFontFromFileTTF("res/fonts/OpenSans/OpenSans-Bold.ttf", 18.0f);
@@ -69,7 +69,7 @@ void Interface::init(Window& window)
 }
 
 
-void Interface::draw(GLFWwindow* window)
+void Editor::draw(GLFWwindow* window)
 {
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -135,23 +135,17 @@ void Interface::draw(GLFWwindow* window)
 
     style.WindowMinSize.x = minWinSize;
 
-    // Display launch screen
-    if (_launchScreenOpen) 
-        ShowLaunchScreen();
 
     /* Pop up Windows */
-    if (_saveFileOpen) 
-        ShowSaveAsWindow();
-    if (_newFileOpen) 
-        ShowNewSceneWindow();
+    if (_launchScreenOpen)  displayLaunchScreen();
+    if (_saveFilePopupOpen) displaySaveAsPopup();
+    if (_newFilePopupOpen)  displayNewScenePopup();
 
     /* Permanent Windows */
-    if (_settingsOpen)
-        ShowSettingsWindow();
-    if (_terminalOpen) 
-        ShowLogWindow();
-    ShowViewportWindow();
-    ShowMenuBar(window);
+    if (_settingsOpen) displaySettings();
+    if (_logOpen) displayLog();
+    displayViewport();
+    displayMenuBar(window);
 
     ImGui::End(); // Main Window
 
@@ -183,7 +177,7 @@ static void drawParameter(const std::string& name, UIFonction uiFonction)
 }
 
 
-bool Interface::ShowLaunchScreen()
+bool Editor::displayLaunchScreen()
 {
     ImGuiWindowFlags window_flags_launch_screen = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking
         | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoMove;
@@ -275,7 +269,7 @@ bool Interface::ShowLaunchScreen()
     return clickInside;
 }
 
-void Interface::ShowMenuBar(GLFWwindow* window)
+void Editor::displayMenuBar(GLFWwindow* window)
 {
     if (ImGui::BeginMenuBar())
     {
@@ -284,7 +278,7 @@ void Interface::ShowMenuBar(GLFWwindow* window)
             if (ImGui::MenuItem("New", "Ctrl+N"))
             {
                 if (IOManager::get().getUnsavedValues())
-                    _newFileOpen = true;
+                    _newFilePopupOpen = true;
                 else
                 {
                     if (_launchScreenOpen) 
@@ -338,7 +332,7 @@ void Interface::ShowMenuBar(GLFWwindow* window)
             }
 
             if (ImGui::MenuItem("Save As..."))
-                _saveFileOpen = true;
+                _saveFilePopupOpen = true;
 
             ImGui::Separator();
 
@@ -354,7 +348,7 @@ void Interface::ShowMenuBar(GLFWwindow* window)
     }
 }
 
-void Interface::drawUpdateModeItem()
+void Editor::drawUpdateModeItem()
 {
     drawParameter("Update Mode", []()
     {
@@ -372,7 +366,7 @@ void Interface::drawUpdateModeItem()
     });
 }
 
-void Interface::ShowSettingsWindow()
+void Editor::displaySettings()
 {
     ImGuiIO& io = ImGui::GetIO();
     auto boldFont = io.Fonts->Fonts[0];
@@ -455,7 +449,7 @@ void Interface::ShowSettingsWindow()
                     int noiseLayersCount = planet->getShapeSettings()->getNoiseLayers().size();
                     if (ImGui::SliderInt("##Count", &noiseLayersCount, 0, 5))
                     {
-                        Interface::Get().updateNoiseLayersCount(noiseLayersCount);
+                        Editor::Get().updateNoiseLayersCount(noiseLayersCount);
                         Application::Get().Update(ObserverFlag::MESH);
                     }
                 });
@@ -592,9 +586,9 @@ void Interface::ShowSettingsWindow()
                     }                
                 });
 
-                drawParameter("", [&color = _color]()
+                drawParameter("", [&color = _color, &editorSettings = _editorSettings]()
                 {
-                    ImGui::Checkbox("Use Skybox", &Application::Get().GetEditor().isSkyboxDisplayed());
+                    ImGui::Checkbox("Use Skybox", &editorSettings->isSkyboxDisplayed());
                 });
 
                 ImGui::EndTabItem();
@@ -609,30 +603,30 @@ void Interface::ShowSettingsWindow()
             {
                 ImGui::PushFont(nullptr);
 
-                drawParameter("", []()
+                drawParameter("", [&editorSettings = _editorSettings]()
                 {
-                    ImGui::Checkbox("Display Wireframe", &Application::Get().GetEditor().IsWireframeVisible());
+                    ImGui::Checkbox("Display Wireframe", &editorSettings->IsWireframeVisible());
                 });
 
-                drawParameter("", []()
+                drawParameter("", [&editorSettings = _editorSettings]()
                 {
-                    ImGui::Checkbox("Display Axis", &Application::Get().GetEditor().IsAxisVisible());
+                    ImGui::Checkbox("Display Axis", &editorSettings->IsAxisVisible());
                 });
 
-                drawParameter("", []()
+                drawParameter("", [&editorSettings = _editorSettings]()
                 {
-                    ImGui::Checkbox("Display Statistics", &Application::Get().GetEditor().IsStatsVisible());
+                    ImGui::Checkbox("Display Statistics", &editorSettings->IsStatsVisible());
                 });
 
-                drawParameter("", []()
+                drawParameter("", [&editorSettings = _editorSettings]()
                 {
-                    ImGui::Checkbox("Display Points", &Application::Get().GetEditor().isPointsDisplayed());
+                    ImGui::Checkbox("Display Points", &editorSettings->isPointsDisplayed());
 
-                    if (Application::Get().GetEditor().isPointsDisplayed())
+                    if (editorSettings->isPointsDisplayed())
                     {
-                        drawParameter("Point Size", []()
+                        drawParameter("Point Size", [&editorSettings = editorSettings]()
                         {
-                            ImGui::SliderInt("Point Size##", &Application::Get().GetEditor().getSizePoints(), 0, 10);
+                            ImGui::SliderInt("Point Size##", &editorSettings->getSizePoints(), 0, 10);
                         });
                     }
                 });
@@ -650,8 +644,7 @@ void Interface::ShowSettingsWindow()
 }
 
 
-
-void Interface::ShowViewportWindow()
+void Editor::displayViewport()
 {
     if (ImGui::Begin("Renderer"))
     {
@@ -665,7 +658,7 @@ void Interface::ShowViewportWindow()
 
 
         // Statistics
-        if (Application::Get().GetEditor().IsStatsVisible() && _planet->isVisible())
+        if (_editorSettings->IsStatsVisible() && _planet->isVisible())
         {
             ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBackground
                 | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
@@ -704,12 +697,12 @@ void Interface::ShowViewportWindow()
     ImGui::End();
 }
 
-void Interface::ShowLogWindow()
+void Editor::displayLog()
 {
     Application::Get().DrawLog();
 }
 
-void Interface::ShowSaveAsWindow()
+void Editor::displaySaveAsPopup()
 {
     ImGui::SetNextWindowPos(ImVec2((_WIDTH * 0.5) - 150, (_HEIGHT * 0.5) - 60));
     ImGui::SetNextWindowSize(ImVec2(300, 120));
@@ -734,18 +727,18 @@ void Interface::ShowSaveAsWindow()
                 // Save As Success
                 Application::Get().AppendLog("File has been saved");
             }
-            _saveFileOpen = false;
+            _saveFilePopupOpen = false;
         }
         ImGui::SameLine();
         if (ImGui::Button("Exit"))
         {
-            _saveFileOpen = false;
+            _saveFilePopupOpen = false;
         }
     }
     ImGui::End();
 }
 
-void Interface::ShowNewSceneWindow()
+void Editor::displayNewScenePopup()
 {
     ImGui::SetNextWindowPos(ImVec2((_WIDTH / 2.0) - 150, (_HEIGHT / 2.0) - 50));
     ImGui::SetNextWindowSize(ImVec2(300, 100));
@@ -754,13 +747,13 @@ void Interface::ShowNewSceneWindow()
         ImGui::Text("Save changes before closing?");
         if (ImGui::Button("Save"))
         {
-            _saveFileOpen = true;
-            _newFileOpen = false;
+            _saveFilePopupOpen = true;
+            _newFilePopupOpen = false;
         }
         ImGui::SameLine();
         if (ImGui::Button("Don't Save"))
         {
-            _newFileOpen = false;
+            _newFilePopupOpen = false;
             IOManager::get().newFile();
             _planet->reset();
             Application::Get().AppendLog("New scene created");
@@ -768,34 +761,23 @@ void Interface::ShowNewSceneWindow()
         ImGui::SameLine();
         if (ImGui::Button("Cancel"))
         {
-            _newFileOpen = false;
+            _newFilePopupOpen = false;
         }
     }
     ImGui::End();
 }
 
-
-void Interface::setLowSliderSpeed()
+void Editor::toggleDisplaySettings()
 {
-    _sliderSpeed = 1;
+    _settingsOpen = _settingsOpen && !_saveFilePopupOpen ? false : true;
 }
 
-void Interface::setDefaultSliderSpeed()
+void Editor::toggleDisplayLog()
 {
-    _sliderSpeed = 100;
+    _logOpen = _logOpen && !_saveFilePopupOpen ? false : true;
 }
 
-void Interface::ShowSettings()
-{
-    _settingsOpen = _settingsOpen && !_saveFileOpen ? false : true;
-}
-
-void Interface::ShowTerminal()
-{
-    _terminalOpen = _terminalOpen && !_saveFileOpen ? false : true;
-}
-
-void Interface::saveFile()
+void Editor::saveFile()
 {
     // Check whether the file is already save
     if (IOManager::get().currentFileSaved())
@@ -813,16 +795,12 @@ void Interface::saveFile()
     // If not, open save as windows
     else
     {
-        _saveFileOpen = true;
+        _saveFilePopupOpen = true;
     }
 }
 
-void Interface::newFile()
-{
-    _newFileOpen = true;
-}
 
-void Interface::updateNoiseLayersCount(int noiseLayersCountUpdated)
+void Editor::updateNoiseLayersCount(int noiseLayersCountUpdated)
 {
     int layersCountDifference = noiseLayersCountUpdated - _planet->getShapeSettings()->getNoiseLayers().size();
 
@@ -849,7 +827,7 @@ void Interface::updateNoiseLayersCount(int noiseLayersCountUpdated)
 
 
 
-void Interface::free()
+void Editor::free()
 {
     //Shutdown ImGUI
     ImGui_ImplOpenGL3_Shutdown();
@@ -860,38 +838,37 @@ void Interface::free()
     _fbo.free();
 }
 
-void Interface::bindFbo()
+void Editor::bindFbo()
 {
     _fbo.bind(_viewportWidth, _viewportHeight);
 }
 
-void Interface::unbindFbo()
+void Editor::unbindFbo()
 {
     _fbo.unbind();
 }
 
-void Interface::setWindowSize(int width, int height)
+void Editor::setWindowSize(int width, int height)
 {
     _WIDTH = width;
     _HEIGHT = height;
 }
 
 
-void Interface::updateStatistics()
+void Editor::updateStatistics()
 {
     prettyPrintNumber(_planet->getVerticesCount(), _statistics.verticesCount);
     prettyPrintNumber(_planet->getFacesCount(), _statistics.facesCount);
     prettyPrintNumber(_planet->getFacesCount() * 2, _statistics.trianglesCount);
 }
 
-void Interface::onResolutionUpdate(int resolution)
+void Editor::onResolutionUpdate(int resolution)
 {
     updateStatistics();
 }
 
 
 // Turn 1451862 into 1 451 862
-// TODO: stock in variable and call this onVerticesChange
 void prettyPrintNumber(int number, std::string& str)
 {
     str = std::to_string(number);
@@ -902,59 +879,7 @@ void prettyPrintNumber(int number, std::string& str)
             str.insert(i++, 1, ' ');
 }
 
-void Interface::setDarkThemeMode()
-{
-    // NOTE: change colors with ImGui demo windows
-    
-    // Setup main colors
-    const ImVec4 lightGreen = ImVec4{ 0, 0.8, 0.478, 1.0f };
-    const ImVec4 green = ImVec4{ 0.149, 0.509, 0.415, 1.0f };
 
-    const ImVec4 darkPurple = ImVec4{ 0.117, 0.109, 0.137, 1.0f };
-    const ImVec4 purple = ImVec4{ 0.196, 0.172, 0.227, 1.0f };
-    const ImVec4 lightPurple = ImVec4{ 0.305, 0.262, 0.356, 1.0f };
-
-    auto& colors = ImGui::GetStyle().Colors;
-    colors[ImGuiCol_WindowBg] = darkPurple;
-
-    // Headers
-    colors[ImGuiCol_Header] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
-    colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
-    colors[ImGuiCol_HeaderActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-
-    // Buttons
-    colors[ImGuiCol_Button] = green;
-    colors[ImGuiCol_ButtonHovered] = lightGreen;
-    colors[ImGuiCol_ButtonActive] = lightGreen;
-
-    // Frame Components BG
-    colors[ImGuiCol_FrameBg] = purple;
-    colors[ImGuiCol_FrameBgHovered] = lightPurple;
-    colors[ImGuiCol_FrameBgActive] = lightPurple;
-
-    // Tabs
-    colors[ImGuiCol_Tab] = green;
-    colors[ImGuiCol_TabHovered] = lightGreen;
-    colors[ImGuiCol_TabActive] = lightGreen;
-    colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-    colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
-
-    // Title
-    colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-    colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-    colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-
-    // Slider
-    colors[ImGuiCol_SliderGrab] = green;
-    colors[ImGuiCol_SliderGrabActive] = lightGreen;
-
-    // Checkbox
-    colors[ImGuiCol_CheckMark] = green;
-
-    // Separator (on resize window)
-    colors[ImGuiCol_SeparatorHovered] = green;
-    colors[ImGuiCol_SeparatorActive] = lightGreen;
-}
 
 };  // ns editor
 

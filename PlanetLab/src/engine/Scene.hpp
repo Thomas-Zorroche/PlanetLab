@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui/gizmo/Gizmo.hpp"
+#include "editor/ui/gizmo/Gizmo.hpp"
 
 
 namespace Ceres 

@@ -39,17 +39,17 @@ struct MeshStatistics
 };
 
 
-class Interface
+class Editor
 {
 public:
-	static Interface& Get()
+	static Editor& Get()
 	{
-		static Interface instance;
+		static Editor instance;
 		return instance;
 	}
 
-	Interface(const Interface&) = delete;
-	Interface& operator=(const Interface&) = delete;
+	Editor(const Editor&) = delete;
+	Editor& operator=(const Editor&) = delete;
 
 	void init(Window& window);
 	void draw(GLFWwindow* window);
@@ -58,37 +58,43 @@ public:
 	void bindFbo();
 	void unbindFbo();
 
+	std::unique_ptr<EditorSettings>& getEditorSettings() { return _editorSettings; }
+
 	float viewportWidth() const { return _viewportWidth; }
 	float viewportHeight() const { return _viewportHeight; }
 
 	void saveFile();
-	void newFile();
+
+	void openNewFilePopup() { _newFilePopupOpen = true; }
 
 	// TODO Re implement
-	void setLowSliderSpeed();
-	void setDefaultSliderSpeed();
+	void setLowSliderSpeed() { _sliderSpeed = 1; }
+	void setDefaultSliderSpeed() { _sliderSpeed = 100; }
+	// --------------------------
 
-	void ShowSettings();
-	void ShowTerminal();
+	void toggleDisplaySettings();
+	void toggleDisplayLog();
 
 	void onResolutionUpdate(int resolution);
-
-	void setDarkThemeMode();
 
 	void setWindowSize(int width, int height);
 
 private:
-	Interface() = default;
-	~Interface() = default;
+	Editor() = default;
+	~Editor() = default;
 
-	void ShowMenuBar(GLFWwindow* window);
-	void ShowSettingsWindow();
-	void ShowViewportWindow();
-	void ShowLogWindow();
-	void ShowSaveAsWindow();
-	void ShowNewSceneWindow();
-	bool ShowLaunchScreen();
+	// ========================================================
+	// 	   Display Window Functions
+	// ========================================================
+	void displayMenuBar(GLFWwindow* window);
+	void displaySettings();
+	void displayViewport();
+	void displayLog();
+	bool displayLaunchScreen();
+	void displaySaveAsPopup();
+	void displayNewScenePopup();
 
+	
 	void drawUpdateModeItem();
 	
 	void updateNoiseLayersCount(int noiseLayersCountUpdated);
@@ -98,10 +104,12 @@ private:
 private:
 	Framebuffer _fbo = Framebuffer();
 
-	bool _saveFileOpen = false;
-	bool _newFileOpen = false;
+	std::unique_ptr<EditorSettings> _editorSettings = std::make_unique<EditorSettings>();
+
+	bool _saveFilePopupOpen = false;
+	bool _newFilePopupOpen = false;
 	bool _settingsOpen = true;
-	bool _terminalOpen = true;
+	bool _logOpen = true;
 	bool _dockspaceOpen = true;
 	bool _launchScreenOpen = true;
 

@@ -5,7 +5,7 @@
 #include "opengl/Mesh.hpp"
 #include "engine/Renderer.hpp"
 #include "editor/Application.hpp"
-#include "ui/Interface.hpp"
+#include "editor/Editor.hpp"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -59,7 +59,7 @@ void StaticMesh::Draw(bool hasWireframe, bool hideSurface)
 	if (!hideSurface)
 		_model->Draw(_shader);
 
-	if (hasWireframe && Application::Get().GetEditor().IsWireframeVisible())
+	if (hasWireframe && Editor::Get().getEditorSettings()->IsWireframeVisible())
 	{
 		auto shaderWireframe = ResourceManager::Get().GetShader("Wireframe");
 		shaderWireframe->Bind();
@@ -69,12 +69,12 @@ void StaticMesh::Draw(bool hasWireframe, bool hideSurface)
 		_model->Draw(shaderWireframe);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
-	if (hasWireframe && Application::Get().GetEditor().isPointsDisplayed())
+	if (hasWireframe && Editor::Get().getEditorSettings()->isPointsDisplayed())
 	{
 		auto shaderPoints = ResourceManager::Get().GetShader("Point");
 		shaderPoints->Bind();
 		Renderer::Get().SendTransMatrixUniforms(_modelMatrix, shaderPoints);
-		_model->DrawPoints(Application::Get().GetEditor().getSizePoints());
+		_model->DrawPoints(Editor::Get().getEditorSettings()->getSizePoints());
 		shaderPoints->Unbind();
 	}
 }

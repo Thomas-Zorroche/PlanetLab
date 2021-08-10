@@ -1,6 +1,6 @@
 #include "engine/Scene.hpp"
 #include "engine/ResourceManager.hpp"
-#include "ui/BackgroundGradient.hpp"
+#include "editor/ui/BackgroundGradient.hpp"
 #include "editor/Application.hpp"
 #include "engine/Skybox.hpp"
 
@@ -28,7 +28,7 @@ Scene::Scene()
 		"front.png",
 		"back.png"
 	};
-	_skybox = std::make_shared<Skybox>(facesSkybox, Application::Get().GetEditor().isSkyboxDisplayed());
+	_skybox = std::make_shared<Skybox>(facesSkybox, Editor::Get().getEditorSettings()->isSkyboxDisplayed());
 
 	// Load All Lights
 	LightManager::Get().LoadAllLights();
@@ -41,7 +41,7 @@ void Scene::Draw(float viewportHeight)
 
 	_planet->draw();
 
-	if (Application::Get().GetEditor().IsAxisVisible())
+	if (Editor::Get().getEditorSettings()->IsAxisVisible())
 		_gizmo.Draw();
 }
 

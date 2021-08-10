@@ -35,6 +35,8 @@ public:
 	int getSizePoints() const { return _sizePoints; }
 	int& getSizePoints() { return _sizePoints; }
 
+	void setDarkThemeMode() const;
+
 
 private:
 	bool _showWireframe = false;

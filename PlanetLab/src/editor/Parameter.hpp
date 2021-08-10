@@ -11,7 +11,7 @@
 namespace PlanetLab
 {
 
-// TODO: remove duplicate function from Interface.cpp
+// TODO: remove duplicate function from Editor.cpp
 template <typename UIFonction>
 static void _drawParameter(const std::string& name, UIFonction uiFonction)
 {

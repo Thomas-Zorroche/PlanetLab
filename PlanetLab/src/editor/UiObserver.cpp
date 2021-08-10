@@ -1,6 +1,6 @@
 ﻿#include "UiObserver.hpp"
 
-#include "Interface.hpp"
+#include "Editor.hpp"
 
 namespace PlanetLab
 {
@@ -16,7 +16,7 @@ UiObserver::~UiObserver() {}
 
 void UiObserver::updateResolution(int newResolution)
 {
-    Interface::Get().onResolutionUpdate(newResolution);
+    Editor::Get().onResolutionUpdate(newResolution);
 }
 
 }
