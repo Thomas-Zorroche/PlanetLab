@@ -136,8 +136,8 @@ void Editor::draw(GLFWwindow* window)
 
     /* Pop up Windows */
     if (_launchScreenOpen)  displayLaunchScreen();
-    if (_saveFilePopupOpen) displaySaveAsPopup();
-    if (_newFilePopupOpen)  displayNewScenePopup();
+    if (_displaySaveAsPopup) displaySaveAsPopup();
+    if (_saveBeforeCloseParams.display)  displaySaveBeforeClosePopup();
 
     /* Permanent Windows */
     if (_settingsOpen) displaySettings();
@@ -275,16 +275,17 @@ void Editor::displayMenuBar(GLFWwindow* window)
         {
             if (ImGui::MenuItem("New", "Ctrl+N"))
             {
-                if (IOManager::get().getUnsavedValues())
-                    _newFilePopupOpen = true;
+                if (_launchScreenOpen)
+                    _launchScreenOpen = false;
+
+                // If any unsaved values, ask for save
+                if (IOManager::get().areUnsavedValues())
+                {
+                    _saveBeforeCloseParams = SaveBeforeCloseParams(true, "new");
+                }
                 else
                 {
-                    if (_launchScreenOpen) 
-                        _launchScreenOpen = false;
-
-                    IOManager::get().newFile();
-                    _planet->reset();
-                    Application::Get().AppendLog("New scene created");
+                    newFile();
                 }
             }
 
@@ -295,21 +296,17 @@ void Editor::displayMenuBar(GLFWwindow* window)
                 {
                     if (ImGui::MenuItem(paths[i].c_str()))
                     {
-                        if (!IOManager::get().open(paths[i], _planet))
+                        if (_launchScreenOpen)
+                            _launchScreenOpen = false;
+
+                        // If any unsaved values, ask for save
+                        if (IOManager::get().areUnsavedValues())
                         {
-                            Application::Get().AppendLog(std::string("Error IO :: cannot open file " + paths[i]).c_str());
+                            _saveBeforeCloseParams = SaveBeforeCloseParams(true, "open", paths[i]);
                         }
                         else
                         {
-                            if (_launchScreenOpen)
-                                _launchScreenOpen = false;
-
-                            _noiseSettingsParameters.clear();
-                            const auto layersCount = _planet->getShapeSettings()->getNoiseLayers().size();
-                            for (size_t i = 0; i < layersCount; i++)
-                                _noiseSettingsParameters.push_back(_planet->getShapeSettings()->getNoiseLayer(i)->getNoiseSettings());
-
-                            Application::Get().AppendLog("File has been opened");
+                            openFile(paths[i]);
                         }
                     }
                 }
@@ -317,7 +314,7 @@ void Editor::displayMenuBar(GLFWwindow* window)
             }
 
             ImGui::Separator();
-            if (!IOManager::get().getUnsavedValues())
+            if (!IOManager::get().areUnsavedValues())
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.2, 0.2, 0.2, 0.8 });
                 ImGui::MenuItem("Save", "Ctrl+S");
@@ -326,11 +323,15 @@ void Editor::displayMenuBar(GLFWwindow* window)
             else
             {
                 if (ImGui::MenuItem("Save", "Ctrl+S"))
+                {
                     saveFile();
+                }
             }
 
             if (ImGui::MenuItem("Save As..."))
-                _saveFilePopupOpen = true;
+            {
+                _displaySaveAsPopup = true;
+            }
 
             ImGui::Separator();
 
@@ -728,18 +729,18 @@ void Editor::displaySaveAsPopup()
                 // Save As Success
                 Application::Get().AppendLog("File has been saved");
             }
-            _saveFilePopupOpen = false;
+            _displaySaveAsPopup = false;
         }
         ImGui::SameLine();
         if (ImGui::Button("Exit"))
         {
-            _saveFilePopupOpen = false;
+            _displaySaveAsPopup = false;
         }
     }
     ImGui::End();
 }
 
-void Editor::displayNewScenePopup()
+void Editor::displaySaveBeforeClosePopup()
 {
     ImGui::SetNextWindowPos(ImVec2((_WIDTH / 2.0) - 150, (_HEIGHT / 2.0) - 50));
     ImGui::SetNextWindowSize(ImVec2(300, 100));
@@ -748,21 +749,26 @@ void Editor::displayNewScenePopup()
         ImGui::Text("Save changes before closing?");
         if (ImGui::Button("Save"))
         {
-            _saveFilePopupOpen = true;
-            _newFilePopupOpen = false;
+            _saveBeforeCloseParams.display = false;
+            _displaySaveAsPopup = true;
         }
         ImGui::SameLine();
         if (ImGui::Button("Don't Save"))
         {
-            _newFilePopupOpen = false;
-            IOManager::get().newFile();
-            _planet->reset();
-            Application::Get().AppendLog("New scene created");
+            _saveBeforeCloseParams.display = false;
+            if (_saveBeforeCloseParams.action == "new")
+            {
+                newFile();
+            }
+            if (_saveBeforeCloseParams.action == "open")
+            {
+                openFile(_saveBeforeCloseParams.pathToOpen);
+            }
         }
         ImGui::SameLine();
         if (ImGui::Button("Cancel"))
         {
-            _newFilePopupOpen = false;
+            _saveBeforeCloseParams.display = false;
         }
     }
     ImGui::End();
@@ -770,33 +776,46 @@ void Editor::displayNewScenePopup()
 
 void Editor::toggleDisplaySettings()
 {
-    _settingsOpen = _settingsOpen && !_saveFilePopupOpen ? false : true;
+    _settingsOpen = _settingsOpen && !_displaySaveAsPopup ? false : true;
 }
 
 void Editor::toggleDisplayLog()
 {
-    _logOpen = _logOpen && !_saveFilePopupOpen ? false : true;
+    _logOpen = _logOpen && !_displaySaveAsPopup ? false : true;
 }
 
 void Editor::saveFile()
 {
-    // Check whether the file is already save
-    if (IOManager::get().currentFileSaved())
+    if (!IOManager::get().areUnsavedValues())
+        return;
+
+    if (!IOManager::get().isFileOnDisk())
+        _saveBeforeCloseParams.display = true;
+     
+    Application::Get().AppendLog(IOManager::get().save(_planet) ? "File has been saved" : "Error IO :: cannot save file ");
+}
+
+void Editor::newFile()
+{
+    IOManager::get().newFile();
+    _planet->reset();
+    Application::Get().AppendLog("New scene created");
+}
+
+void Editor::openFile(const std::string& filePath)
+{
+    if (IOManager::get().open(filePath, _planet))
     {
-        // Check whether the save succeed
-        if (!IOManager::get().save(_planet))
-        {
-            Application::Get().AppendLog("Error IO :: cannot save file ");
-        }
-        else
-        {
-            Application::Get().AppendLog("File has been saved");
-        }
+        _noiseSettingsParameters.clear();
+        const auto layersCount = _planet->getShapeSettings()->getNoiseLayers().size();
+        for (size_t i = 0; i < layersCount; i++)
+            _noiseSettingsParameters.push_back(_planet->getShapeSettings()->getNoiseLayer(i)->getNoiseSettings());
+
+        Application::Get().AppendLog("File has been opened");
     }
-    // If not, open save as windows
     else
     {
-        _saveFilePopupOpen = true;
+        Application::Get().AppendLog("Error opening file.");
     }
 }
 

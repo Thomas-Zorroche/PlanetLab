@@ -33,10 +33,13 @@ public:
 
 	std::vector<std::string> getAllFilesFromFolder(const std::string& path);
 
-	bool currentFileSaved() const { return _currentFileSaved; }
+	bool isFileOnDisk() const { return _fileOnDisk; }
 	std::string currentFileName() const { return _currentFileName; }
-	void setUnsavedValues();
-	bool getUnsavedValues() const { return _unsavedValues; }
+	void setFileValuesSaved(bool save) { _fileValuesSaved = save; updateTitleWindow(); }
+
+	/// Whether there are unsaved values
+	bool areUnsavedValues() const { return /*_fileOnDisk && */!_fileValuesSaved; }
+
 
 	void updateTitleWindow();
 
@@ -57,8 +60,8 @@ private:
 	~IOManager() = default;
 
 private:
-	bool _currentFileSaved = false;				// If user has already save once or open a scene
-	bool _unsavedValues = false;				// If user change any value and did not save
+	bool _fileOnDisk = false;				// If user has already save once or open a scene
+	bool _fileValuesSaved = false;			// If there are no more unsaved changes
 	std::string _currentFileName = "New Scene";
 };
 

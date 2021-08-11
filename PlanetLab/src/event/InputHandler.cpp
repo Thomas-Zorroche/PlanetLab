@@ -111,7 +111,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     {
         if (Input::IsKeyPressed(KeyCode::CTRL))
         {
-            Editor::Get().openNewFilePopup();
+            Editor::Get().newFile();
         }
     }
 

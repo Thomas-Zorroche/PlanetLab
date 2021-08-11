@@ -38,6 +38,18 @@ struct MeshStatistics
 	std::string trianglesCount= "";
 };
 
+/// Parameters of futur action after ask for saves before open / new file
+struct SaveBeforeCloseParams
+{
+	SaveBeforeCloseParams(bool display = false, const std::string& action = "new", const std::string& pathToOpen = "")
+		: display(display), action(action), pathToOpen(pathToOpen)
+	{}
+
+	bool display = false;
+	std::string action = "new";
+	std::string pathToOpen = "";
+};
+
 
 class Editor
 {
@@ -64,8 +76,8 @@ public:
 	float viewportHeight() const { return _viewportHeight; }
 
 	void saveFile();
-
-	void openNewFilePopup() { _newFilePopupOpen = true; }
+	void openFile(const std::string& filePath);
+	void newFile();
 
 	void setLowSliderSpeed() { _sliderSpeed = 0.001; }
 	void setDefaultSliderSpeed() { _sliderSpeed = 0.08; }
@@ -90,7 +102,7 @@ private:
 	void displayLog();
 	bool displayLaunchScreen();
 	void displaySaveAsPopup();
-	void displayNewScenePopup();
+	void displaySaveBeforeClosePopup();
 	
 	void drawUpdateModeItem();
 	
@@ -103,8 +115,9 @@ private:
 
 	std::unique_ptr<EditorSettings> _editorSettings = std::make_unique<EditorSettings>();
 
-	bool _saveFilePopupOpen = false;
-	bool _newFilePopupOpen = false;
+	bool _displaySaveAsPopup = false;
+	SaveBeforeCloseParams _saveBeforeCloseParams;
+
 	bool _settingsOpen = true;
 	bool _logOpen = true;
 	bool _dockspaceOpen = true;
@@ -131,6 +144,7 @@ private:
 
 	SpriteSheet _loadingWheel = SpriteSheet("res/img/LoadingSheet.png", 31);
 	Texture _launchScreen = ResourceManager::Get().LoadTexture("res/img/launch_screen_0_8.png");
+
 };
 
 void prettyPrintNumber(int number, std::string& str);

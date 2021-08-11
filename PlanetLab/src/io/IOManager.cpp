@@ -10,16 +10,20 @@ using namespace Ceres;
 
 void IOManager::newFile()
 {
-	_currentFileSaved = false;
+	_fileOnDisk = false;
 	_currentFileName = "New Scene";
-	_unsavedValues = false;
+	_fileValuesSaved = false;
 	updateTitleWindow();
 }
 
 
 bool IOManager::save(std::shared_ptr<Planet>& planet)
 {
-	return _currentFileSaved ? saveAs(_currentFileName, planet) : false;
+	if (_fileOnDisk && !_fileValuesSaved)
+	{
+		return saveAs(_currentFileName, planet);
+	}
+	return false;
 }
 
 bool IOManager::saveAs(const std::string& outputFileName, std::shared_ptr<Planet>& planet)
@@ -81,14 +85,16 @@ bool IOManager::saveAs(const std::string& outputFileName, std::shared_ptr<Planet
 	// generate an INI file (overwrites any previous file)
 	if (file.generate(ini))
 	{
-		_currentFileSaved = true;
+		_fileOnDisk = true;
 		_currentFileName = outputFileName;
-		_unsavedValues = false;
+		_fileValuesSaved = true;
 		updateTitleWindow();
+		return true;
 	}
 	else
 	{
-		_currentFileSaved = false;
+		_fileOnDisk = false;
+		_fileValuesSaved = false;
 		return false;
 	}
 }
@@ -111,9 +117,9 @@ bool IOManager::open(const std::string& inputFileName, std::shared_ptr<Planet>& 
 	// then import values and assign to the planet
 	loadValues(ini, planet);
 
-	_currentFileSaved = true;
+	_fileOnDisk = true;
 	_currentFileName = inputFileName;
-	_unsavedValues = false;
+	_fileValuesSaved = true;
 	updateTitleWindow();
 
 	return true;
@@ -205,22 +211,13 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 
 void IOManager::updateTitleWindow()
 {
-	if (_unsavedValues && _currentFileSaved)
+	if (areUnsavedValues())
 	{
 		Application::Get().updateTitle(std::string("PlanetLab * " + _currentFileName));
 	}
 	else
 	{
 		Application::Get().updateTitle(std::string("PlanetLab " + _currentFileName));
-	}
-}
-
-void IOManager::setUnsavedValues()
-{
-	if (!_unsavedValues)
-	{
-		_unsavedValues = true;
-		updateTitleWindow();
 	}
 }
 
