@@ -13,7 +13,7 @@ namespace PlanetLab
 class Skybox
 {
 public:
-	Skybox(const std::vector<std::string>& faces, bool& display);
+	Skybox(const std::vector<std::string>& faces);
 
 	void GenerateMesh();
 
@@ -32,8 +32,6 @@ private:
 	std::shared_ptr<Mesh> _mesh;
 
 	static const float _SkyboxVertices[];
-
-	bool& _displayed;
 };
 
 }	

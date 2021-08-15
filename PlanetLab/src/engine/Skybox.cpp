@@ -3,11 +3,10 @@
 namespace PlanetLab
 {
 
-Skybox::Skybox(const std::vector<std::string>& faces, bool& display)
+Skybox::Skybox(const std::vector<std::string>& faces)
     : _faces(faces),
       _id(ResourceManager::Get().LoadCubemap(_faces)),
-      _shader(ResourceManager::Get().GetShader("Skybox")),
-      _displayed(display)
+      _shader(ResourceManager::Get().GetShader("Skybox"))
 {
     GenerateMesh();
 }
@@ -38,9 +37,6 @@ void Skybox::GenerateMesh()
 
 void Skybox::Draw()
 {
-    if (!_displayed)
-        return;
-
     glDepthFunc(GL_LEQUAL);
     
     _shader->Bind();

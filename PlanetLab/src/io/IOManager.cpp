@@ -1,7 +1,11 @@
 #include "IOManager.hpp"
-#include "ceres/Planet.hpp"
-#include "ceres/ShapeGenerator.hpp"
-#include "ceres/noise/NoiseFilter.hpp"
+#include "Ceres/Planet.hpp"
+#include "Ceres/ShapeGenerator.hpp"
+#include "Ceres/noise/NoiseFilter.hpp"
+
+#ifdef linux
+#include <experimental/filesystem>
+#endif
 
 namespace PlanetLab
 {
@@ -128,18 +132,29 @@ bool IOManager::open(const std::string& inputFileName, std::shared_ptr<Planet>& 
 std::vector<std::string> IOManager::getAllFilesFromFolder(const std::string& path)
 {
 	std::vector<std::string> paths;
-	for (const auto& entry : std::filesystem::directory_iterator(path))
+	
+#ifdef linux
+	for (const auto& entry : std::experimental::filesystem::directory_iterator(path))
 	{
 		paths.push_back(entry.path().string());
 	}
+#endif
+
+#ifdef _WIN32
+	for (const auto& entry : std:::filesystem::directory_iterator(path))
+	{
+		paths.push_back(entry.path().string());
+	}
+#endif
+
 	return paths;
 }
 
-void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet>& planet)
+void IOManager::loadValues(mINI::INIStructure& ini, std::shared_ptr<Planet>& planet)
 {
 	planet->reset();
 
-	std::string& layersCountStr = ini.get("layers").get("count");
+	std::string& layersCountStr = ini["layers"]["count"];
 	const int layersCount = std::atoi(layersCountStr.c_str());
 
 	planet->addNoiseLayer(layersCount);
@@ -149,17 +164,17 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 		std::string section = "noiseSettings_" + std::to_string(i);
 
 		// Read values
-		std::string& typeStr		      = ini.get(section).get("type");
-		std::string& seedStr		      = ini.get(section).get("seed");
-		std::string& strengthStr          = ini.get(section).get("strength");
-		std::string& layersCountStr       = ini.get(section).get("layersCount");
-		std::string& baseRoughnessStr     = ini.get(section).get("baseRoughness");
-		std::string& roughnessStr         = ini.get(section).get("roughness");
-		std::string& centerXStr           = ini.get(section).get("centerX");	// TODO Replace with parse Vec3 function
-		std::string& centerYStr           = ini.get(section).get("centerY");
-		std::string& centerZStr           = ini.get(section).get("centerZ");
-		std::string& minValueStr          = ini.get(section).get("minValue");
-		std::string& weightMultiplierStr  = ini.get(section).get("weightMultiplier");
+		std::string& typeStr		      = ini[section]["type"];
+		std::string& seedStr		      = ini[section]["seed"];
+		std::string& strengthStr          = ini[section]["strength"];
+		std::string& layersCountStr       = ini[section]["layersCount"];
+		std::string& baseRoughnessStr     = ini[section]["baseRoughness"];
+		std::string& roughnessStr         = ini[section]["roughness"];
+		std::string& centerXStr           = ini[section]["centerX"];	// TODO Replace with parse Vec3 function
+		std::string& centerYStr           = ini[section]["centerY"];
+		std::string& centerZStr           = ini[section]["centerZ"];
+		std::string& minValueStr          = ini[section]["minValue"];
+		std::string& weightMultiplierStr  = ini[section]["weightMultiplier"];
 	
 		// Assign values
 		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->filterType = (typeStr == "simple") ? FilterType::Simple : FilterType::Rigid;
@@ -177,11 +192,11 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 	}
 
 	// Load Color values
-	std::string& useoceancolorStr = ini.get("colorsettings").get("useoceancolor");
-	std::string& oceandepthStr = ini.get("colorsettings").get("oceandepth");
-	std::string& oceancolorStr = ini.get("colorsettings").get("oceancolor");
-	std::string& planetcolorStr = ini.get("colorsettings").get("planetcolor");
-	std::string& uselandmassrampStr = ini.get("colorsettings").get("uselandmassramp");
+	std::string& useoceancolorStr = ini["colorsettings"]["useoceancolor"];
+	std::string& oceandepthStr = ini["colorsettings"]["oceandepth"];
+	std::string& oceancolorStr = ini["colorsettings"]["oceancolor"];
+	std::string& planetcolorStr = ini["colorsettings"]["planetcolor"];
+	std::string& uselandmassrampStr = ini["colorsettings"]["uselandmassramp"];
 
 	planet->getColorSettings()->getUseOceanColor() = std::atoi(useoceancolorStr.c_str());
 	planet->getColorSettings()->getOceanDepth() = std::atoi(oceandepthStr.c_str());
@@ -190,7 +205,7 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 	planet->getColorSettings()->getUseLandmassRamp() = std::atoi(oceandepthStr.c_str());
 
 	// Load Gradient values
-	std::string& marksCountStr = ini.get("gradientsettings").get("markscount");
+	std::string& marksCountStr = ini["gradientsettings"]["markscount"];
 	int marksCount = std::atof(marksCountStr.c_str());
 	std::list<ImGradientMark> marks;
 	for (size_t i = 1; i <= marksCount; i++)
@@ -198,8 +213,8 @@ void IOManager::loadValues(const mINI::INIStructure& ini, std::shared_ptr<Planet
 		std::string labelPos = "pos_" + std::to_string(i);
 		std::string labelColor = "color_" + std::to_string(i);
 
-		std::string& posStr = ini.get("gradientsettings").get(labelPos);
-		std::string& colorStr = ini.get("gradientsettings").get(labelColor);
+		std::string& posStr = ini["gradientsettings"][labelPos];
+		std::string& colorStr = ini["gradientsettings"][labelColor];
 
 		marks.push_back(ImGradientMark( parseVec3(colorStr), std::atof(posStr.c_str()) ));
 	}

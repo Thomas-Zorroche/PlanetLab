@@ -129,12 +129,12 @@ private:
 
 	std::shared_ptr<Ceres::Planet> _planet = nullptr;
 
-	float _viewportWidth;
-	float _viewportHeight;
-	float _settingsWidth;
+	float _WIDTH = 1920.0f;
+	float _HEIGHT = 1080.0f;
 
-	float _WIDTH;
-	float _HEIGHT;
+	float _viewportWidth = 0.7 * _WIDTH;
+	float _viewportHeight = _HEIGHT;
+	float _settingsWidth = _WIDTH - _viewportWidth;
 
 	MeshStatistics _statistics;
 

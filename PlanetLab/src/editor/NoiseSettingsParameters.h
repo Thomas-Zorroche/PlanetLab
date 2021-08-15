@@ -11,7 +11,7 @@ using ParametersMap = std::unordered_map < std::string, std::shared_ptr<Paramete
 class NoiseSettingsParameters
 {
 public:
-	NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSettings>& noiseSettings);
+	NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSettings> noiseSettings);
 
 	void display(float sliderSpedd = 0.1f);
 
@@ -25,7 +25,7 @@ private:
 
 	ParametersMap _parameters;
 
-	std::vector<std::string> _parametersNames; // liste triée
+	std::vector<std::string> _parametersNames; // liste triee
 };
 
 }

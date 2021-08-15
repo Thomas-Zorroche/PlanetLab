@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "ceres/noise/NoiseSettings.hpp"
+#include "Ceres/noise/NoiseSettings.hpp"
 #include "editor/Application.hpp"
 
 #include "imgui/imgui.h"

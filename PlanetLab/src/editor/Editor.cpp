@@ -7,11 +7,11 @@
 #include "editor/Application.hpp"
 #include "event/Input.hpp"
 
-#include "ceres/Planet.hpp"
-#include "ceres/ShapeSettings.hpp"
-#include "ceres/ColorSettings.hpp"
-#include "ceres/noise/NoiseSettings.hpp"
-#include "ceres/noise/NoiseFilter.hpp"
+#include "Ceres/Planet.hpp"
+#include "Ceres/ShapeSettings.hpp"
+#include "Ceres/ColorSettings.hpp"
+#include "Ceres/noise/NoiseSettings.hpp"
+#include "Ceres/noise/NoiseFilter.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -508,7 +508,7 @@ void Editor::displaySettings()
             ImGui::PushFont(boldFont);
             if (ImGui::BeginTabItem("Material"))
             {
-                auto& colorSettings = _planet->getColorSettings();
+                auto colorSettings = _planet->getColorSettings();
                 ImGui::PushFont(nullptr);
                 drawUpdateModeItem();
 
@@ -569,7 +569,7 @@ void Editor::displaySettings()
             ImGui::PushFont(boldFont);
             if (ImGui::BeginTabItem("World"))
             {
-                auto& colorSettings = _planet->getColorSettings();
+                auto colorSettings = _planet->getColorSettings();
 
                 ImGui::PushFont(nullptr);
                 drawUpdateModeItem();
@@ -666,7 +666,7 @@ void Editor::displayViewport()
                 | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
             ImGui::SetNextWindowPos(ImVec2(40, 80));
             ImGui::SetNextWindowSize(ImVec2(150, 100));
-            if (ImGui::Begin("Statistics", false, window_flags))
+            if (ImGui::Begin("Statistics", NULL, window_flags))
             {
                 ImGui::Text("Vertices    %s", _statistics.verticesCount.c_str());
                 ImGui::Text("Faces        %s", _statistics.facesCount.c_str());
@@ -683,7 +683,7 @@ void Editor::displayViewport()
                 | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
             ImGui::SetNextWindowPos(ImVec2(25, _viewportHeight - 50));
             ImGui::SetNextWindowSize(ImVec2(50, 50));
-            if (ImGui::Begin("Loading", false, window_flags))
+            if (ImGui::Begin("Loading", NULL, window_flags))
             {
                 float frame = Application::Get().GetLastFrameDuration();
                 ImGui::Image((ImTextureID)_loadingWheel.GetId(), ImVec2(40, 40),

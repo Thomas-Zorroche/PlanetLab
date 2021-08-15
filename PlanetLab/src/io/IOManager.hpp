@@ -44,7 +44,7 @@ public:
 	void updateTitleWindow();
 
 private:
-	void loadValues(const mINI::INIStructure& ini, std::shared_ptr<Ceres::Planet>& planet);
+	void loadValues(mINI::INIStructure& ini, std::shared_ptr<Ceres::Planet>& planet);
 
 	// Read vec3 string from ini files and return Color
 	Ceres::Color parseColor(const std::string& vec3String);

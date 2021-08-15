@@ -112,7 +112,7 @@ unsigned int ResourceManager::LoadCubemap(const std::vector<std::string>& faces)
 		}
 		else
 		{
-			throw std::string("[STBI_IMAGE] Error whe loading heightmap : " + path);
+			throw std::string("[STBI_IMAGE] Error when loading cubemap : " + path);
 			stbi_image_free(data);
 		}
 	}

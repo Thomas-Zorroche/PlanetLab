@@ -5,7 +5,7 @@
 #include "engine/Skybox.hpp"
 
 #include "lighting/LightManager.hpp"
-#include "ceres/Planet.hpp"
+#include "Ceres/Planet.hpp"
 
 #include "io/IOManager.hpp"
 
@@ -28,7 +28,7 @@ Scene::Scene()
 		"front.png",
 		"back.png"
 	};
-	_skybox = std::make_shared<Skybox>(facesSkybox, Editor::Get().getEditorSettings()->isSkyboxDisplayed());
+	_skybox = std::make_shared<Skybox>(facesSkybox);
 
 	// Load All Lights
 	LightManager::Get().LoadAllLights();
@@ -37,7 +37,8 @@ Scene::Scene()
 
 void Scene::Draw(float viewportHeight)
 {
-	_skybox->Draw();
+	if (Editor::Get().getEditorSettings()->isSkyboxDisplayed())
+		_skybox->Draw();
 
 	_planet->draw();
 

@@ -20,6 +20,7 @@ int Window::Init()
     _glfw_Window = glfwCreateWindow((int)_width, (int)_height, "PlanetLab New Scene", NULL, NULL);
     if (!_glfw_Window)
     {
+        PLANETLAB_ERROR("GLFW: Failed to create window");
         glfwTerminate();
         return 0;
     }

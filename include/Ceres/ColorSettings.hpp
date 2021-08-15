@@ -2,7 +2,7 @@
 
 #include "engine/Color.hpp"
 #include "imgui/imgui_color_gradient.h"
-#include "Color/Color.hpp"
+#include "color/Color.hpp"
 
 namespace PlanetLab
 {
