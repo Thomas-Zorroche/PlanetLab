@@ -141,7 +141,7 @@ std::vector<std::string> IOManager::getAllFilesFromFolder(const std::string& pat
 #endif
 
 #ifdef _WIN32
-	for (const auto& entry : std:::filesystem::directory_iterator(path))
+	for (const auto& entry : std::filesystem::directory_iterator(path))
 	{
 		paths.push_back(entry.path().string());
 	}
