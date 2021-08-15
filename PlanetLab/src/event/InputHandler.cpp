@@ -2,7 +2,7 @@
 #include "Input.hpp"
 #include "engine/Camera.hpp"
 #include "editor/Application.hpp"
-#include "ui/Interface.hpp"
+#include "editor/Editor.hpp"
 
 #include "GLFW/glfw3.h"
 
@@ -19,6 +19,8 @@ void InputHandler::SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr)
 
     glfwSetWindowUserPointer(window, &callbackPtr);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+    glfwSetWindowSizeCallback(window, window_size_callback);
 }
 
 
@@ -86,11 +88,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     {
         if (Input::IsKeyPressed(KeyCode::CTRL))
         {
-            Interface::Get().saveFile();
+            Editor::Get().saveFile();
         }
         else
         {
-            Interface::Get().ShowSettings();
+            Editor::Get().toggleDisplaySettings();
         }
     }
 
@@ -102,24 +104,24 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     else if (key == (int)KeyCode::T && action == GLFW_PRESS)
     {
-        Interface::Get().ShowTerminal();
+        Editor::Get().toggleDisplayLog();
     }
 
     else if (key == (int)KeyCode::N && action == GLFW_PRESS)
     {
         if (Input::IsKeyPressed(KeyCode::CTRL))
         {
-            Interface::Get().newFile();
+            Editor::Get().newFile();
         }
     }
 
     else if (key == (int)KeyCode::SHIFT && action == GLFW_PRESS)
     {
-        Interface::Get().setLowSliderSpeed();
+        Editor::Get().setLowSliderSpeed();
     }
     else if (key == (int)KeyCode::SHIFT && action == GLFW_RELEASE)
     {
-        Interface::Get().setDefaultSliderSpeed();
+        Editor::Get().setDefaultSliderSpeed();
     }
 
     // Close Window
@@ -149,6 +151,12 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
             Application::Get().SetReadyToGenerate(true);
     }
 }
+
+void window_size_callback(GLFWwindow* window, int width, int height)
+{
+    Editor::Get().setWindowSize(width, height);
+}
+
 
 }   // ns editor
 

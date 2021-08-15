@@ -11,7 +11,7 @@
 #include "engine/Scene.hpp"
 #include "engine/Color.hpp"
 
-#include "ui/AppLog.hpp"
+#include "editor/AppLog.hpp"
 
 #include "Ceres/Planet.hpp"
 
@@ -50,13 +50,9 @@ public:
 	UpdateMode GetUpdateMode() const { return _updateMode; }
 
 	Window& GetWindow() { return *_window; }
-	EditorSettings& GetEditor() { return *_editor; }
 	std::shared_ptr<Ceres::Planet> GetPlanet() { return _planet; }
 
 	void AppendPlanet(const std::shared_ptr<Ceres::Planet>& planet) { _planet = planet; }
-
-	Color GetBackgroundColor() const { return _backgroundColor; }
-	Color& GetBackgroundColor() { return _backgroundColor; }
 
 	float GetLastFrameDuration() const { return _lastFrameDuration; }
 	void SetLastFrameDuration(float time) { _lastFrameDuration = time; }
@@ -76,17 +72,15 @@ private:
 
 private:
 	std::unique_ptr<Window> _window = nullptr;
-	std::unique_ptr<EditorSettings> _editor = nullptr;
 	std::shared_ptr<Ceres::Planet> _planet = nullptr;
 
 	UpdateMode _updateMode = UpdateMode::Auto;
 	std::vector<Ceres::ObserverFlag> _updatesQueue;
 
-	Color _backgroundColor = Color(0.570, 0.598, 0.727);
-
 	float _lastFrameDuration = 0.0f;
 
 	bool _loading = false;
+
 	bool _readyToGenerate = false; // TODO : remove this
 
 	AppLog _log;

@@ -8,7 +8,7 @@
 #include "engine/StaticMesh.hpp"
 #include "opengl/Shader.h"
 #include "engine/ResourceManager.hpp"
-#include "ui/Interface.hpp"
+#include "editor/Editor.hpp"
 
 
 namespace PlanetLab
@@ -35,7 +35,7 @@ public:
 	void ComputeProjectionMatrix()
 	{
 		float fov = _camera->GetFov();
-		float ratio = Interface::Get().viewportWidth() / Interface::Get().viewportHeight();
+		float ratio = Editor::Get().viewportWidth() / Editor::Get().viewportHeight();
 		float nearPlane = _camera->GetNearPlane();
 		float farPlane = _camera->GetFarPlane();
 

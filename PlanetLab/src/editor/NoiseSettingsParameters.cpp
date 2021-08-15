@@ -7,7 +7,7 @@ using namespace Ceres;
 namespace PlanetLab
 {
 
-NoiseSettingsParameters::NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSettings>& noiseSettings)
+NoiseSettingsParameters::NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSettings> noiseSettings)
 	: _filterType(noiseSettings->filterType),
 	_parameters{
 		{ ParameterFactory::Float("Strength",		   FilterType::Simple, ObserverFlag::MESH, noiseSettings->strength, 0.0f, 10.0f) },
@@ -32,17 +32,6 @@ NoiseSettingsParameters::NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSet
 	}
 {};
 
-void NoiseSettingsParameters::display()
-{
-	for (const auto& name : _parametersNames)
-	{
-		auto parameter = getParameterByName(_parameters, name);
-		if (parameter->GetType() == _filterType || parameter->GetType() == Ceres::FilterType::Simple)
-			parameter->Display();
-	}
-}
-
-
 // Friend function
 const std::shared_ptr<PlanetLab::ParameterBase>& getParameterByName(const PlanetLab::ParametersMap& parameters, const std::string& name)
 {
@@ -57,5 +46,18 @@ const std::shared_ptr<PlanetLab::ParameterBase>& getParameterByName(const Planet
 		return it->second;
 	}
 }
+
+void NoiseSettingsParameters::display(float sliderSpeed)
+{
+	for (const auto& name : _parametersNames)
+	{
+		auto parameter = getParameterByName(_parameters, name);
+		if (parameter->GetType() == _filterType || parameter->GetType() == Ceres::FilterType::Simple)
+			parameter->Display(sliderSpeed);
+	}
+}
+
+
+
 
 }

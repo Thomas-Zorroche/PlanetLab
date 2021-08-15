@@ -10,8 +10,6 @@
 namespace PlanetLab
 {
 
-class Fog;
-
 class Skybox
 {
 public:
@@ -20,18 +18,20 @@ public:
 	void GenerateMesh();
 
 
-	void Draw(const std::shared_ptr<Fog>& fog);
+	void Draw();
 
 private:
-	void SendUniforms(const std::shared_ptr<Fog>& fog);
+	void SendUniforms();
 
 	std::vector<std::string> _faces;
+
 	unsigned int _id;
+
 	std::shared_ptr<Shader> _shader;
+
 	std::shared_ptr<Mesh> _mesh;
 
 	static const float _SkyboxVertices[];
-
 };
 
 }	

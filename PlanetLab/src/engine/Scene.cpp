@@ -1,11 +1,11 @@
 #include "engine/Scene.hpp"
 #include "engine/ResourceManager.hpp"
-#include "engine/Skybox.hpp"
-#include "ui/BackgroundGradient.hpp"
+#include "editor/ui/BackgroundGradient.hpp"
 #include "editor/Application.hpp"
+#include "engine/Skybox.hpp"
 
 #include "lighting/LightManager.hpp"
-#include "ceres/Planet.hpp"
+#include "Ceres/Planet.hpp"
 
 #include "io/IOManager.hpp"
 
@@ -15,11 +15,20 @@ namespace PlanetLab
 Scene::Scene()
 {
 	// Procedural Planet
-	_planet = std::make_shared<Ceres::Planet>();
+	_planet = std::make_shared<Ceres::Planet>(64, false); // visible --> false
 	Application::Get().AppendPlanet(_planet);
+	_planet->setScaleOnLoading(true);
 
-	// Background Gradient (Simple Plane placed on camera far plane)
-	_backgroundPlane = std::make_shared<BackgroundGradient>();
+	std::vector<std::string> facesSkybox
+	{
+		"right.png",
+		"left.png",
+		"top.png",
+		"bottom.png",
+		"front.png",
+		"back.png"
+	};
+	_skybox = std::make_shared<Skybox>(facesSkybox);
 
 	// Load All Lights
 	LightManager::Get().LoadAllLights();
@@ -28,9 +37,12 @@ Scene::Scene()
 
 void Scene::Draw(float viewportHeight)
 {
-	_backgroundPlane->Draw(viewportHeight);
+	if (Editor::Get().getEditorSettings()->isSkyboxDisplayed())
+		_skybox->Draw();
+
 	_planet->draw();
-	if (Application::Get().GetEditor().IsAxisVisible())
+
+	if (Editor::Get().getEditorSettings()->IsAxisVisible())
 		_gizmo.Draw();
 }
 

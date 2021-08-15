@@ -5,7 +5,7 @@
 #include "opengl/Mesh.hpp"
 #include "engine/Renderer.hpp"
 #include "editor/Application.hpp"
-#include "ui/Interface.hpp"
+#include "editor/Editor.hpp"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -52,11 +52,14 @@ StaticMesh::StaticMesh(const std::vector<std::shared_ptr<Mesh>>& meshes, const T
 	Scale(_transformLayout.Scale());
 }
 
-void StaticMesh::Draw(bool hasWireframe)
+void StaticMesh::Draw(bool hasWireframe, bool hideSurface)
 {
 	SendUniforms();
-	_model->Draw(_shader);
-	if (hasWireframe && Application::Get().GetEditor().IsWireframeVisible())
+
+	if (!hideSurface)
+		_model->Draw(_shader);
+
+	if (hasWireframe && Editor::Get().getEditorSettings()->IsWireframeVisible())
 	{
 		auto shaderWireframe = ResourceManager::Get().GetShader("Wireframe");
 		shaderWireframe->Bind();
@@ -65,6 +68,14 @@ void StaticMesh::Draw(bool hasWireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		_model->Draw(shaderWireframe);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+	if (hasWireframe && Editor::Get().getEditorSettings()->isPointsDisplayed())
+	{
+		auto shaderPoints = ResourceManager::Get().GetShader("Point");
+		shaderPoints->Bind();
+		Renderer::Get().SendTransMatrixUniforms(_modelMatrix, shaderPoints);
+		_model->DrawPoints(Editor::Get().getEditorSettings()->getSizePoints());
+		shaderPoints->Unbind();
 	}
 }
 
@@ -75,6 +86,11 @@ void StaticMesh::Draw(bool hasWireframe)
 void StaticMesh::Scale(float alpha)
 {
 	_modelMatrix = _modelMatrix * glm::scale(glm::mat4(1.0f), glm::vec3(alpha));
+}
+
+void StaticMesh::SetScale(float alpha)
+{
+	_modelMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(alpha));
 }
 
 void StaticMesh::Scale(const glm::vec3& vector)
@@ -89,7 +105,7 @@ void StaticMesh::Translate(const glm::vec3& delta)
 
 void StaticMesh::Rotate(const glm::vec3& alpha)
 {
-	_modelMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(alpha.x), glm::vec3(1, 0, 0));
+	_modelMatrix = glm::rotate(_modelMatrix, glm::radians(alpha.x), glm::vec3(1, 0, 0));
 	_modelMatrix = glm::rotate(_modelMatrix, glm::radians(alpha.y), glm::vec3(0, 1, 0));
 	_modelMatrix = glm::rotate(_modelMatrix, glm::radians(alpha.z), glm::vec3(0, 0, 1));
 }

@@ -45,7 +45,7 @@ class Planet
 {
 public:
 	/// Defautl resolution of 64
-	Planet(int resolution = 64);
+	Planet(int resolution = 64, bool visible = true);
 
 	// Accessors
 
@@ -61,12 +61,22 @@ public:
 	int getResolution() const { return _resolution; }
 	int& getResolution() { return _resolution; }
 
-	FaceRenderMask& getFaceRenderMask() { return _faceRenderMask; }
+	float getRotationSpeed() const { return _rotationSpeed; }
+	float& getRotationSpeed() { return _rotationSpeed; }
 
+	FaceRenderMask& getFaceRenderMask() { return _faceRenderMask; }
 	PlanetSubject& getPlanetSubject() { return _planetSubject; }
 	
 	int getVerticesCount() const;
 	int getFacesCount() const;
+
+	void setScaleOnLoading(bool scale) { _scaleOnLoading = scale; }
+
+	void setVisible(bool visible) { _visible = visible; }
+	bool isVisible() const { return _visible; }
+
+	bool isSurfaceHidden() const { return _hideSurface; }
+	bool& isSurfaceHidden() { return _hideSurface; }
 
 	// Public methods
 
@@ -107,6 +117,12 @@ private:
 	/// Resolution fo planet, amount of subdivisions per face
 	int _resolution;
 
+	/// Whether to draw the planet (surface + wireframe)
+	bool _visible;
+
+	/// Whether to draw the surface
+	bool _hideSurface = false;
+
 	/// Contains radius and noise settings
 	std::shared_ptr<ShapeSettings> _shapeSettings;
 
@@ -130,6 +146,18 @@ private:
 
 	/// Subject of the Observer pattern
 	PlanetSubject _planetSubject;
+
+	/// Planet's spin 
+	float _rotationSpeed = 0.05f;
+
+	/// Whether to scale on loading
+	bool _scaleOnLoading = false;
+	
+	/// Amount of animation scale on loading planet
+	float _scaleLoadingAmount = 0.1f;
+
+	/// Speed of scale loading animation 
+	float _scaleLoadingSpeed = 0.02f;
 };
 
 #define EMIT_ResolutionChanged(resolution) emitResolutionChanged(resolution)

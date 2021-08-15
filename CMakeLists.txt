@@ -65,6 +65,7 @@ elseif(UNIX AND NOT APPLE)
   # use pkg-config --libs $(pkg-config --print-requires --print-requires-private glfw3) in a terminal to confirm
   set(LIBS ${GLFW3_LIBRARY} X11 Xrandr Xinerama Xi Xcursor GL dl pthread ${ASSIMP_LIBRARIES})
   set (CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ldl")
+  link_libraries(stdc++fs)
 elseif(APPLE)
   INCLUDE_DIRECTORIES(/System/Library/Frameworks)
   FIND_LIBRARY(COCOA_LIBRARY Cocoa)
@@ -119,6 +120,7 @@ file(GLOB_RECURSE MY_SOURCES ${CMAKE_SOURCE_DIR}/PlanetLab/src/*)
 file(GLOB_RECURSE MY_SHADERS ${CMAKE_SOURCE_DIR}/PlanetLab/res/shaders/*)
 file(GLOB_RECURSE MY_MODELS ${CMAKE_SOURCE_DIR}/PlanetLab/res/models/*)
 file(GLOB_RECURSE MY_SCENES ${CMAKE_SOURCE_DIR}/PlanetLab/res/scene/*)
+file(GLOB_RECURSE MY_FONTS ${CMAKE_SOURCE_DIR}/PlanetLab/res/fonts/*)
 
 # Create target executable
 add_executable(${PROJECT_NAME}
@@ -143,6 +145,10 @@ VS_RegisterFiles("${CERES_SOURCES}")
 # copy shader files to build directory
 file(COPY ${CMAKE_SOURCE_DIR}/PlanetLab/res
   DESTINATION ${CMAKE_BINARY_DIR})
+
+# copy imgui config ini file
+file(COPY ${CMAKE_SOURCE_DIR}/imgui.ini
+DESTINATION ${CMAKE_BINARY_DIR})
 
 # /////////////////////////////////////////////////////////////////////////////
 # ////////////////////////// PRECOMPILED HEADERS //////////////////////////////

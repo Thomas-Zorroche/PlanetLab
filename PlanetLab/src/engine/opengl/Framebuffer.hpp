@@ -8,7 +8,8 @@ class Framebuffer
 public:
 	Framebuffer(float width = 64.0f, float height = 64.0f);
 
-	unsigned int id() const { return _id; }
+	unsigned int getId() const { return _id; }
+	unsigned int getTextureId() const { return _textureID; }
 	void resize(float width, float height);
 
 	void bind(float viewportWidth, float viewportHeight);

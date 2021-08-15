@@ -1,18 +1,18 @@
 #pragma once
 
-#include "ui/gizmo/Gizmo.hpp"
+#include "editor/ui/gizmo/Gizmo.hpp"
+
 
 namespace Ceres 
 {
 class Planet;
 }
 
-
 namespace PlanetLab
 {
 
-class BackgroundGradient;
 class Application;
+class Skybox;
 
 class Scene
 {
@@ -31,7 +31,8 @@ public:
 
 private:
 	std::shared_ptr<Ceres::Planet> _planet = nullptr;
-	std::shared_ptr<BackgroundGradient> _backgroundPlane = nullptr;
+
+	std::shared_ptr<Skybox> _skybox = nullptr;
 
 	Gizmo _gizmo = Gizmo(2, 0.005);
 };

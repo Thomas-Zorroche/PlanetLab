@@ -10,8 +10,9 @@
 namespace Ceres
 {
 
-Planet::Planet(int resolution)
+Planet::Planet(int resolution, bool visible)
 	: _resolution(resolution),
+	_visible(visible),
 	_shapeSettings(std::make_shared<ShapeSettings>(1.0f /* radius */)),
 	_colorSettings(std::make_shared<ColorSettings>()),
 	_shapeGenerator(std::make_shared<ShapeGenerator>(_shapeSettings)),
@@ -32,13 +33,26 @@ Planet::Planet(int resolution)
 		_terrainFaces[5].getMesh(),
 	}, PlanetLab::TransformLayout(glm::vec3(0)), "Planet")
 {
-	generatePlanet();
+	if (_visible)
+		generatePlanet();
 }
 
 void Planet::draw()
 {
+	if (!_visible)
+		return;
+
+	if (_scaleOnLoading && _scaleLoadingAmount < 1)
+	{
+		_scaleLoadingAmount += _scaleLoadingSpeed;
+		_staticMesh.SetScale(_scaleLoadingAmount);
+	}
+
+	// Planet spin
+	rotate(glm::vec3(0, _rotationSpeed, 0));
+
 	sendUniforms();
-	_staticMesh.Draw();
+	_staticMesh.Draw(true, _hideSurface);
 }
 
 void Planet::sendUniforms()
@@ -149,6 +163,8 @@ void Planet::reset()
 	_colorSettings->reset();
 
 	_resolution = 64;
+	_scaleLoadingAmount = 0.0f;
+	_visible = true;
 
 	update(ObserverFlag::RESOLUTION);
 	update(ObserverFlag::COLOR);

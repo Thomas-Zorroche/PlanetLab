@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "ceres/noise/NoiseSettings.hpp"
+#include "Ceres/noise/NoiseSettings.hpp"
 #include "editor/Application.hpp"
 
 #include "imgui/imgui.h"
@@ -10,6 +10,30 @@
 
 namespace PlanetLab
 {
+
+// TODO: remove duplicate function from Editor.cpp
+template <typename UIFonction>
+static void _drawParameter(const std::string& name, UIFonction uiFonction)
+{
+	if (!name.empty())
+	{
+		float posX = (ImGui::GetCursorPosX() + (ImGui::GetColumnWidth() * 0.4) - ImGui::CalcTextSize(name.c_str()).x
+			- ImGui::GetScrollX() - 2 * ImGui::GetStyle().ItemSpacing.x);
+		if (posX > ImGui::GetCursorPosX())
+			ImGui::SetCursorPosX(posX);
+
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text(name.c_str()); ImGui::SameLine();
+	}
+
+	ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.55f);
+	ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.4);
+
+	uiFonction();
+
+	ImGui::PopItemWidth();
+}
+
 
 /*
 * Abstract Parameter Class
@@ -24,7 +48,7 @@ public:
 
 	Ceres::FilterType GetType() const { return _type; };
 
-	virtual void Display() = 0;
+	virtual void Display(float sliderSpeed = 0.1f) = 0;
 
 protected:
 	std::string _name;
@@ -41,12 +65,15 @@ public:
 	ParameterFloat(const std::string& name, Ceres::FilterType type, Ceres::ObserverFlag flag, float& value, float min, float max)
 		: ParameterBase(name, type, flag), _value(value), _min(min), _max(max) {};
 
-	void Display() override 
+	void Display(float sliderSpeed = 0.1f) override
 	{
-		if (ImGui::SliderFloat(_name.c_str(), &_value, _min, _max))
+		_drawParameter(_name.c_str(), [&name = _name, &value = _value, &min = _min, &max = _max, &flag = _flag, sliderSpeed]()
 		{
-			Application::Get().Update(_flag);
-		}
+			if (ImGui::DragFloat(("##" + name).c_str(), &value, sliderSpeed, min, max))
+			{
+				Application::Get().Update(flag);
+			}
+		});
 	};
 
 private:
@@ -62,12 +89,16 @@ public:
 		: ParameterBase(name, type, flag), _value(value), _min(min), _max(max) {};
 
 
-	void Display() override
+	void Display(float sliderSpeed = 0.1f) override
 	{
-		if (ImGui::SliderInt(_name.c_str(), &_value, _min, _max))
+		_drawParameter(_name.c_str(), [&name = _name, &value = _value, &min = _min, &max = _max, &flag = _flag]()
 		{
-			Application::Get().Update(_flag);
-		}
+			if (ImGui::SliderInt(("##" + name).c_str(), &value, min, max))
+			{
+				Application::Get().Update(flag);
+			}
+		});
+
 	};
 
 private:
@@ -82,12 +113,15 @@ public:
 	ParameterBoolean(const std::string& name, Ceres::FilterType type, Ceres::ObserverFlag flag, bool value)
 		: ParameterBase(name, type, flag), _value(value) {};
 
-	void Display() override
+	void Display(float sliderSpeed = 0.1f) override
 	{
-		if (ImGui::Checkbox(_name.c_str(), &_value))
+		_drawParameter(_name.c_str(), [&name = _name, &value = _value, &flag = _flag]()
 		{
-			Application::Get().Update(_flag);
-		}
+			if (ImGui::Checkbox(name.c_str(), &value))
+			{
+				Application::Get().Update(flag);
+			}
+		});
 	};
 
 private:
@@ -101,12 +135,15 @@ public:
 	ParameterVec3(const std::string& name, Ceres::FilterType type, Ceres::ObserverFlag flag, glm::vec3& value, float min, float max)
 		: ParameterBase(name, type, flag), _value(value), _min(min), _max(max) {};
 
-	void Display() override
+	void Display(float sliderSpeed = 0.1f) override
 	{
-		if (ImGui::SliderFloat3(_name.c_str(), (float*)&(_value), _min, _max))
+		_drawParameter(_name.c_str(), [&name = _name, &value = _value, &min = _min, &max = _max, &flag = _flag]()
 		{
-			Application::Get().Update(_flag);
-		}
+			if (ImGui::SliderFloat3(("##" + name).c_str(), (float*)&(value), min, max))
+			{
+				Application::Get().Update(flag);
+			}
+		});
 	};
 
 private:

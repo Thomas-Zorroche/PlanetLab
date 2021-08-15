@@ -48,12 +48,13 @@ public:
 	StaticMesh(const std::vector<std::shared_ptr<Mesh>>& meshes, const TransformLayout& transLayout = TransformLayout(), 
 		const std::string& shaderName = "DefaultLighting");
 
-	void Draw(bool hasWireframe = true);
+	void Draw(bool hasWireframe = true, bool hideSurface = false);
 
 	glm::mat4 GetModelMatrix() const { return _modelMatrix; }
 	std::shared_ptr<Shader>& GetShader() { return _shader; }
 
 	void Translate(const glm::vec3& delta);
+	void SetScale(float alpha);
 	void Scale(float alpha);
 	void Scale(const glm::vec3& vector);
 	void Rotate(const glm::vec3& alpha);

@@ -2,7 +2,7 @@
 
 #include "engine/Color.hpp"
 #include "imgui/imgui_color_gradient.h"
-#include "Color/Color.hpp"
+#include "color/Color.hpp"
 
 namespace PlanetLab
 {
@@ -72,7 +72,7 @@ private:
 	/// Amount of depth in ocean
 	float _oceanDepth = 0.0f;
 	/// Ocean color
-	Color _oceanColor = Color(0, 0, 0.8);
+	Color _oceanColor = Color(0.219, 0.686, 0.784);
 
 };
 

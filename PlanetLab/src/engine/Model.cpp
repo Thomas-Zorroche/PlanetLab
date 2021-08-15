@@ -35,6 +35,13 @@ void Model::Draw(std::shared_ptr<Shader>& shader)
         _meshes[i]->Draw(shader);
 }
 
+void Model::DrawPoints(int pointsSize) const
+{
+    for (unsigned int i = 0; i < _meshes.size(); i++)
+        _meshes[i]->drawPoints(pointsSize);
+}
+
+
 void Model::LoadModel(const std::string& path)
 {
     // read file via ASSIMP

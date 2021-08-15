@@ -17,6 +17,11 @@ void ResourceManager::DeleteAllResources()
 	{
 		glDeleteTextures(1, texture.second.IdPtr());
 	}
+
+	if (_cubemapGenerated)
+	{
+		glDeleteTextures(1, &_cubemapId);
+	}
 }
 
 //
@@ -84,12 +89,15 @@ std::vector<unsigned short> ResourceManager::LoadHeightmap(const std::string& pa
 }
 
 
-unsigned int ResourceManager::LoadCubemap(const std::vector<std::string>& faces) const
+unsigned int ResourceManager::LoadCubemap(const std::vector<std::string>& faces)
 {
-	unsigned int textureID;
-	glGenTextures(1, &textureID);
+	if (!_cubemapGenerated)
+	{
+		glGenTextures(1, &_cubemapId);
+		_cubemapGenerated = true;
+	}
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _cubemapId);
 
 	int width, height, BPP;
 	std::string path = "";
@@ -104,7 +112,7 @@ unsigned int ResourceManager::LoadCubemap(const std::vector<std::string>& faces)
 		}
 		else
 		{
-			throw std::string("[STBI_IMAGE] Error whe loading heightmap : " + path);
+			throw std::string("[STBI_IMAGE] Error when loading cubemap : " + path);
 			stbi_image_free(data);
 		}
 	}
@@ -118,7 +126,7 @@ unsigned int ResourceManager::LoadCubemap(const std::vector<std::string>& faces)
 
 	std::cout << "[Resource Manager] : loaded skybox" << std::endl;
 
-	return textureID;
+	return _cubemapId;
 }
 
 //
@@ -248,6 +256,11 @@ void ResourceManager::LoadAllShaders()
 	ResourceManager::Get().LoadShader("res/shaders/BackgroundGradient.vert", "res/shaders/BackgroundGradient.frag", "BackgroundGradient");
 	// Gizmo Shader
 	ResourceManager::Get().LoadShader("res/shaders/Gizmo.vert", "res/shaders/Gizmo.frag", "Gizmo");
+	// Skybow Shader
+	ResourceManager::Get().LoadShader("res/shaders/Skybox.vert", "res/shaders/Skybox.frag", "Skybox");
+	// Point Shader
+	ResourceManager::Get().LoadShader("res/shaders/Point.vert", "res/shaders/Point.frag", "Point");
+
 }
 
 }

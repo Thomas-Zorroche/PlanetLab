@@ -27,18 +27,18 @@ BackgroundGradient::BackgroundGradient()
 
 void BackgroundGradient::Draw(float viewportHeight)
 {
-	_shader->Bind();
-	glDisable(GL_DEPTH_TEST);
+	//_shader->Bind();
+	//glDisable(GL_DEPTH_TEST);
 
-	// Color 
-	const glm::vec3& color = (glm::vec3&)Application::Get().GetBackgroundColor();
-	_shader->SetUniform3f("u_color", color);
-	_shader->SetUniform1f("u_viewportHeight", viewportHeight);
+	//// Color 
+	//const glm::vec3& color = (glm::vec3&)Application::Get().GetBackgroundColor();
+	//_shader->SetUniform3f("u_color", color);
+	//_shader->SetUniform1f("u_viewportHeight", viewportHeight);
 
-	_mesh.Draw(_shader);
+	//_mesh.Draw(_shader);
 
-	glEnable(GL_DEPTH_TEST);
-	_shader->Unbind();
+	//glEnable(GL_DEPTH_TEST);
+	//_shader->Unbind();
 }
 
 } // ns editor

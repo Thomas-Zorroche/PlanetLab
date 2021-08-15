@@ -4,8 +4,8 @@
 
 int main(int argc, char** argv)
 {
-    PlanetLab::Application& app = PlanetLab::Application(argc, argv);
-
+    PlanetLab::Application app(argc, argv);
+    
     if (!app.GetWindow().Init())
         return 1;
 

@@ -1,6 +1,5 @@
 #include "Mesh.hpp"
 #include "Texture.h"
-#include "engine/ResourceManager.hpp"
 
 namespace PlanetLab
 {
@@ -83,13 +82,34 @@ void Mesh::Draw(std::shared_ptr<Shader>& shader) const
     // draw mesh
     glBindVertexArray(VAO);
     if (_indices.empty())
+    {
         glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
+    }
     else
+    {
         glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
+    }
 
     shader->Unbind();
     glActiveTexture(GL_TEXTURE0);
+
+    glBindVertexArray(0);
+    glDisable(GL_BLEND);
+}
+
+void Mesh::drawPoints(int pointsSize) const
+{
+    if (_vertices.empty())
+        return;
+
+    glEnable(GL_BLEND);
+    glPointSize(pointsSize);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBindVertexArray(VAO);
+    {
+        glDrawArrays(GL_POINTS, 0, _vertices.size());
+    }
+    glBindVertexArray(0);
     glDisable(GL_BLEND);
 }
 

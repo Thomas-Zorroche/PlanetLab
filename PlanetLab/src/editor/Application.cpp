@@ -8,7 +8,7 @@
 
 #include "event/InputHandler.hpp"
 
-#include "ui/Interface.hpp"
+#include "editor/Editor.hpp"
 
 #include "io/IOManager.hpp"
 
@@ -20,13 +20,12 @@ namespace PlanetLab
 void mainloop(Window& windowObject)
 {
     GLFWwindow* window = windowObject.GetNativeWindow();
-    //IOManager::get().setWindowPtr(window);
 
     // Load all the 
     ResourceManager::Get().LoadAllShaders();
 
     Scene scene;
-    Interface::Get().init(windowObject);
+    Editor::Get().init(windowObject);
 
     auto camera = std::make_shared<Camera>();
     Renderer::Get().SetCamera(camera);
@@ -53,12 +52,12 @@ void mainloop(Window& windowObject)
         Application::Get().ClearColor();
 
         // Render scene here
-        Interface::Get().bindFbo();
-        scene.Draw(Interface::Get().viewportHeight());
-        Interface::Get().unbindFbo();
+        Editor::Get().bindFbo();
+        scene.Draw(Editor::Get().viewportHeight());
+        Editor::Get().unbindFbo();
 
-        // Render Interface
-        Interface::Get().draw(window);
+        // Render UI
+        Editor::Get().draw(window);
 
         if (Application::Get().GetUpdateMode() == UpdateMode::Auto || Application::Get().IsReadyToGenerate())
         {
@@ -72,7 +71,7 @@ void mainloop(Window& windowObject)
         glfwPollEvents();
     }
 
-    Interface::Get().free();
+    Editor::Get().free();
     scene.Free();
 }
 
@@ -87,16 +86,14 @@ Application::Application(int argc, char** argv)
     s_instance = this;
     
     PlanetLab::Log::init(argc, argv);
-
     _window = std::make_unique<Window>(argc, argv);
-    _editor = std::make_unique<EditorSettings>();
 }
 
 void Application::GenerateUpdateQueue(bool onRelease)
 {
     if (!_updatesQueue.empty()/* && (onRelease && _updateMode == UpdateMode::OnRelease) || !onRelease*/)
     {
-        IOManager::get().setUnsavedValues();
+        IOManager::get().setFileValuesSaved(false);
         for (const auto& flag : _updatesQueue)
         {
             _planet->update(flag);

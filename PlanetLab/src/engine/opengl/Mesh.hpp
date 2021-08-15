@@ -20,6 +20,7 @@ public:
 	void Free();
 
 	void Draw(std::shared_ptr<Shader>& shader) const;
+	void drawPoints(int pointsSize = 1) const;
 
 	unsigned int GetVAO() const { return VAO; }
 	const std::vector<ShapeVertex>& Vertices() const { return _vertices; }

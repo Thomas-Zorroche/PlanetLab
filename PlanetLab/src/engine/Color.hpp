@@ -2,7 +2,7 @@
 
 #include "glm/glm.hpp"
 
-#include "Ceres/Color/Color.hpp"
+#include "Ceres/color/Color.hpp"
 
 
 namespace PlanetLab
