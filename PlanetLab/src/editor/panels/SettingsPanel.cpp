@@ -354,18 +354,20 @@ void SettingsPanel::updateNoiseLayersCount(int noiseLayersCountUpdated)
     if (layersCountDifference > 0)
     {
         for (size_t i = 0; i < layersCountDifference; i++)
+        {
             _planet->addNoiseLayer();
-
-        // Add a noiseSettingsParamater
-        _noiseSettingsParameters.push_back(NoiseSettingsParameters(_planet->getShapeSettings()->getLastLayer()->getNoiseSettings()));
+            // Add a noiseSettingsParamater
+            _noiseSettingsParameters.push_back(NoiseSettingsParameters(_planet->getShapeSettings()->getLastLayer()->getNoiseSettings()));
+        }
     }
     else
     {
         for (size_t i = 0; i < abs(layersCountDifference); i++)
+        {
             _planet->removeLastNoiseLayer();
-
-        // Remove the noiseSettingsParamater linked with last layer to be removed
-        _noiseSettingsParameters.pop_back();
+            // Remove the noiseSettingsParamater linked with last layer to be removed
+            _noiseSettingsParameters.pop_back();
+        }
     }
 }
 
