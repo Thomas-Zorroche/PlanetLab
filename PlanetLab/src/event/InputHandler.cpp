@@ -5,6 +5,7 @@
 #include "editor/Editor.hpp"
 
 #include "GLFW/glfw3.h"
+#include "imgui/imgui_impl_glfw.h"
 
 namespace PlanetLab
 {
@@ -72,6 +73,11 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos)
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
+    ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
+
+    if (!Editor::Get().isViewer3DHovered())
+        return;
+
     CallbackPtr* callbackPtr = (CallbackPtr*)glfwGetWindowUserPointer(window);
     auto camera = callbackPtr->_camera;
 
