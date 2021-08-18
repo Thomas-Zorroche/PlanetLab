@@ -30,7 +30,7 @@ struct NoiseSettings
 
 	glm::vec3 center = glm::vec3(0, 0, 0);
 
-	int layersCount = 1;
+	int iterations = 1;
 
 	/// Amplitude will be half with each layer
 	float persistence = 0.5f; 

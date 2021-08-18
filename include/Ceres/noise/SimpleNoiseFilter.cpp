@@ -15,7 +15,7 @@ float SimpleNoiseFilter::evaluate(const glm::vec3& point) const
 	float frequency = _settings->baseRoughness;
 	float amplitude = 1;
 
-	for (size_t i = 0; i < _settings->layersCount; i++)
+	for (size_t i = 0; i < _settings->iterations; i++)
 	{
 		glm::vec3 coordNoise = point * frequency + _settings->center;
 		float v = _noise.noise3D(coordNoise.x, coordNoise.y, coordNoise.z);

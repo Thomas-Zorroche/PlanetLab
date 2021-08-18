@@ -181,9 +181,7 @@ bool Editor::displayLaunchScreen()
             if (ImGui::Button("General"))
             {
                 _launchScreenOpen = false;
-                IOManager::get().newFile();
-                _planet->reset();
-                Application::Get().AppendLog("New scene created");
+                newFile();
                 clickInside = true;
             }
             ImGui::PopStyleColor();
@@ -417,6 +415,7 @@ void Editor::saveFile()
 void Editor::newFile()
 {
     IOManager::get().newFile();
+    _settingsPanel.clearNoiseSettings();
     _planet->reset();
     Application::Get().AppendLog("New scene created");
 }

@@ -2,6 +2,7 @@
 #include "editor/Application.hpp"
 #include "editor/Editor.hpp"
 #include "engine/lighting/LightManager.hpp"
+#include "editor/Parameter.hpp"
 
 #include "Ceres/noise/NoiseFilter.hpp"
 
@@ -13,38 +14,6 @@ namespace PlanetLab
 using namespace Ceres;
 using namespace PlanetLab;
 
-template <typename UIFonction>
-static void drawParameter(const std::string& name, UIFonction uiFonction)
-{
-    if (!name.empty())
-    {
-        float posX = (ImGui::GetCursorPosX() + (ImGui::GetColumnWidth() * 0.4) - ImGui::CalcTextSize(name.c_str()).x
-            - ImGui::GetScrollX() - 2 * ImGui::GetStyle().ItemSpacing.x);
-        if (posX > ImGui::GetCursorPosX())
-            ImGui::SetCursorPosX(posX);
-
-        ImGui::AlignTextToFramePadding();
-        ImGui::Text(name.c_str()); ImGui::SameLine();
-
-        // Hover description
-        //const std::string& desc 
-        //if (!desc.empty() && ImGui::IsItemHovered())
-        //{
-        //    ImGui::BeginTooltip();
-        //    ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-        //    ImGui::TextUnformatted(desc.c_str());
-        //    ImGui::PopTextWrapPos();
-        //    ImGui::EndTooltip();
-        //}
-    }
-
-    ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.55f);
-    ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.4);
-
-    uiFonction();
-
-    ImGui::PopItemWidth();
-}
 
 SettingsPanel::SettingsPanel(std::shared_ptr<Ceres::Planet> planet)
     : _planet(planet)
@@ -147,19 +116,19 @@ void SettingsPanel::draw()
 void SettingsPanel::drawUpdateModeItem()
 {
     drawParameter("Update Mode", []()
-        {
-            ImGui::Combo("##Update Mode", &(int&)Application::Get().GetUpdateMode(), "Auto\0On Release\0On Generate\0\0");
-        });
+    {
+        ImGui::Combo("##Update Mode", &(int&)Application::Get().GetUpdateMode(), "Auto\0On Release\0On Generate\0\0");
+    }, "When does planet updates have to be executed:\n * Auto: directly after user changes\n * On Release: after user release click on any parameter\n * On Generate: after click on generate button.");
 
     drawParameter("", []()
+    {
+        if (Application::Get().GetUpdateMode() == UpdateMode::OnGenerate)
         {
-            if (Application::Get().GetUpdateMode() == UpdateMode::OnGenerate)
-            {
-                if (ImGui::Button("Generate"))
-                    Application::Get().SetReadyToGenerate(true);
-            }
-            ImGui::Separator();
-        });
+            if (ImGui::Button("Generate"))
+                Application::Get().SetReadyToGenerate(true);
+        }
+        ImGui::Separator();
+    });
 }
 
 void SettingsPanel::displayPlanetPanel()
@@ -177,7 +146,7 @@ void SettingsPanel::displayPlanetPanel()
         {
             Application::Get().Update(ObserverFlag::RESOLUTION);
         }
-    });
+    }, "Number of edge subdivisions per Terrain Face.");
 
     drawParameter("FaceRenderMask", [&planet = _planet]()
     {
@@ -186,12 +155,12 @@ void SettingsPanel::displayPlanetPanel()
             Application::Get().Update(ObserverFlag::MESH);
             Application::Get().Update(ObserverFlag::FACERENDERMASK);
         }
-    });
+    }, "Whether to render one Terrain Face of the planet, or the entierty.");
 
     drawParameter("Rotation Speed", [&planet = _planet]()
     {
         ImGui::SliderFloat("##Rotation Speed", &planet->getRotationSpeed(), 0.0f, 0.5f);
-    });
+    }, "Rotation speed around Y axis.");
 
     drawParameter("", [&planet = _planet]()
     {
@@ -206,20 +175,20 @@ void SettingsPanel::displayPlanetPanel()
         {
             planet->generateRandomPlanet();
         }
-    });
+    }, "Generate random values for colors, noise seed and noise location.");
 }
 
 void SettingsPanel::displayNoisePanel()
 {
     drawParameter("Count", [this]()
+    {
+        int noiseLayersCount = _planet->getShapeSettings()->getNoiseLayers().size();
+        if (ImGui::SliderInt("##Count", &noiseLayersCount, 0, 5))
         {
-            int noiseLayersCount = _planet->getShapeSettings()->getNoiseLayers().size();
-            if (ImGui::SliderInt("##Count", &noiseLayersCount, 0, 5))
-            {
-                updateNoiseLayersCount(noiseLayersCount);
-                Application::Get().Update(ObserverFlag::MESH);
-            }
-        });
+            updateNoiseLayersCount(noiseLayersCount);
+            Application::Get().Update(ObserverFlag::MESH);
+        }
+    }, "Number of noise layers");
 
     int layerCountNode = 0;
     for (auto& layer : _planet->getShapeSettings()->getNoiseLayers())
@@ -245,7 +214,7 @@ void SettingsPanel::displayNoisePanel()
                     noiseSettingsParameters[layerCountNode].setFilterType(layer->getNoiseSettings()->filterType);
                     Application::Get().Update(ObserverFlag::MESH);
                 }
-            });
+            }, "Type of noise filter:\n * Simple: basic perlin noise\n * Rigid: sharp perlin noise (ideal for mountains).");
 
             drawParameter("Seed", [&planet = _planet, &layer, &layerCountNode]()
             {
@@ -254,7 +223,7 @@ void SettingsPanel::displayNoisePanel()
                     planet->getShapeGenerator()->getNoiseFilter(layerCountNode)->reseed();
                     Application::Get().Update(ObserverFlag::MESH);
                 }
-            });
+            }, "Random number to initialize perlin noise.");
 
             // Display filter noise settings
             _noiseSettingsParameters[layerCountNode].display(_sliderSpeed);
@@ -279,13 +248,13 @@ void SettingsPanel::displayMaterialPanel()
             {
                 if (ImGui::ColorEdit3("##Color", (float*)&(color->getLandmassColor())))
                     Application::Get().Update(ObserverFlag::COLOR);
-            });
+            }, "Landmass color.");
         }
 
         drawParameter("", [&color = colorSettings]()
         {
             ImGui::Checkbox("Use Color Ramp", &color->getUseLandmassRamp());
-        });
+        }, "Use multiple colors for landmass.");
 
         if (colorSettings->getUseLandmassRamp())
         {
@@ -308,7 +277,7 @@ void SettingsPanel::displayMaterialPanel()
             drawParameter("Depth", [&color = colorSettings]()
             {
                 ImGui::SliderFloat("##Depth", &color->getOceanDepth(), 0.0f, 10.0f);
-            });
+            }, "Use unscaled elevation to retrieve depth under water.");
 
             drawParameter("Color", [&color = colorSettings]()
             {
@@ -331,7 +300,7 @@ void SettingsPanel::displayWorldPanel()
     drawParameter("Ambient Light", []()
     {
         static float ambientGlobal = 0.2f;
-        if (ImGui::SliderFloat("Ambient Light##", &ambientGlobal, 0.0f, 1.0f))
+        if (ImGui::SliderFloat("##Ambient Light", &ambientGlobal, 0.0f, 1.0f))
         {
             LightManager::Get().GetLight()->SetAmbient(ambientGlobal);
         }

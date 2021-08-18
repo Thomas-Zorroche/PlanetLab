@@ -1,5 +1,4 @@
 #include "editor/Application.hpp"
-#include "editor/EditorSettings.hpp"
 
 #include "engine/ResourceManager.hpp"
 #include "engine/Renderer.hpp"

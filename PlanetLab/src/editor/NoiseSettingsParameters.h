@@ -23,7 +23,7 @@ private:
 private:
 	Ceres::FilterType _filterType = Ceres::FilterType::Simple;
 
-	ParametersMap _parameters;
+	ParametersMap _parameters = {};
 
 	std::vector<std::string> _parametersNames; // liste triee
 };

@@ -52,7 +52,7 @@ bool IOManager::saveAs(const std::string& outputFileName, std::shared_ptr<Planet
 		ini[section]["seed"] = std::to_string(planet->getShapeGenerator()->getNoiseFilter(layerCount - 1)->getSeed());
 
 		ini[section]["strength"] = std::to_string(layer->getNoiseSettings()->strength);
-		ini[section]["layersCount"] = std::to_string(layer->getNoiseSettings()->layersCount);
+		ini[section]["iterations"] = std::to_string(layer->getNoiseSettings()->iterations);
 		ini[section]["baseRoughness"] = std::to_string(layer->getNoiseSettings()->baseRoughness);
 		ini[section]["roughness"] = std::to_string(layer->getNoiseSettings()->roughness);
 		ini[section]["persistence"] = std::to_string(layer->getNoiseSettings()->persistence);
@@ -167,7 +167,7 @@ void IOManager::loadValues(mINI::INIStructure& ini, std::shared_ptr<Planet>& pla
 		std::string& typeStr		      = ini[section]["type"];
 		std::string& seedStr		      = ini[section]["seed"];
 		std::string& strengthStr          = ini[section]["strength"];
-		std::string& layersCountStr       = ini[section]["layersCount"];
+		std::string& layersCountStr       = ini[section]["iterations"];
 		std::string& baseRoughnessStr     = ini[section]["baseRoughness"];
 		std::string& roughnessStr         = ini[section]["roughness"];
 		std::string& centerXStr           = ini[section]["centerX"];	// TODO Replace with parse Vec3 function
@@ -181,7 +181,7 @@ void IOManager::loadValues(mINI::INIStructure& ini, std::shared_ptr<Planet>& pla
 		planet->getShapeGenerator()->updateFilterType(i - 1);
 		planet->getShapeGenerator()->getNoiseFilter(i - 1)->reseed(std::atof(seedStr.c_str()));
 		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->strength = std::atof(strengthStr.c_str());
-		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->layersCount = std::atof(layersCountStr.c_str());
+		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->iterations = std::atof(layersCountStr.c_str());
 		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->baseRoughness = std::atof(baseRoughnessStr.c_str());
 		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->roughness = std::atof(roughnessStr.c_str());
 		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->center.x = std::atof(centerXStr.c_str());
