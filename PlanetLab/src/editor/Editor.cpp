@@ -3,15 +3,8 @@
 #include "engine/opengl/Framebuffer.hpp"
 #include "engine/Window.hpp"
 #include "engine/Renderer.hpp"
-#include "engine/lighting/LightManager.hpp"
 #include "editor/Application.hpp"
 #include "event/Input.hpp"
-
-#include "Ceres/Planet.hpp"
-#include "Ceres/ShapeSettings.hpp"
-#include "Ceres/ColorSettings.hpp"
-#include "Ceres/noise/NoiseSettings.hpp"
-#include "Ceres/noise/NoiseFilter.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -41,20 +34,19 @@ void Editor::init(Window& window)
 
     // Init shared pointers
     _planet = Application::Get().GetPlanet();
+    _settingsPanel.setPlanet(_planet);
+    _viewer3DPanel.setPlanet(_planet);
     _observer = std::make_unique<UiObserver>(_planet->getPlanetSubject());
 
     // Init windows sizes
     _WIDTH = window.Width();
     _HEIGHT = window.Height();
-    _viewportWidth = 0.7 * _WIDTH;
-    _viewportHeight = _HEIGHT;
-    _settingsWidth = _WIDTH - _viewportWidth;
+    _viewer3DPanel.setSize(0.7 * _WIDTH, _HEIGHT);
+    _settingsWidth = _WIDTH - _viewer3DPanel.getViewportWidth();
 
-    _fbo.resize(_viewportWidth, _viewportHeight);
+    _viewer3DPanel.updateStatistics();
 
-    updateStatistics();
-
-    // Setup theme
+    // Setup Theme
     _editorSettings->setDarkThemeMode();
 
     // Setup fonts
@@ -140,9 +132,9 @@ void Editor::draw(GLFWwindow* window)
     if (_saveBeforeCloseParams.display)  displaySaveBeforeClosePopup();
 
     /* Permanent Windows */
-    if (_settingsOpen) displaySettings();
+    if (_settingsOpen) _settingsPanel.draw();
     if (_logOpen) displayLog();
-    displayViewport();
+    _viewer3DPanel.draw();
     displayMenuBar(window);
 
     ImGui::End(); // Main Window
@@ -151,29 +143,6 @@ void Editor::draw(GLFWwindow* window)
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
-
-template <typename UIFonction>
-static void drawParameter(const std::string& name, UIFonction uiFonction)
-{
-    if (!name.empty())
-    {
-        float posX = (ImGui::GetCursorPosX() + (ImGui::GetColumnWidth() * 0.4) - ImGui::CalcTextSize(name.c_str()).x
-            - ImGui::GetScrollX() - 2 * ImGui::GetStyle().ItemSpacing.x);
-        if (posX > ImGui::GetCursorPosX())
-            ImGui::SetCursorPosX(posX);
-
-        ImGui::AlignTextToFramePadding();
-        ImGui::Text(name.c_str()); ImGui::SameLine();
-    }
-
-    ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.55f);
-    ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.4);
-    
-    uiFonction();
-
-    ImGui::PopItemWidth();
-}
-
 
 bool Editor::displayLaunchScreen()
 {
@@ -237,10 +206,10 @@ bool Editor::displayLaunchScreen()
                     }
                     else
                     {
-                        _noiseSettingsParameters.clear();
+                        _settingsPanel.clearNoiseSettings();
                         const auto layersCount = _planet->getShapeSettings()->getNoiseLayers().size();
                         for (size_t i = 0; i < layersCount; i++)
-                            _noiseSettingsParameters.push_back(_planet->getShapeSettings()->getNoiseLayer(i)->getNoiseSettings());
+                            _settingsPanel.addNoiseSettings(_planet->getShapeSettings()->getNoiseLayer(i)->getNoiseSettings());
 
                         Application::Get().AppendLog("File has been opened");
                     }
@@ -345,358 +314,6 @@ void Editor::displayMenuBar(GLFWwindow* window)
         }
         ImGui::EndMenuBar();
     }
-}
-
-void Editor::drawUpdateModeItem()
-{
-    drawParameter("Update Mode", []()
-    {
-        ImGui::Combo("##Update Mode", &(int&)Application::Get().GetUpdateMode(), "Auto\0On Release\0On Generate\0\0");
-    });
-
-    drawParameter("", []()
-    {
-        if (Application::Get().GetUpdateMode() == UpdateMode::OnGenerate)
-        {
-            if (ImGui::Button("Generate"))
-                Application::Get().SetReadyToGenerate(true);
-        }
-        ImGui::Separator();
-    });
-}
-
-void Editor::displaySettings()
-{
-    ImGuiIO& io = ImGui::GetIO();
-    auto boldFont = io.Fonts->Fonts[0];
-
-    if (ImGui::Begin("Settings"))
-    {
-        ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_FittingPolicyResizeDown;
-        if (_planet->isVisible() && ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
-        {
-            // Planet Settings
-            // ***********************************************************************
-            ImGui::PushFont(boldFont);
-            if (ImGui::BeginTabItem("Planet"))
-            {
-                ImGui::PushFont(nullptr);
-
-                drawUpdateModeItem();
-
-                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.9f, 0.3f, 0.1f, 1.0f });
-                drawParameter("", [&planet = _planet]()
-                {
-                    ImGui::Text("Warning: depending on your computer,\nresolution above 128 could slow down the application.");
-                });
-                ImGui::PopStyleColor();
-
-                drawParameter("Resolution", [&planet = _planet]()
-                {
-                    if (ImGui::SliderInt("##Resolution", &planet->getResolution(), 4, 256))
-                    {
-                        Application::Get().Update(ObserverFlag::RESOLUTION);
-                    }
-                });
-
-                drawParameter("FaceRenderMask", [&planet = _planet]()
-                {
-                    if (ImGui::Combo("##FaceRenderMask", &(int&)planet->getFaceRenderMask(), "All\0Top\0Bottom\0Left\0Right\0Front\0Back\0\0"))
-                    {
-                        Application::Get().Update(ObserverFlag::MESH);
-                        Application::Get().Update(ObserverFlag::FACERENDERMASK);
-                    }
-                });
-
-                drawParameter("Rotation Speed", [&planet = _planet]()
-                {
-                    ImGui::SliderFloat("##Rotation Speed", &planet->getRotationSpeed(), 0.0f, 0.5f);
-                });
-
-                drawParameter("", [&planet = _planet]()
-                {
-                    ImGui::Checkbox("Hide Surface", &planet->isSurfaceHidden());
-                });
-
-                ImGui::Separator();
-
-                drawParameter("", [&planet = _planet]()
-                {
-                    if (ImGui::Button("Generate Random"))
-                    {
-                        planet->generateRandomPlanet();
-                    }
-                });
-
-
-                ImGui::EndTabItem();
-                ImGui::PopFont();
-            }
-            ImGui::PopFont();
-
-            
-            // Noise Settings
-            // ***********************************************************************
-            ImGui::PushFont(boldFont);
-            if (ImGui::BeginTabItem("Noise"))
-            {
-                ImGui::PushFont(nullptr);
-                drawUpdateModeItem();
-
-                drawParameter("Count", [&planet = _planet]()
-                {
-                    int noiseLayersCount = planet->getShapeSettings()->getNoiseLayers().size();
-                    if (ImGui::SliderInt("##Count", &noiseLayersCount, 0, 5))
-                    {
-                        Editor::Get().updateNoiseLayersCount(noiseLayersCount);
-                        Application::Get().Update(ObserverFlag::MESH);
-                    }
-                });
-
-                int layerCountNode = 0;
-                for (auto& layer : _planet->getShapeSettings()->getNoiseLayers())
-                {
-                    ImGui::Separator();
-
-                    std::string titleNode = "Noise Layer " + std::to_string(layerCountNode + 1);
-                    if (ImGui::TreeNode(titleNode.c_str()))
-                    {
-                        drawParameter("", [&planet = _planet, &layer]()
-                        {
-                            if (ImGui::Checkbox("Enabled", &layer->isEnabled()))
-                            {
-                                Application::Get().Update(ObserverFlag::MESH);
-                            }
-                        });
-
-                        drawParameter("FilterType", [&planet = _planet, &layer, &layerCountNode, &noiseSettingsParameters = _noiseSettingsParameters]()
-                        {
-                            if (ImGui::Combo("##Filter Type", &(int&)layer->getNoiseSettings()->filterType, "Simple\0Rigid\0\0"))
-                            {
-                                planet->getShapeGenerator()->updateFilterType(layerCountNode);
-                                noiseSettingsParameters[layerCountNode].setFilterType(layer->getNoiseSettings()->filterType);
-                                Application::Get().Update(ObserverFlag::MESH);
-                            }
-                        });
-
-                        drawParameter("Seed", [&planet = _planet, &layer, &layerCountNode]()
-                        {
-                            if (ImGui::InputInt("##Seed", &(int&)planet->getShapeGenerator()->getNoiseFilter(layerCountNode)->getSeed()))
-                            {
-                                planet->getShapeGenerator()->getNoiseFilter(layerCountNode)->reseed();
-                                Application::Get().Update(ObserverFlag::MESH);
-                            }
-                        });
-
-                        // Display filter noise settings
-                        _noiseSettingsParameters[layerCountNode].display(_sliderSpeed);
-
-                        ImGui::TreePop();
-
-                    }
-                    layerCountNode++;
-                    
-                }
-                ImGui::EndTabItem();
-                ImGui::PopFont();
-            }
-            ImGui::PopFont();
-
-
-            // Material Settings
-            // ***********************************************************************
-            ImGui::PushFont(boldFont);
-            if (ImGui::BeginTabItem("Material"))
-            {
-                auto colorSettings = _planet->getColorSettings();
-                ImGui::PushFont(nullptr);
-                drawUpdateModeItem();
-
-                if (ImGui::TreeNode("Landmass"))
-                {
-                    if (!colorSettings->getUseLandmassRamp())
-                    {
-                        drawParameter("Color", [&color = colorSettings]()
-                        {
-                            if (ImGui::ColorEdit3("##Color", (float*)&(color->getLandmassColor())))
-                                Application::Get().Update(ObserverFlag::COLOR);
-                        });
-                    }
-
-                    drawParameter("", [&color = colorSettings]()
-                    {
-                        ImGui::Checkbox("Use Color Ramp", &color->getUseLandmassRamp());
-                    });
-
-                    if (colorSettings->getUseLandmassRamp())
-                    {
-                        static ImGradientMark* draggingMark = nullptr;
-                        static ImGradientMark* selectedMark = nullptr;
-                        ImGui::GradientEditor(&colorSettings->getGradient(), draggingMark, selectedMark);
-                    }
-                    ImGui::TreePop();
-                }
-
-                if (ImGui::TreeNode("Ocean"))
-                {
-                    drawParameter("", [&color = colorSettings]()
-                    {
-                        ImGui::Checkbox("Use a different color for ocean", &color->getUseOceanColor());
-                    });
-
-                    if (colorSettings->getUseOceanColor())
-                    {
-                        drawParameter("Depth", [&color = colorSettings]()
-                        {
-                            ImGui::SliderFloat("##Depth", &color->getOceanDepth(), 0.0f, 10.0f);
-                        });
-
-                        drawParameter("Color", [&color = colorSettings]()
-                        {
-                            ImGui::ColorEdit3("##Color", (float*)&color->getOceanColor());
-                        });
-                    }
-                    ImGui::TreePop();
-                }
-
-                ImGui::EndTabItem();
-                ImGui::PopFont();
-            }
-            ImGui::PopFont();
-
-            // World Settings
-            // ***********************************************************************
-            ImGui::PushFont(boldFont);
-            if (ImGui::BeginTabItem("World"))
-            {
-                auto colorSettings = _planet->getColorSettings();
-
-                ImGui::PushFont(nullptr);
-                drawUpdateModeItem();
-
-                drawParameter("Sun", []()
-                {
-                    ImGui::SliderFloat("##Sun", &LightManager::Get().GetLight()->Intensity(), 0.0f, 1.0f);
-                });
-
-                drawParameter("Ambient Light", []()
-                {
-                    static float ambientGlobal = 0.2f;
-                    if (ImGui::SliderFloat("Ambient Light##", &ambientGlobal, 0.0f, 1.0f))
-                    {
-                        LightManager::Get().GetLight()->SetAmbient(ambientGlobal);
-                    }                
-                });
-
-                drawParameter("", [&color = colorSettings, &editorSettings = _editorSettings]()
-                {
-                    ImGui::Checkbox("Use Skybox", &editorSettings->isSkyboxDisplayed());
-                });
-
-                ImGui::EndTabItem();
-                ImGui::PopFont();
-            }
-            ImGui::PopFont();
-
-            // Overlays Settings
-            // ***********************************************************************
-            ImGui::PushFont(boldFont);
-            if (ImGui::BeginTabItem("Overlays"))
-            {
-                ImGui::PushFont(nullptr);
-
-                drawParameter("", [&editorSettings = _editorSettings]()
-                {
-                    ImGui::Checkbox("Display Wireframe", &editorSettings->IsWireframeVisible());
-                });
-
-                drawParameter("", [&editorSettings = _editorSettings]()
-                {
-                    ImGui::Checkbox("Display Axis", &editorSettings->IsAxisVisible());
-                });
-
-                drawParameter("", [&editorSettings = _editorSettings]()
-                {
-                    ImGui::Checkbox("Display Statistics", &editorSettings->IsStatsVisible());
-                });
-
-                drawParameter("", [&editorSettings = _editorSettings]()
-                {
-                    ImGui::Checkbox("Display Points", &editorSettings->isPointsDisplayed());
-
-                    if (editorSettings->isPointsDisplayed())
-                    {
-                        drawParameter("Point Size", [&editorSettings = editorSettings]()
-                        {
-                            ImGui::SliderInt("Point Size##", &editorSettings->getSizePoints(), 0, 10);
-                        });
-                    }
-                });
-
-                ImGui::EndTabItem();
-                ImGui::PopFont();
-            }
-            ImGui::PopFont();
-
-            ImGui::EndTabBar();
-        }
-
-    }
-    ImGui::End(); // Settings
-}
-
-
-void Editor::displayViewport()
-{
-    if (ImGui::Begin("Renderer"))
-    {
-        // 3D Viewport
-        ImVec2 wsize = ImGui::GetContentRegionAvail();
-        ImGui::Image((ImTextureID)_fbo.getTextureId(), wsize, ImVec2(0, 1), ImVec2(1, 0));
-        _viewportWidth = wsize.x;
-        _viewportHeight = wsize.y;
-        _fbo.resize(_viewportWidth, _viewportHeight);
-        Renderer::Get().ComputeProjectionMatrix();
-
-
-        // Statistics
-        if (_editorSettings->IsStatsVisible() && _planet->isVisible())
-        {
-            ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBackground
-                | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
-            ImGui::SetNextWindowPos(ImVec2(40, 80));
-            ImGui::SetNextWindowSize(ImVec2(150, 100));
-            if (ImGui::Begin("Statistics", NULL, window_flags))
-            {
-                ImGui::Text("Vertices    %s", _statistics.verticesCount.c_str());
-                ImGui::Text("Faces        %s", _statistics.facesCount.c_str());
-                ImGui::Text("Triangles  %s", _statistics.trianglesCount.c_str());
-                ImGui::Text("Fps            %.1f", ImGui::GetIO().Framerate);
-            }
-            ImGui::End();
-        }
-
-        // Loading Wheel
-        if (Application::Get().GetLoading())
-        {
-            ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBackground
-                | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
-            ImGui::SetNextWindowPos(ImVec2(25, _viewportHeight - 50));
-            ImGui::SetNextWindowSize(ImVec2(50, 50));
-            if (ImGui::Begin("Loading", NULL, window_flags))
-            {
-                float frame = Application::Get().GetLastFrameDuration();
-                ImGui::Image((ImTextureID)_loadingWheel.GetId(), ImVec2(40, 40),
-                    ImVec2(_loadingWheel.GetUV1().x, _loadingWheel.GetUV1().y),
-                    ImVec2(_loadingWheel.GetUV2().x, _loadingWheel.GetUV2().y)
-                );
-                _loadingWheel.NextSprite();
-            }
-            ImGui::End();
-        }
-
-    }
-    ImGui::End();
 }
 
 void Editor::displayLog()
@@ -806,10 +423,10 @@ void Editor::openFile(const std::string& filePath)
 {
     if (IOManager::get().open(filePath, _planet))
     {
-        _noiseSettingsParameters.clear();
+        _settingsPanel.clearNoiseSettings();
         const auto layersCount = _planet->getShapeSettings()->getNoiseLayers().size();
         for (size_t i = 0; i < layersCount; i++)
-            _noiseSettingsParameters.push_back(_planet->getShapeSettings()->getNoiseLayer(i)->getNoiseSettings());
+            _settingsPanel.addNoiseSettings(_planet->getShapeSettings()->getNoiseLayer(i)->getNoiseSettings());
 
         Application::Get().AppendLog("File has been opened");
     }
@@ -820,33 +437,6 @@ void Editor::openFile(const std::string& filePath)
 }
 
 
-void Editor::updateNoiseLayersCount(int noiseLayersCountUpdated)
-{
-    int layersCountDifference = noiseLayersCountUpdated - _planet->getShapeSettings()->getNoiseLayers().size();
-
-    if (layersCountDifference == 0)
-        return;
-
-    if (layersCountDifference > 0)
-    {
-        for (size_t i = 0; i < layersCountDifference; i++)
-            _planet->addNoiseLayer();
-
-        // Add a noiseSettingsParamater
-        _noiseSettingsParameters.push_back(NoiseSettingsParameters(_planet->getShapeSettings()->getLastLayer()->getNoiseSettings()));
-    }
-    else
-    {
-        for (size_t i = 0; i < abs(layersCountDifference); i++)
-            _planet->removeLastNoiseLayer();
-        
-        // Remove the noiseSettingsParamater linked with last layer to be removed
-        _noiseSettingsParameters.pop_back();
-    }
-}
-
-
-
 void Editor::free()
 {
     //Shutdown ImGUI
@@ -855,17 +445,7 @@ void Editor::free()
     ImGui::DestroyContext();
 
     // Delete Framebuffer
-    _fbo.free();
-}
-
-void Editor::bindFbo()
-{
-    _fbo.bind(_viewportWidth, _viewportHeight);
-}
-
-void Editor::unbindFbo()
-{
-    _fbo.unbind();
+    _viewer3DPanel.freeFbo();
 }
 
 void Editor::setWindowSize(int width, int height)
@@ -874,30 +454,11 @@ void Editor::setWindowSize(int width, int height)
     _HEIGHT = height;
 }
 
-
-void Editor::updateStatistics()
-{
-    prettyPrintNumber(_planet->getVerticesCount(), _statistics.verticesCount);
-    prettyPrintNumber(_planet->getFacesCount(), _statistics.facesCount);
-    prettyPrintNumber(_planet->getFacesCount() * 2, _statistics.trianglesCount);
-}
-
 void Editor::onResolutionUpdate(int resolution)
 {
-    updateStatistics();
+    _viewer3DPanel.updateStatistics();
 }
 
-
-// Turn 1451862 into 1 451 862
-void prettyPrintNumber(int number, std::string& str)
-{
-    str = std::to_string(number);
-    str.reserve(str.length() + str.length() / 3);
-
-    for (int i = 0, j = 3 - str.length() % 3; i < str.length(); ++i, ++j)
-        if (i != 0 && j % 3 == 0)
-            str.insert(i++, 1, ' ');
-}
 
 };  // ns editor
 

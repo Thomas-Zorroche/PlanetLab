@@ -115,10 +115,10 @@ private:
 
 private:
 	/// Resolution fo planet, amount of subdivisions per face
-	int _resolution;
+	int _resolution = 64;
 
 	/// Whether to draw the planet (surface + wireframe)
-	bool _visible;
+	bool _visible = true;
 
 	/// Whether to draw the surface
 	bool _hideSurface = false;
