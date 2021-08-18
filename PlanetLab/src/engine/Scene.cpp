@@ -35,7 +35,7 @@ Scene::Scene()
 }
 
 
-void Scene::Draw(float viewportHeight)
+void Scene::Draw()
 {
 	if (Editor::Get().getEditorSettings()->isSkyboxDisplayed())
 		_skybox->Draw();

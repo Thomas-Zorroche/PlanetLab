@@ -14,13 +14,6 @@ Viewer3DPanel::Viewer3DPanel(std::shared_ptr<Ceres::Planet> planet)
 {
 }
 
-void Viewer3DPanel::setSize(float w, float h)
-{
-    _viewportWidth = w;
-    _viewportHeight = h;
-    _fbo.resize(_viewportWidth, _viewportHeight);
-}
-
 void Viewer3DPanel::draw()
 {
     if (ImGui::Begin("Renderer"))
@@ -35,11 +28,15 @@ void Viewer3DPanel::draw()
 void Viewer3DPanel::displayRenderer()
 {
     ImVec2 wsize = ImGui::GetContentRegionAvail();
-    ImGui::Image((ImTextureID)_fbo.getTextureId(), wsize, ImVec2(0, 1), ImVec2(1, 0));
-    _viewportWidth = wsize.x;
-    _viewportHeight = wsize.y;
-    _fbo.resize(_viewportWidth, _viewportHeight);
+    if (_viewportWidth != wsize.x || _viewportHeight != wsize.y)
+    {
+        _viewportWidth = wsize.x;
+        _viewportHeight = wsize.y;
+        _fbo.resize(_viewportWidth, _viewportHeight);
+    }
     Renderer::Get().ComputeProjectionMatrix();
+
+    ImGui::Image((ImTextureID)_fbo.getTextureId(), wsize, ImVec2(0, 1), ImVec2(1, 0));
 }
 
 void Viewer3DPanel::displayStatistics()

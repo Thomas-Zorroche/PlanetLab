@@ -23,7 +23,7 @@ public:
 	Scene(const Scene&) = delete;
 	Scene& operator=(const Scene&) = delete;
 
-	void Draw(float viewportHeight);
+	void Draw();
 
 	void Free();
 

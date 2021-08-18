@@ -41,7 +41,6 @@ void Editor::init(Window& window)
     // Init windows sizes
     _WIDTH = window.Width();
     _HEIGHT = window.Height();
-    _viewer3DPanel.setSize(0.7 * _WIDTH, _HEIGHT);
     _settingsWidth = _WIDTH - _viewer3DPanel.getViewportWidth();
 
     _viewer3DPanel.updateStatistics();
@@ -138,7 +137,10 @@ void Editor::draw(GLFWwindow* window)
     displayMenuBar(window);
 
     ImGui::End(); // Main Window
+}
 
+void Editor::render()
+{
     // Render ImGUI
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

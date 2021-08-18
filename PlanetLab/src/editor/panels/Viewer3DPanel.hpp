@@ -30,8 +30,6 @@ public:
 
 	void updateStatistics();
 
-	void setSize(float w, float h);
-
 	void bindFbo() { _fbo.bind(_viewportWidth, _viewportHeight); }
 	void unbindFbo() { _fbo.unbind(); }
 	void freeFbo() { _fbo.free(); }

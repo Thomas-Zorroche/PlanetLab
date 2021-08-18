@@ -59,6 +59,7 @@ public:
 
 	void init(Window& window);
 	void draw(GLFWwindow* window);
+	void render();
 	void free();
 
 	const std::unique_ptr<EditorSettings>& getEditorSettings() { return _editorSettings; }
