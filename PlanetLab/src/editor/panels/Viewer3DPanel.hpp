@@ -34,6 +34,8 @@ public:
 	void unbindFbo() { _fbo.unbind(); }
 	void freeFbo() { _fbo.free(); }
 
+	bool isViewer3DHovered() const { return _viewer3DHovered; }
+
 private:
 	void displayRenderer();
 	void displayStatistics();
@@ -52,6 +54,8 @@ private:
 	std::shared_ptr<Ceres::Planet> _planet;
 
 	SpriteSheet _loadingWheel = SpriteSheet("res/img/LoadingSheet.png", 31);
+
+	bool _viewer3DHovered = false;
 };
 
 void prettyPrintNumber(int number, std::string& str);

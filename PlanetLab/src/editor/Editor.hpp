@@ -84,6 +84,8 @@ public:
 	void bindFbo() { _viewer3DPanel.bindFbo(); }
 	void unbindFbo() { _viewer3DPanel.unbindFbo(); }
 
+	bool isViewer3DHovered() const { return _viewer3DPanel.isViewer3DHovered(); }
+
 private:
 	Editor() = default;
 	~Editor() = default;

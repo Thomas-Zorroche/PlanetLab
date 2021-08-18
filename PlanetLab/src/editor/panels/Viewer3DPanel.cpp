@@ -18,6 +18,7 @@ void Viewer3DPanel::draw()
 {
     if (ImGui::Begin("Renderer"))
     {
+        _viewer3DHovered = ImGui::IsWindowHovered();
         displayRenderer();
         displayStatistics();
         displayLoadingWheel();

@@ -26,6 +26,9 @@ void InputHandler::SetCallback(GLFWwindow* window, CallbackPtr& callbackPtr)
 
 void mouse_callback(GLFWwindow* window, double xPos, double yPos)
 {
+    if (!Editor::Get().isViewer3DHovered())
+        return;
+
     CallbackPtr* callbackPtr = (CallbackPtr*)glfwGetWindowUserPointer(window);
     auto camera = callbackPtr->_camera;
 
@@ -61,9 +64,10 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos)
         // Update the camera view (we keep the same lookat and the same up vector)
         camera->updatePosition(finalPosition);
     }
-        // Update the mouse position for the next rotation
-        camera->SetLastX(xPos);
-        camera->SetLastY(yPos);
+
+    // Update the mouse position for the next rotation
+    camera->SetLastX(xPos);
+    camera->SetLastY(yPos);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -94,12 +98,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         {
             Editor::Get().toggleDisplaySettings();
         }
-    }
-
-    else if (key == (int)KeyCode::ALT && action == GLFW_RELEASE)
-    {
-        auto camera = ((CallbackPtr*)glfwGetWindowUserPointer(window))->_camera;
-        camera->SetCanRotate(false);
     }
 
     else if (key == (int)KeyCode::T && action == GLFW_PRESS)
@@ -139,10 +137,7 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
 
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
     {
-        if (Input::IsKeyPressed(KeyCode::ALT))
-        {
-            camera->SetCanRotate(true);
-        }
+        camera->SetCanRotate(true);
     }
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
     {
