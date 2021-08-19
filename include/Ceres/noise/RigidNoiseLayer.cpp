@@ -30,7 +30,12 @@ float RigidNoiseLayer::evaluate(const glm::vec3& point) const
 	}
 
 	noiseValue = std::max(0.0f, noiseValue - _noiseSettings->minValue);
-	return noiseValue * _noiseSettings->strength;
+	noiseValue *= _noiseSettings->strength;
+
+	if (_invert)
+		noiseValue *= -1;
+
+	return noiseValue;
 }
 
 }	// ns Ceres

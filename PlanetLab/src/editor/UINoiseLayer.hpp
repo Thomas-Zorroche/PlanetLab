@@ -26,13 +26,9 @@ private:
 
 	unsigned int _id = 0;
 
-	bool _enabled = true;
-	
 	bool _locked = false;
 
 	bool _isolated = false;
-
-	bool _invert = false;
 
 	std::shared_ptr<Ceres::Planet> _planet;
 

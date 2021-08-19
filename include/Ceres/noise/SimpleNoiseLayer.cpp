@@ -25,8 +25,12 @@ float SimpleNoiseLayer::evaluate(const glm::vec3& point) const
 		amplitude *= _noiseSettings->persistence;
 	}
 
-	noiseValue = noiseValue - _noiseSettings->minValue;
-	return noiseValue * _noiseSettings->strength;
+	noiseValue = (noiseValue - _noiseSettings->minValue) * _noiseSettings->strength;
+
+	if (_invert)
+		noiseValue *= -1;
+
+	return noiseValue;
 }
 
 }	// ns Ceres

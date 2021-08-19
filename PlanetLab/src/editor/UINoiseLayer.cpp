@@ -35,6 +35,14 @@ void UINoiseLayer::draw()
             }
         });
 
+        drawParameter("", [this]()
+        {
+            if (ImGui::Checkbox("Invert", &_noiseLayer->isInverted()))
+            {
+                Application::Get().Update(Ceres::ObserverFlag::MESH);
+            }
+        });
+
         drawParameter("Layer Type", [this]()
         {
             if (ImGui::Combo("##Layer Type", &(int&)_noiseLayer->getNoiseSettings()->layerType, "Simple\0Rigid\0\0"))

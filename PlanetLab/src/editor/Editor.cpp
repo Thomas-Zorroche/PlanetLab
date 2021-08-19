@@ -431,7 +431,7 @@ void Editor::saveFile()
         return;
 
     if (!IOManager::get().isFileOnDisk())
-        _saveBeforeCloseParams.display = true;
+        _displaySaveAsPopup = true;
      
     Application::Get().AppendLog(IOManager::get().save(_planet) ? "File has been saved" : "Error IO :: cannot save file ");
 }
