@@ -28,8 +28,6 @@ private:
 
 	bool _locked = false;
 
-	bool _isolated = false;
-
 	std::shared_ptr<Ceres::Planet> _planet;
 
 	float& _sliderSpeed;

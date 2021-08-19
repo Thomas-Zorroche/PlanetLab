@@ -45,6 +45,9 @@ public:
 	bool isInverted() const { return _invert; }
 	bool& isInverted() { return _invert; }
 
+	bool isIsolated() const { return _isolated; }
+	bool& isIsolated() { return _isolated; }
+
 	bool firstLayerUsedAsMask() const { return _useFirstLayerAsMask; }
 	bool& firstLayerUsedAsMask() { return _useFirstLayerAsMask; }
 
@@ -61,6 +64,8 @@ protected:
 	bool _enabled = true;
 
 	bool _invert = false;
+
+	bool _isolated = false;
 
 	bool _useFirstLayerAsMask = true;
 

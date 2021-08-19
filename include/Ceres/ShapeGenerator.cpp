@@ -17,6 +17,11 @@ float ShapeGenerator::calculateUnscaledElevation(const glm::vec3& pointOnUnitSph
 	float firstLayerValue = 0;
 	float elevation = 0;
 
+	if (_isolatedLayerIndex != -1 && _noiseLayers[_isolatedLayerIndex]->isEnabled())
+	{
+		return _noiseLayers[_isolatedLayerIndex]->evaluate(pointOnUnitSphere);
+	}
+
 	if (_noiseLayers.size() > 0)
 	{
 		firstLayerValue = _noiseLayers[0]->evaluate(pointOnUnitSphere); // TODO: put this in the if ?
@@ -91,5 +96,20 @@ std::shared_ptr<NoiseLayer> ShapeGenerator::updateLayerType(std::uint32_t index)
 	_noiseLayers[index] = NoiseLayerFactory::createNoiseLayer(index, _noiseLayers[index]->getNoiseSettings());
 	return _noiseLayers[index];
 }
+
+void ShapeGenerator::setIsolatedLayerIndex(int index)
+{
+	if (index == -1)
+	{
+		_isolatedLayerIndex = index;
+		return;
+	}
+	
+	if (index >= _noiseLayers.size())
+		CERES_ERROR("ShapeGenerator: index out of range.");
+	else
+		_isolatedLayerIndex = index;
+}
+
 
 }	// ns Ceres

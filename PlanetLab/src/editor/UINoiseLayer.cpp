@@ -43,6 +43,15 @@ void UINoiseLayer::draw()
             }
         });
 
+        drawParameter("", [this]()
+        {
+            if (ImGui::Checkbox("Isolate", &_noiseLayer->isIsolated()))
+            {
+                _planet->getShapeGenerator()->setIsolatedLayerIndex(_noiseLayer->isIsolated() ? _id : -1);
+                Application::Get().Update(Ceres::ObserverFlag::MESH);
+            }
+        });
+
         drawParameter("Layer Type", [this]()
         {
             if (ImGui::Combo("##Layer Type", &(int&)_noiseLayer->getNoiseSettings()->layerType, "Simple\0Rigid\0\0"))

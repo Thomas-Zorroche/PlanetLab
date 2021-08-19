@@ -30,6 +30,8 @@ public:
 
 	void removeAllLayers();
 
+	void setIsolatedLayerIndex(int index);
+
 
 	// Elevation
 
@@ -53,6 +55,8 @@ private:
 	std::vector<std::shared_ptr<NoiseLayer> > _noiseLayers;
 
 	float _planetRadius = 1.0f;
+
+	int _isolatedLayerIndex = -1;
 };
 
 }	// ns proceduralPlanet
