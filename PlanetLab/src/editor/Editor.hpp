@@ -15,6 +15,7 @@
 
 #include "editor/panels/SettingsPanel.hpp"
 #include "editor/panels/Viewer3DPanel.hpp"
+#include "editor/panels/Viewer2DPanel.hpp"
 
 
 namespace Ceres
@@ -76,8 +77,10 @@ public:
 	
 	void toggleDisplaySettings();
 	void toggleDisplayLog();
+	void toggleDisplayViewer2D();
 
 	void onResolutionUpdate(int resolution);
+	void onMeshUpdate();
 
 	void setWindowSize(int width, int height);
 
@@ -98,7 +101,7 @@ private:
 	bool displayLaunchScreen();
 	void displaySaveAsPopup();
 	void displaySaveBeforeClosePopup();
-	
+
 
 private:
 	bool _displaySaveAsPopup = false;
@@ -106,6 +109,7 @@ private:
 
 	bool _settingsOpen = true;
 	bool _logOpen = true;
+	bool _viewer2DOpen = false;
 	bool _dockspaceOpen = true;
 	bool _launchScreenOpen = true;
 
@@ -125,6 +129,7 @@ private:
 
 	SettingsPanel _settingsPanel;
 	Viewer3DPanel _viewer3DPanel;
+	Viewer2DPanel _viewer2DPanel;
 
 	std::unique_ptr<EditorSettings> _editorSettings = std::make_unique<EditorSettings>();
 };

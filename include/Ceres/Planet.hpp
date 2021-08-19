@@ -105,12 +105,9 @@ private:
 	/// Send colors settings uniforms and max elevation value
 	void sendUniforms();
 
-/*
-* Signals
-* Do not use it. Use EMIT keyword.
-*/
 private:
 	void emitResolutionChanged(int resolution);
+	void emitMeshChanged();
 
 
 private:
@@ -159,7 +156,5 @@ private:
 	/// Speed of scale loading animation 
 	float _scaleLoadingSpeed = 0.02f;
 };
-
-#define EMIT_ResolutionChanged(resolution) emitResolutionChanged(resolution)
 
 } // ns Ceres

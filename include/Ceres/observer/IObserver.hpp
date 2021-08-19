@@ -12,6 +12,7 @@ public:
 	virtual ~IObserver() {};
 
 	virtual void updateResolution(int newResolution) = 0;
+	virtual void updateMesh() = 0;
 };
 
 }

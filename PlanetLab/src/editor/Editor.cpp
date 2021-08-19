@@ -36,6 +36,7 @@ void Editor::init(Window& window)
     _planet = Application::Get().GetPlanet();
     _settingsPanel.setPlanet(_planet);
     _viewer3DPanel.setPlanet(_planet);
+    _viewer2DPanel.setPlanet(_planet);
     _observer = std::make_unique<UiObserver>(_planet->getPlanetSubject());
 
     // Init windows sizes
@@ -134,6 +135,7 @@ void Editor::draw(GLFWwindow* window)
     if (_settingsOpen) _settingsPanel.draw();
     if (_logOpen) displayLog();
     _viewer3DPanel.draw();
+    if (_viewer2DOpen) _viewer2DPanel.draw();
     displayMenuBar(window);
 
     ImGui::End(); // Main Window
@@ -236,6 +238,26 @@ bool Editor::displayLaunchScreen()
     return clickInside;
 }
 
+template <typename UIFunction>
+static void displayWindowMenuItem(const std::string& label, bool open, UIFunction uiFunction)
+{
+    bool closeNext = false;
+    if (!open)
+    {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 0.5, 0.5, 0.5, 0.8 });
+        closeNext = true;
+    }
+    if (ImGui::MenuItem(label.c_str()))
+    {
+        uiFunction();
+    }
+    if (closeNext)
+    {
+        ImGui::PopStyleColor();
+        closeNext = false;
+    }
+}
+
 void Editor::displayMenuBar(GLFWwindow* window)
 {
     if (ImGui::BeginMenuBar())
@@ -312,6 +334,15 @@ void Editor::displayMenuBar(GLFWwindow* window)
 
             ImGui::EndMenu();
         }
+
+        if (ImGui::BeginMenu("Window"))
+        {
+            displayWindowMenuItem("Settings",  _settingsOpen, [this]() { toggleDisplaySettings(); });
+            displayWindowMenuItem("Log",       _logOpen,      [this]() { toggleDisplayLog(); });
+            displayWindowMenuItem("Viewer 2D", _viewer2DOpen, [this]() { toggleDisplayViewer2D(); });
+            ImGui::EndMenu();
+        }
+
         ImGui::EndMenuBar();
     }
 }
@@ -401,6 +432,11 @@ void Editor::toggleDisplayLog()
     _logOpen = _logOpen && !_displaySaveAsPopup ? false : true;
 }
 
+void Editor::toggleDisplayViewer2D()
+{
+    _viewer2DOpen = _viewer2DOpen && !_displaySaveAsPopup ? false : true;
+}
+
 void Editor::saveFile()
 {
     if (!IOManager::get().areUnsavedValues())
@@ -458,6 +494,11 @@ void Editor::setWindowSize(int width, int height)
 void Editor::onResolutionUpdate(int resolution)
 {
     _viewer3DPanel.updateStatistics();
+}
+
+void Editor::onMeshUpdate()
+{
+    _viewer2DPanel.updateTexture();
 }
 
 

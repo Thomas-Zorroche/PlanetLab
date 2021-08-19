@@ -114,7 +114,7 @@ void Planet::update(ObserverFlag flag)
 				face.updateResolution(_resolution);
 			}
 
-			EMIT_ResolutionChanged(_resolution);
+			emitResolutionChanged(_resolution);
 			break;
 		}
 		case ObserverFlag::COLOR:
@@ -125,11 +125,12 @@ void Planet::update(ObserverFlag flag)
 		case ObserverFlag::MESH:
 		{
 			generateMesh();
+			emitMeshChanged();
 			break;
 		}
 		case ObserverFlag::FACERENDERMASK:
 		{
-			EMIT_ResolutionChanged(_resolution);
+			emitResolutionChanged(_resolution);
 			break;
 		}
 	}
@@ -215,6 +216,11 @@ int Planet::getFacesCount() const
 void Planet::emitResolutionChanged(int resolution)
 {
 	_planetSubject.updateResolution(_resolution);
+}
+
+void Planet::emitMeshChanged()
+{
+	_planetSubject.updateMesh();
 }
 
 } // ns Ceres

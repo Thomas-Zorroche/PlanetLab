@@ -16,7 +16,7 @@ Viewer3DPanel::Viewer3DPanel(std::shared_ptr<Ceres::Planet> planet)
 
 void Viewer3DPanel::draw()
 {
-    if (ImGui::Begin("Renderer"))
+    if (ImGui::Begin("Viewer 3D"))
     {
         _viewer3DHovered = ImGui::IsWindowHovered();
         displayRenderer();

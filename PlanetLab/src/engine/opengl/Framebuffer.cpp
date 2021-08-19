@@ -37,9 +37,11 @@ void Framebuffer::resize(float width, float height)
     {
         glBindTexture(GL_TEXTURE_2D, _textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         glBindRenderbuffer(GL_RENDERBUFFER, _rboID);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
