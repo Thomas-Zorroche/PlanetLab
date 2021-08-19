@@ -202,19 +202,7 @@ bool Editor::displayLaunchScreen()
                 if (ImGui::Button(paths[i].c_str()))
                 {
                     _launchScreenOpen = false;
-                    if (!IOManager::get().open(paths[i], _planet))
-                    {
-                        Application::Get().AppendLog(std::string("Error IO :: cannot open file " + paths[i]).c_str());
-                    }
-                    else
-                    {
-                        _settingsPanel.clearNoiseSettings();
-                        const auto layersCount = _planet->getShapeSettings()->getNoiseLayers().size();
-                        for (size_t i = 0; i < layersCount; i++)
-                            _settingsPanel.addNoiseSettings(_planet->getShapeSettings()->getNoiseLayer(i)->getNoiseSettings());
-
-                        Application::Get().AppendLog("File has been opened");
-                    }
+                    openFile(paths[i]);
                 }
                 ImGui::PopStyleColor();
             }
@@ -451,7 +439,7 @@ void Editor::saveFile()
 void Editor::newFile()
 {
     IOManager::get().newFile();
-    _settingsPanel.clearNoiseSettings();
+    _settingsPanel.clearNoiseLayers();
     _planet->reset();
     Application::Get().AppendLog("New scene created");
 }
@@ -460,10 +448,10 @@ void Editor::openFile(const std::string& filePath)
 {
     if (IOManager::get().open(filePath, _planet))
     {
-        _settingsPanel.clearNoiseSettings();
+        _settingsPanel.clearNoiseLayers();
         const auto layersCount = _planet->getShapeSettings()->getNoiseLayers().size();
         for (size_t i = 0; i < layersCount; i++)
-            _settingsPanel.addNoiseSettings(_planet->getShapeSettings()->getNoiseLayer(i)->getNoiseSettings());
+            _settingsPanel.addNoiseLayer(_planet->getShapeSettings()->getNoiseLayer(i));
 
         Application::Get().AppendLog("File has been opened");
     }

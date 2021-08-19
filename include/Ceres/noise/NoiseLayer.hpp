@@ -11,7 +11,7 @@ namespace Ceres
 class NoiseLayer
 {
 public:
-	NoiseLayer(const std::shared_ptr<NoiseSettings>& settings = std::make_shared<NoiseSettings>());
+	NoiseLayer(int id = -1, const std::shared_ptr<NoiseSettings>& settings = std::make_shared<NoiseSettings>());
 
 	const std::shared_ptr<NoiseSettings>& getNoiseSettings() const { return _noiseSettings; }
 	std::shared_ptr<NoiseSettings> getNoiseSettings() { return _noiseSettings; }
@@ -21,12 +21,16 @@ public:
 
 	bool isUsingFirstLayerAsMask() const { return _useFirstLayerAsMask; }
 
+	int getId() const { return _id; }
+
 private:
 	bool _enabled;
 
 	bool _useFirstLayerAsMask = true;
 
 	std::shared_ptr<NoiseSettings> _noiseSettings;
+
+	int _id = -1;
 };
 
 }

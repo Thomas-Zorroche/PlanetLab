@@ -136,14 +136,16 @@ void Planet::update(ObserverFlag flag)
 	}
 }
 
-void Planet::addNoiseLayer(unsigned int count)
+std::shared_ptr<NoiseLayer> Planet::addNoiseLayer(unsigned int count)
 {
+	std::shared_ptr<NoiseLayer> layer = nullptr;
 	for (size_t i = 0; i < count; i++)
 	{
-		auto layer = std::make_shared<NoiseLayer>();
+		layer = std::make_shared<NoiseLayer>(_shapeSettings->getNoiseLayers().size());
 		_shapeSettings->addLayer(layer);
 		_shapeGenerator->addFilter(NoiseFilterFactory::createNoiseFilter(layer->getNoiseSettings()));
 	}
+	return layer;
 }
 
 void Planet::removeLastNoiseLayer()

@@ -90,8 +90,8 @@ public:
 	void rotate(const glm::vec3& angles);
 	/// Change randomly ONLY seed and colors
 	void generateRandomPlanet();
-	/// Add noise layer and filter
-	void addNoiseLayer(unsigned int count = 1);
+	/// Add noise layer and filter. Return last noise layer added
+	std::shared_ptr<NoiseLayer> addNoiseLayer(unsigned int count = 1);
 	/// Remove last noise layer and filter
 	void removeLastNoiseLayer();
 

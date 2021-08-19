@@ -190,50 +190,8 @@ void SettingsPanel::displayNoisePanel()
         }
     }, "Number of noise layers");
 
-    int layerCountNode = 0;
-    for (auto& layer : _planet->getShapeSettings()->getNoiseLayers())
-    {
-        ImGui::Separator();
-
-        std::string titleNode = "Noise Layer " + std::to_string(layerCountNode + 1);
-        if (ImGui::TreeNode(titleNode.c_str()))
-        {
-            drawParameter("", [&planet = _planet, &layer]()
-            {
-                if (ImGui::Checkbox("Enabled", &layer->isEnabled()))
-                {
-                    Application::Get().Update(ObserverFlag::MESH);
-                }
-            });
-
-            drawParameter("FilterType", [&planet = _planet, &layer, &layerCountNode, &noiseSettingsParameters = _noiseSettingsParameters]()
-            {
-                if (ImGui::Combo("##Filter Type", &(int&)layer->getNoiseSettings()->filterType, "Simple\0Rigid\0\0"))
-                {
-                    planet->getShapeGenerator()->updateFilterType(layerCountNode);
-                    noiseSettingsParameters[layerCountNode].setFilterType(layer->getNoiseSettings()->filterType);
-                    Application::Get().Update(ObserverFlag::MESH);
-                }
-            }, "Type of noise filter:\n * Simple: basic perlin noise\n * Rigid: sharp perlin noise (ideal for mountains).");
-
-            drawParameter("Seed", [&planet = _planet, &layer, &layerCountNode]()
-            {
-                if (ImGui::InputInt("##Seed", &(int&)planet->getShapeGenerator()->getNoiseFilter(layerCountNode)->getSeed()))
-                {
-                    planet->getShapeGenerator()->getNoiseFilter(layerCountNode)->reseed();
-                    Application::Get().Update(ObserverFlag::MESH);
-                }
-            }, "Random number to initialize perlin noise.");
-
-            // Display filter noise settings
-            _noiseSettingsParameters[layerCountNode].display(_sliderSpeed);
-
-            ImGui::TreePop();
-
-        }
-        layerCountNode++;
-
-    }
+    for (auto& uiNoiseLayer : _uiNoiseLayers)
+        uiNoiseLayer.draw();
 }
 
 void SettingsPanel::displayMaterialPanel()
@@ -355,20 +313,34 @@ void SettingsPanel::updateNoiseLayersCount(int noiseLayersCountUpdated)
     {
         for (size_t i = 0; i < layersCountDifference; i++)
         {
-            _planet->addNoiseLayer();
-            // Add a noiseSettingsParamater
-            _noiseSettingsParameters.push_back(NoiseSettingsParameters(_planet->getShapeSettings()->getLastLayer()->getNoiseSettings()));
+            // Add Ceres noise layer and filter
+            auto layer = _planet->addNoiseLayer();
+
+            // Add PlanetLab corresponding ui noise layer
+            _uiNoiseLayers.push_back(UINoiseLayer(layer, _planet, _sliderSpeed));
         }
     }
     else
     {
         for (size_t i = 0; i < abs(layersCountDifference); i++)
         {
+            // Remove Ceres noise layer and filter
             _planet->removeLastNoiseLayer();
-            // Remove the noiseSettingsParamater linked with last layer to be removed
-            _noiseSettingsParameters.pop_back();
+
+            // Remove the ui noise layer linked with last layer to be removed
+            _uiNoiseLayers.pop_back();
         }
     }
+}
+
+void SettingsPanel::clearNoiseLayers()
+{ 
+    _uiNoiseLayers.clear();
+}
+
+void SettingsPanel::addNoiseLayer(std::shared_ptr<Ceres::NoiseLayer> noiselayer)
+{ 
+    _uiNoiseLayers.push_back(UINoiseLayer(noiselayer, _planet, _sliderSpeed));
 }
 
 } // ns PlanetLab

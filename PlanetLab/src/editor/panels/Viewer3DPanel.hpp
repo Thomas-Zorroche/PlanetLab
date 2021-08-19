@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Ceres/Planet.hpp"
-#include "editor/NoiseSettingsParameters.h"
+#include "editor/NoiseSettingsParameters.hpp"
 #include "engine/SpriteSheet.hpp"
 #include "engine/opengl/Framebuffer.hpp"
 

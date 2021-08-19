@@ -1,4 +1,4 @@
-#include "NoiseSettingsParameters.h"
+#include "NoiseSettingsParameters.hpp"
 #include "ParameterFactory.hpp"
 
 using namespace Ceres;

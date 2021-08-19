@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Ceres/Planet.hpp"
-#include "editor/NoiseSettingsParameters.h"
+#include "editor/UINoiseLayer.hpp"
 
 namespace PlanetLab
 {
@@ -18,8 +18,8 @@ public:
 
 	void setPlanet(std::shared_ptr<Ceres::Planet> planet) { _planet = planet; }
 
-	void clearNoiseSettings() { _noiseSettingsParameters.clear(); }
-	void addNoiseSettings(NoiseSettingsParameters noiseSettings) { _noiseSettingsParameters.push_back(noiseSettings); }
+	void clearNoiseLayers();
+	void addNoiseLayer(std::shared_ptr<Ceres::NoiseLayer> noiselayer);
 
 private:
 	void displayPlanetPanel();
@@ -34,7 +34,7 @@ private:
 private:
 	std::shared_ptr<Ceres::Planet> _planet;
 
-	std::vector<NoiseSettingsParameters> _noiseSettingsParameters;
+	std::vector<UINoiseLayer> _uiNoiseLayers;
 
 	float _sliderSpeed = 0.08;
 };
