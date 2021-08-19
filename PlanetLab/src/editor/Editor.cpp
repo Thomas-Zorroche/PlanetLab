@@ -449,9 +449,9 @@ void Editor::openFile(const std::string& filePath)
     if (IOManager::get().open(filePath, _planet))
     {
         _settingsPanel.clearNoiseLayers();
-        const auto layersCount = _planet->getShapeSettings()->getNoiseLayers().size();
+        const auto layersCount = _planet->getShapeGenerator()->getNoiseLayers().size();
         for (size_t i = 0; i < layersCount; i++)
-            _settingsPanel.addNoiseLayer(_planet->getShapeSettings()->getNoiseLayer(i));
+            _settingsPanel.addNoiseLayer(_planet->getShapeGenerator()->getNoiseLayer(i));
 
         Application::Get().AppendLog("File has been opened");
     }

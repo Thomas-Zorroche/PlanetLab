@@ -28,10 +28,6 @@ public:
 
 
 private:
-
-
-
-private:
 	std::shared_ptr<Ceres::Planet> _planet;
 	
 	unsigned int _textureId = 0;
@@ -39,7 +35,7 @@ private:
 
 	std::vector<unsigned char> localBuffer = std::vector<unsigned char>(_textureSize.x * _textureSize.y);
 
-	UpdateMode _updateMode = UpdateMode::Auto;
+	UpdateMode _updateMode = UpdateMode::OnGenerate;
 
 	bool _readyToGenerate = false;
 

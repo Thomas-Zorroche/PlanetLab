@@ -3,7 +3,6 @@
 #include "TerrainFace.hpp"
 #include "engine/StaticMesh.hpp"
 
-#include "ShapeSettings.hpp"
 #include "ColorSettings.hpp"
 #include "ShapeGenerator.hpp"
 
@@ -49,9 +48,6 @@ public:
 
 	// Accessors
 
-	const std::shared_ptr<ShapeSettings>& getShapeSettings() const { return _shapeSettings; }
-	std::shared_ptr<ShapeSettings> getShapeSettings() { return _shapeSettings; }
-
 	const std::shared_ptr<ColorSettings>& getColorSettings() const { return _colorSettings; }
 	std::shared_ptr<ColorSettings> getColorSettings() { return _colorSettings; }
 
@@ -90,9 +86,9 @@ public:
 	void rotate(const glm::vec3& angles);
 	/// Change randomly ONLY seed and colors
 	void generateRandomPlanet();
-	/// Add noise layer and filter. Return last noise layer added
+	/// Add noise layer. Return last noise layer added
 	std::shared_ptr<NoiseLayer> addNoiseLayer(unsigned int count = 1);
-	/// Remove last noise layer and filter
+	/// Remove last noise layer
 	void removeLastNoiseLayer();
 
 private:
@@ -119,9 +115,6 @@ private:
 
 	/// Whether to draw the surface
 	bool _hideSurface = false;
-
-	/// Contains radius and noise settings
-	std::shared_ptr<ShapeSettings> _shapeSettings;
 
 	/// Contains ocean and landmass colors 
 	std::shared_ptr<ColorSettings> _colorSettings;

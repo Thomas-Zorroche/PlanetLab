@@ -4,7 +4,7 @@
 #include "editor/Application.hpp"
 #include "editor/Parameter.hpp"
 
-#include "Ceres/noise/NoiseFilter.hpp"
+#include "Ceres/noise/NoiseLayer.hpp"
 
 namespace PlanetLab
 {
@@ -35,26 +35,26 @@ void UINoiseLayer::draw()
             }
         });
 
-        drawParameter("FilterType", [this]()
+        drawParameter("Layer Type", [this]()
         {
-            if (ImGui::Combo("##Filter Type", &(int&)_noiseLayer->getNoiseSettings()->filterType, "Simple\0Rigid\0\0"))
+            if (ImGui::Combo("##Layer Type", &(int&)_noiseLayer->getNoiseSettings()->layerType, "Simple\0Rigid\0\0"))
             {
-                _planet->getShapeGenerator()->updateFilterType(_id);
-                _noiseSettingsParameters.setFilterType(_noiseLayer->getNoiseSettings()->filterType);
+                _noiseLayer = _planet->getShapeGenerator()->updateLayerType(_id);
+                _noiseSettingsParameters.setLayerType(_noiseLayer->getNoiseSettings()->layerType);
                 Application::Get().Update(Ceres::ObserverFlag::MESH);
             }
-        }, "Type of noise filter:\n * Simple: basic perlin noise\n * Rigid: sharp perlin noise (ideal for mountains).");
+        }, "Type of noise layer:\n * Simple: basic perlin noise\n * Rigid: sharp perlin noise (ideal for mountains).");
 
         drawParameter("Seed", [this]()
         {
-            if (ImGui::InputInt("##Seed", &(int&)_planet->getShapeGenerator()->getNoiseFilter(_id)->getSeed()))
+            if (ImGui::InputInt("##Seed", &(int&)_planet->getShapeGenerator()->getNoiseLayer(_id)->getSeed()))
             {
-                _planet->getShapeGenerator()->getNoiseFilter(_id)->reseed();
+                _planet->getShapeGenerator()->getNoiseLayer(_id)->reseed();
                 Application::Get().Update(Ceres::ObserverFlag::MESH);
             }
         }, "Random number to initialize perlin noise.");
 
-        // Display filter noise settings
+        // Display layer noise settings
         _noiseSettingsParameters.display(_sliderSpeed);
 
         ImGui::TreePop();

@@ -4,8 +4,7 @@
 namespace Ceres
 {
 
-class NoiseFilter;
-class ShapeSettings;
+class NoiseLayer;
 
 /**
  * @brief Responsible to apply noises algorithms on the surface mesh
@@ -13,23 +12,23 @@ class ShapeSettings;
 class ShapeGenerator
 {
 public:
-	ShapeGenerator(const std::shared_ptr<ShapeSettings>& shapeSettings);
+	ShapeGenerator();
 
-	// Filters
+	// Layers
 
-	std::vector<std::shared_ptr<NoiseFilter> > getNoiseFilters();
+	std::vector<std::shared_ptr<NoiseLayer> > getNoiseLayers();
 
-	std::shared_ptr<NoiseFilter> getNoiseFilter(unsigned int index) const;
+	std::shared_ptr<NoiseLayer> getNoiseLayer(unsigned int index) const;
 
-	void updateFilterType(std::uint32_t index);
+	std::shared_ptr<NoiseLayer> updateLayerType(std::uint32_t index);
 
-	void addFilter(const std::shared_ptr<NoiseFilter>& layer);
+	void addLayer(const std::shared_ptr<NoiseLayer>& layer);
 
-	void removeLastFilter();
+	void removeLastLayer();
 
-	void removeFilter(unsigned int index);
+	void removeLayer(unsigned int index);
 
-	void removeAllFilters();
+	void removeAllLayers();
 
 
 	// Elevation
@@ -51,9 +50,9 @@ public:
 	float getScaledElevation(float unscaledElevation) const;
 
 private:
-	std::shared_ptr<ShapeSettings> _settings;
+	std::vector<std::shared_ptr<NoiseLayer> > _noiseLayers;
 
-	std::vector<std::shared_ptr<NoiseFilter> > _noiseFilters;
+	float _planetRadius = 1.0f;
 };
 
 }	// ns proceduralPlanet

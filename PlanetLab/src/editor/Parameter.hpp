@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Ceres/noise/NoiseSettings.hpp"
+
 #include "editor/Application.hpp"
 
 #include "imgui/imgui.h"
@@ -51,19 +53,19 @@ void drawParameter(const std::string& name, UIFonction uiFonction, const std::st
 class ParameterBase
 {
 public:
-	ParameterBase(const std::string& name, Ceres::FilterType type, Ceres::ObserverFlag flag, const std::string& desc = "")
+	ParameterBase(const std::string& name, Ceres::LayerType type, Ceres::ObserverFlag flag, const std::string& desc = "")
 		: _name(name), _type(type), _flag(flag), _description(desc)	{};
 
 	virtual ~ParameterBase() {}
 
-	Ceres::FilterType GetType() const { return _type; };
+	Ceres::LayerType GetType() const { return _type; };
 
 	virtual void Display(float sliderSpeed = 0.1f) = 0;
 
 protected:
 	std::string _name = "";
 	std::string _description = "";
-	Ceres::FilterType _type = Ceres::FilterType::Simple;
+	Ceres::LayerType _type = Ceres::LayerType::Simple;
 	Ceres::ObserverFlag _flag = Ceres::ObserverFlag::MESH;
 };
 
@@ -73,7 +75,7 @@ protected:
 class ParameterFloat : public ParameterBase
 {
 public:
-	ParameterFloat(const std::string& name, Ceres::FilterType type, Ceres::ObserverFlag flag, float& value, float min, float max, 
+	ParameterFloat(const std::string& name, Ceres::LayerType type, Ceres::ObserverFlag flag, float& value, float min, float max, 
 		const std::string& desc = "")
 		: ParameterBase(name, type, flag, desc), _value(value), _min(min), _max(max) {};
 
@@ -97,7 +99,7 @@ private:
 class ParameterInt : public ParameterBase
 {
 public:
-	ParameterInt(const std::string& name, Ceres::FilterType type, Ceres::ObserverFlag flag, int& value, int min, int max, 
+	ParameterInt(const std::string& name, Ceres::LayerType type, Ceres::ObserverFlag flag, int& value, int min, int max, 
 		const std::string& desc = "")
 		: ParameterBase(name, type, flag, desc), _value(value), _min(min), _max(max) {};
 
@@ -123,7 +125,7 @@ private:
 class ParameterBoolean : public ParameterBase
 {
 public:
-	ParameterBoolean(const std::string& name, Ceres::FilterType type, Ceres::ObserverFlag flag, bool value, 
+	ParameterBoolean(const std::string& name, Ceres::LayerType type, Ceres::ObserverFlag flag, bool value, 
 		const std::string& desc = "")
 		: ParameterBase(name, type, flag, desc), _value(value) {};
 
@@ -146,7 +148,7 @@ private:
 class ParameterVec3 : public ParameterBase
 {
 public:
-	ParameterVec3(const std::string& name, Ceres::FilterType type, Ceres::ObserverFlag flag, glm::vec3& value, float min, float max,
+	ParameterVec3(const std::string& name, Ceres::LayerType type, Ceres::ObserverFlag flag, glm::vec3& value, float min, float max,
 		const std::string& desc = "")
 		: ParameterBase(name, type, flag, desc), _value(value), _min(min), _max(max) {};
 

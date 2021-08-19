@@ -15,13 +15,13 @@ public:
 
 	void display(float sliderSpedd = 0.1f);
 
-	void setFilterType(const Ceres::FilterType& filterType) { _filterType = filterType; }
+	void setLayerType(const Ceres::LayerType& layerType) { _layerType = layerType; }
 
 private:
 	friend const std::shared_ptr<ParameterBase>& getParameterByName(const ParametersMap& parameters, const std::string& name);
 
 private:
-	Ceres::FilterType _filterType = Ceres::FilterType::Simple;
+	Ceres::LayerType _layerType = Ceres::LayerType::Simple;
 
 	ParametersMap _parameters = {};
 

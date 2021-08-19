@@ -1,7 +1,7 @@
 ﻿#include "Viewer2DPanel.hpp"
 
 #include "Ceres/ShapeGenerator.hpp"
-#include "Ceres/noise/NoiseFilter.hpp"
+#include "Ceres/noise/NoiseLayer.hpp"
 #include "editor/Parameter.hpp"
 
 
@@ -52,7 +52,7 @@ void Viewer2DPanel::draw()
 		// Image Texture
 		ImGui::SetCursorPosX((ImGui::GetWindowWidth() - _textureSize.x) * 0.5f);
 		ImGui::SetCursorPosY((ImGui::GetWindowHeight() - _textureSize.y) * 0.5f);
-		ImGui::Image(_noiseLayerId == -1 ? (ImTextureID)_noiseLayerId : (ImTextureID)_textureId, _textureSize, ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image(/*_noiseLayerId == -1 ? (ImTextureID)_noiseLayerId : */(ImTextureID)_textureId, _textureSize, ImVec2(0, 1), ImVec2(1, 0));
 	}
 	ImGui::End();
 }
@@ -81,20 +81,20 @@ void Viewer2DPanel::updateTexture()
 	else
 		_readyToGenerate = false;
 
-	if (!_planet->getShapeGenerator()->getNoiseFilter(0))
+	if (!_planet->getShapeGenerator()->getNoiseLayer(0))
 		return;
 
 	PLANETLAB_INFO("Updating Viewer2D texture.");
 
 	localBuffer.clear();
-	auto& noiseFilter = _planet->getShapeGenerator()->getNoiseFilter(0);
+	auto& noiseLayer = _planet->getShapeGenerator()->getNoiseLayer(0);
 	unsigned int index = 0;
 	float value = 0;
 	for (size_t i = 0; i < _textureSize.x; i++)
 	{
 		for (size_t j = 0; j < _textureSize.y; j++)
 		{
-			value = noiseFilter->evaluate(glm::vec3(i * 0.01, j * 0.01, 0));
+			value = noiseLayer->evaluate(glm::vec3(i * 0.01, j * 0.01, 0));
 			value *= 50;
 			localBuffer.push_back((unsigned char) (std::clamp(value, 0.0f, 1.0f) * 255));
 		}

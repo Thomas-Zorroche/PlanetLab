@@ -1,7 +1,7 @@
 #include "IOManager.hpp"
 #include "Ceres/Planet.hpp"
 #include "Ceres/ShapeGenerator.hpp"
-#include "Ceres/noise/NoiseFilter.hpp"
+#include "Ceres/noise/NoiseLayer.hpp"
 
 #ifdef linux
 #include <experimental/filesystem>
@@ -39,17 +39,17 @@ bool IOManager::saveAs(const std::string& outputFileName, std::shared_ptr<Planet
 	mINI::INIStructure ini;
 
 	// populate the structure
-	ini["layers"]["count"] = std::to_string(planet->getShapeSettings()->getNoiseLayers().size());
+	ini["layers"]["count"] = std::to_string(planet->getShapeGenerator()->getNoiseLayers().size());
 
 	int layerCount = 1;
-	for (const auto& layer : planet->getShapeSettings()->getNoiseLayers())
+	for (const auto& layer : planet->getShapeGenerator()->getNoiseLayers())
 	{
 		std::string section = "noiseSettings_" + std::to_string(layerCount);
 
-		std::string type = (layer->getNoiseSettings()->filterType == FilterType::Simple) ? "simple" : "rigid"; // TODO for the moment, there are just 2 type of noise...
+		std::string type = (layer->getNoiseSettings()->layerType == LayerType::Simple) ? "simple" : "rigid"; // TODO for the moment, there are just 2 type of noise...
 		ini[section]["type"] = type;
 		
-		ini[section]["seed"] = std::to_string(planet->getShapeGenerator()->getNoiseFilter(layerCount - 1)->getSeed());
+		ini[section]["seed"] = std::to_string(planet->getShapeGenerator()->getNoiseLayer(layerCount - 1)->getSeed());
 
 		ini[section]["strength"] = std::to_string(layer->getNoiseSettings()->strength);
 		ini[section]["iterations"] = std::to_string(layer->getNoiseSettings()->iterations);
@@ -177,18 +177,18 @@ void IOManager::loadValues(mINI::INIStructure& ini, std::shared_ptr<Planet>& pla
 		std::string& weightMultiplierStr  = ini[section]["weightMultiplier"];
 	
 		// Assign values
-		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->filterType = (typeStr == "simple") ? FilterType::Simple : FilterType::Rigid;
-		planet->getShapeGenerator()->updateFilterType(i - 1);
-		planet->getShapeGenerator()->getNoiseFilter(i - 1)->reseed(std::atof(seedStr.c_str()));
-		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->strength = std::atof(strengthStr.c_str());
-		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->iterations = std::atof(layersCountStr.c_str());
-		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->baseRoughness = std::atof(baseRoughnessStr.c_str());
-		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->roughness = std::atof(roughnessStr.c_str());
-		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->center.x = std::atof(centerXStr.c_str());
-		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->center.y = std::atof(centerYStr.c_str());
-		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->center.z = std::atof(centerZStr.c_str());
-		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->minValue = std::atof(minValueStr.c_str());
-		planet->getShapeSettings()->getNoiseLayer(i - 1)->getNoiseSettings()->weightMultiplier = std::atof(weightMultiplierStr.c_str());
+		planet->getShapeGenerator()->getNoiseLayer(i - 1)->getNoiseSettings()->layerType = (typeStr == "simple") ? LayerType::Simple : LayerType::Rigid;
+		planet->getShapeGenerator()->updateLayerType(i - 1);
+		planet->getShapeGenerator()->getNoiseLayer(i - 1)->reseed(std::atof(seedStr.c_str()));
+		planet->getShapeGenerator()->getNoiseLayer(i - 1)->getNoiseSettings()->strength = std::atof(strengthStr.c_str());
+		planet->getShapeGenerator()->getNoiseLayer(i - 1)->getNoiseSettings()->iterations = std::atof(layersCountStr.c_str());
+		planet->getShapeGenerator()->getNoiseLayer(i - 1)->getNoiseSettings()->baseRoughness = std::atof(baseRoughnessStr.c_str());
+		planet->getShapeGenerator()->getNoiseLayer(i - 1)->getNoiseSettings()->roughness = std::atof(roughnessStr.c_str());
+		planet->getShapeGenerator()->getNoiseLayer(i - 1)->getNoiseSettings()->center.x = std::atof(centerXStr.c_str());
+		planet->getShapeGenerator()->getNoiseLayer(i - 1)->getNoiseSettings()->center.y = std::atof(centerYStr.c_str());
+		planet->getShapeGenerator()->getNoiseLayer(i - 1)->getNoiseSettings()->center.z = std::atof(centerZStr.c_str());
+		planet->getShapeGenerator()->getNoiseLayer(i - 1)->getNoiseSettings()->minValue = std::atof(minValueStr.c_str());
+		planet->getShapeGenerator()->getNoiseLayer(i - 1)->getNoiseSettings()->weightMultiplier = std::atof(weightMultiplierStr.c_str());
 	}
 
 	// Load Color values

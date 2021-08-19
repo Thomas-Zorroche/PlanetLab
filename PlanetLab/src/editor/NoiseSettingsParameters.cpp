@@ -7,7 +7,7 @@ namespace PlanetLab
 {
 
 NoiseSettingsParameters::NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSettings> noiseSettings)
-	: _filterType(noiseSettings->filterType),
+	: _layerType(noiseSettings->layerType),
 	// Must be sorted
 	_parametersNames{
 		"Strength",
@@ -20,21 +20,21 @@ NoiseSettingsParameters::NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSet
 		"Weight Multiplier",
 	}
 {
-	_parameters.insert(ParameterFactory::Float("Strength", FilterType::Simple, noiseSettings->strength, 0.0f, 5.0f,
+	_parameters.insert(ParameterFactory::Float("Strength", LayerType::Simple, noiseSettings->strength, 0.0f, 5.0f,
 		"Strength of this noise layer."));
-	_parameters.insert(ParameterFactory::Float("Base Roughness", FilterType::Simple, noiseSettings->baseRoughness, 0.0f, 10.0f,
+	_parameters.insert(ParameterFactory::Float("Base Roughness", LayerType::Simple, noiseSettings->baseRoughness, 0.0f, 10.0f,
 		"Initial frequency of noise texture."));
-	_parameters.insert(ParameterFactory::Float("Roughness", FilterType::Simple, noiseSettings->roughness, 0.0f, 10.0f,
+	_parameters.insert(ParameterFactory::Float("Roughness", LayerType::Simple, noiseSettings->roughness, 0.0f, 10.0f,
 		"This will multiply frequency with each layer."));
-	_parameters.insert(ParameterFactory::Vec3("Center", FilterType::Simple, noiseSettings->center, 0.0f, 10.0f,
+	_parameters.insert(ParameterFactory::Vec3("Center", LayerType::Simple, noiseSettings->center, 0.0f, 10.0f,
 		"Center of noise texture."));
-	_parameters.insert(ParameterFactory::Int("Iterations", FilterType::Simple, noiseSettings->iterations, 0.0f, 10,
-		"Iterations of noise filters apply to this layer."));
-	_parameters.insert(ParameterFactory::Float("Persistence", FilterType::Simple, noiseSettings->persistence, 0.0f, 10.0f,
+	_parameters.insert(ParameterFactory::Int("Iterations", LayerType::Simple, noiseSettings->iterations, 0.0f, 10,
+		"Iterations of noise Layers apply to this layer."));
+	_parameters.insert(ParameterFactory::Float("Persistence", LayerType::Simple, noiseSettings->persistence, 0.0f, 10.0f,
 		"This will multiply amplitude with each layer."));
-	_parameters.insert(ParameterFactory::Float("Min Value", FilterType::Simple, noiseSettings->minValue, 0.0f, 5.0f,
+	_parameters.insert(ParameterFactory::Float("Min Value", LayerType::Simple, noiseSettings->minValue, 0.0f, 5.0f,
 		"Decrease noise value."));
-	_parameters.insert(ParameterFactory::Float("Weight Multiplier", FilterType::Rigid, noiseSettings->weightMultiplier, 0.0f, 5.0f,
+	_parameters.insert(ParameterFactory::Float("Weight Multiplier", LayerType::Rigid, noiseSettings->weightMultiplier, 0.0f, 5.0f,
 		"This will multiply noise value with previous iterations values.\nFor regions with high elevations, value will be increased."));
 };
 
@@ -58,7 +58,7 @@ void NoiseSettingsParameters::display(float sliderSpeed)
 	for (const auto& name : _parametersNames)
 	{
 		auto parameter = getParameterByName(_parameters, name);
-		if (parameter && (parameter->GetType() == _filterType || parameter->GetType() == Ceres::FilterType::Simple))
+		if (parameter && (parameter->GetType() == _layerType || parameter->GetType() == Ceres::LayerType::Simple))
 			parameter->Display(sliderSpeed);
 	}
 }

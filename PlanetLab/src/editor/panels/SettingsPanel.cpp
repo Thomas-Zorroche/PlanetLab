@@ -4,7 +4,7 @@
 #include "engine/lighting/LightManager.hpp"
 #include "editor/Parameter.hpp"
 
-#include "Ceres/noise/NoiseFilter.hpp"
+#include "Ceres/noise/NoiseLayer.hpp"
 
 #include "imgui/imgui.h"
 
@@ -182,7 +182,7 @@ void SettingsPanel::displayNoisePanel()
 {
     drawParameter("Count", [this]()
     {
-        int noiseLayersCount = _planet->getShapeSettings()->getNoiseLayers().size();
+        int noiseLayersCount = _planet->getShapeGenerator()->getNoiseLayers().size();
         if (ImGui::SliderInt("##Count", &noiseLayersCount, 0, 5))
         {
             updateNoiseLayersCount(noiseLayersCount);
@@ -304,7 +304,7 @@ void SettingsPanel::displayOverlaysPanel()
 
 void SettingsPanel::updateNoiseLayersCount(int noiseLayersCountUpdated)
 {
-    int layersCountDifference = noiseLayersCountUpdated - _planet->getShapeSettings()->getNoiseLayers().size();
+    int layersCountDifference = noiseLayersCountUpdated - _planet->getShapeGenerator()->getNoiseLayers().size();
 
     if (layersCountDifference == 0)
         return;
@@ -313,7 +313,7 @@ void SettingsPanel::updateNoiseLayersCount(int noiseLayersCountUpdated)
     {
         for (size_t i = 0; i < layersCountDifference; i++)
         {
-            // Add Ceres noise layer and filter
+            // Add Ceres noise layer and layer
             auto layer = _planet->addNoiseLayer();
 
             // Add PlanetLab corresponding ui noise layer
@@ -324,7 +324,7 @@ void SettingsPanel::updateNoiseLayersCount(int noiseLayersCountUpdated)
     {
         for (size_t i = 0; i < abs(layersCountDifference); i++)
         {
-            // Remove Ceres noise layer and filter
+            // Remove Ceres noise layer and layer
             _planet->removeLastNoiseLayer();
 
             // Remove the ui noise layer linked with last layer to be removed
