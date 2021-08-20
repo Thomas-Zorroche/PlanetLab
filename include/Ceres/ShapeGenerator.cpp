@@ -24,9 +24,9 @@ float ShapeGenerator::calculateUnscaledElevation(const glm::vec3& pointOnUnitSph
 
 	if (_noiseLayers.size() > 0)
 	{
-		firstLayerValue = _noiseLayers[0]->evaluate(pointOnUnitSphere); // TODO: put this in the if ?
 		if (_noiseLayers[0]->isEnabled())
 		{
+			firstLayerValue = _noiseLayers[0]->evaluate(pointOnUnitSphere);
 			elevation = firstLayerValue;
 		}
 	}

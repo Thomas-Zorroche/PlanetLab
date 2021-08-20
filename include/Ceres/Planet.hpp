@@ -138,7 +138,7 @@ private:
 	PlanetSubject _planetSubject;
 
 	/// Planet's spin 
-	float _rotationSpeed = 0.05f;
+	float _rotationSpeed = 0.02f;
 
 	/// Whether to scale on loading
 	bool _scaleOnLoading = false;
