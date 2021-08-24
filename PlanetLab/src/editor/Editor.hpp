@@ -89,6 +89,10 @@ public:
 
 	bool isViewer3DHovered() const { return _viewer3DPanel.isViewer3DHovered(); }
 
+	unsigned int getSelectedLayerId() const { return _selectedLayerId; }
+	void setSelectedLayerId(unsigned int id) { _selectedLayerId = id; _viewer2DPanel.updateTexture(); }
+	bool hasNoiseLayer() const { return _settingsPanel.getNoiseLayersCount(); }
+
 private:
 	Editor() = default;
 	~Editor() = default;
@@ -132,6 +136,8 @@ private:
 	Viewer2DPanel _viewer2DPanel;
 
 	std::unique_ptr<EditorSettings> _editorSettings = std::make_unique<EditorSettings>();
+
+	unsigned int _selectedLayerId = 0;
 };
 
 

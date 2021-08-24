@@ -190,8 +190,13 @@ void SettingsPanel::displayNoisePanel()
         }
     }, "Number of noise layers");
 
+    int layerIndex = 0;
     for (auto& uiNoiseLayer : _uiNoiseLayers)
-        uiNoiseLayer.draw();
+    {
+        if (uiNoiseLayer.draw(Editor::Get().getSelectedLayerId()))
+            Editor::Get().setSelectedLayerId(layerIndex);
+        ++layerIndex;
+    }
 }
 
 void SettingsPanel::displayMaterialPanel()

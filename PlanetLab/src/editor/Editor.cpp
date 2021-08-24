@@ -486,7 +486,8 @@ void Editor::onResolutionUpdate(int resolution)
 
 void Editor::onMeshUpdate()
 {
-    _viewer2DPanel.updateTexture();
+    if (_viewer2DOpen)
+        _viewer2DPanel.updateTexture();
 }
 
 

@@ -21,6 +21,8 @@ public:
 	void clearNoiseLayers();
 	void addNoiseLayer(std::shared_ptr<Ceres::NoiseLayer> noiselayer);
 
+	int getNoiseLayersCount() const { return _uiNoiseLayers.size(); }
+
 private:
 	void displayPlanetPanel();
 	void displayNoisePanel();

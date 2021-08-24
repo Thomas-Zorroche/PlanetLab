@@ -3,6 +3,7 @@
 #include "Ceres/ShapeGenerator.hpp"
 #include "Ceres/noise/NoiseLayer.hpp"
 #include "editor/Parameter.hpp"
+#include "editor/Editor.hpp"
 
 
 namespace PlanetLab
@@ -26,22 +27,22 @@ void Viewer2DPanel::draw()
 		drawParameter("Texture Size", [this]()
 		{
 			static int textureSizeId = 0;
-			if (ImGui::Combo("##Texture Size", &(int&)textureSizeId, "256\0 512\0 1024 \0 2048\0\0"))
+			if (ImGui::Combo("##Texture Size", &(int&)textureSizeId, "256\0 512\0\0"))
 			{
 				switch (textureSizeId)
 				{
 				case 0:
-					_textureSize = ImVec2(256, 265);
+					_textureSize = ImVec2(256, 256);
 					break;
 				case 1:
 					_textureSize = ImVec2(512, 512);
 					break;
-				case 2:
-					_textureSize = ImVec2(1024, 1024);
-					break;
-				case 3:
-					_textureSize = ImVec2(2048, 2048);
-					break;
+				//case 2:
+				//	_textureSize = ImVec2(1024, 1024);
+				//	break;
+				//case 3:
+				//	_textureSize = ImVec2(2048, 2048);
+				//	break;
 				}
 				updateTexture();
 			}
@@ -49,10 +50,17 @@ void Viewer2DPanel::draw()
 
 		drawUpdateModeItem();
 
+		const unsigned int& layerId = Editor::Get().getSelectedLayerId();
+		if (Editor::Get().hasNoiseLayer())
+			ImGui::Text(("Noise Layer " + std::to_string(layerId)).c_str());
+		else
+			ImGui::Text("No Layer Selected");
+
+
 		// Image Texture
 		ImGui::SetCursorPosX((ImGui::GetWindowWidth() - _textureSize.x) * 0.5f);
 		ImGui::SetCursorPosY((ImGui::GetWindowHeight() - _textureSize.y) * 0.5f);
-		ImGui::Image(/*_noiseLayerId == -1 ? (ImTextureID)_noiseLayerId : */(ImTextureID)_textureId, _textureSize, ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image(Editor::Get().hasNoiseLayer() ? (ImTextureID)_textureId : (ImTextureID)layerId, _textureSize, ImVec2(0, 1), ImVec2(1, 0));
 	}
 	ImGui::End();
 }
@@ -87,15 +95,14 @@ void Viewer2DPanel::updateTexture()
 	PLANETLAB_INFO("Updating Viewer2D texture.");
 
 	localBuffer.clear();
-	auto& noiseLayer = _planet->getShapeGenerator()->getNoiseLayer(0);
-	unsigned int index = 0;
+	auto& noiseLayer = _planet->getShapeGenerator()->getNoiseLayer(Editor::Get().getSelectedLayerId());
 	float value = 0;
 	for (size_t i = 0; i < _textureSize.x; i++)
 	{
 		for (size_t j = 0; j < _textureSize.y; j++)
 		{
 			value = noiseLayer->evaluate(glm::vec3(i * 0.01, j * 0.01, 0));
-			value *= 50;
+			value *= 10;
 			localBuffer.push_back((unsigned char) (std::clamp(value, 0.0f, 1.0f) * 255));
 		}
 	}

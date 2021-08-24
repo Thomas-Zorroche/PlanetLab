@@ -38,9 +38,6 @@ private:
 	UpdateMode _updateMode = UpdateMode::OnGenerate;
 
 	bool _readyToGenerate = false;
-
-	int _noiseLayerId = -1;
-
 };
 
 }

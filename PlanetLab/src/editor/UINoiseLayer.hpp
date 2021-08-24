@@ -14,7 +14,7 @@ public:
 	UINoiseLayer(std::shared_ptr<Ceres::NoiseLayer> noiseLayer, 
 		std::shared_ptr<Ceres::Planet> planet, float& sliderSpeed);
 
-	void draw();
+	bool draw(unsigned int selectedLayerId);
 
 
 private:
@@ -22,15 +22,19 @@ private:
 
 	NoiseSettingsParameters _noiseSettingsParameters;
 
-	std::string _name = "";
+	std::string _defaultName = "";
 
 	unsigned int _id = 0;
+
+	std::string _name = "Noise Layer";
 
 	bool _locked = false;
 
 	std::shared_ptr<Ceres::Planet> _planet;
 
 	float& _sliderSpeed;
+
+	bool _open = true;
 };
 
 

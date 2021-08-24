@@ -60,7 +60,7 @@ public:
 
 	Ceres::LayerType GetType() const { return _type; };
 
-	virtual void Display(float sliderSpeed = 0.1f) = 0;
+	virtual void Display(unsigned int layerId, float sliderSpeed = 0.1f) = 0;
 
 protected:
 	std::string _name = "";
@@ -79,13 +79,13 @@ public:
 		const std::string& desc = "")
 		: ParameterBase(name, type, flag, desc), _value(value), _min(min), _max(max) {};
 
-	void Display(float sliderSpeed = 0.1f) override
+	void Display(unsigned int layerId, float sliderSpeed = 0.1f) override
 	{
-		drawParameter(_name.c_str(), [&name = _name, &value = _value, &min = _min, &max = _max, &flag = _flag, sliderSpeed]()
+		drawParameter(_name.c_str(), [this, layerId, sliderSpeed]()
 		{
-			if (ImGui::DragFloat(("##" + name).c_str(), &value, sliderSpeed, min, max))
+			if (ImGui::DragFloat(("##" + _name + std::to_string(layerId)).c_str(), &_value, sliderSpeed, _min, _max))
 			{
-				Application::Get().Update(flag);
+				Application::Get().Update(_flag);
 			}
 		}, _description);
 	};
@@ -104,13 +104,13 @@ public:
 		: ParameterBase(name, type, flag, desc), _value(value), _min(min), _max(max) {};
 
 
-	void Display(float sliderSpeed = 0.1f) override
+	void Display(unsigned int layerId, float sliderSpeed = 0.1f) override
 	{
-		drawParameter(_name.c_str(), [&name = _name, &value = _value, &min = _min, &max = _max, &flag = _flag]()
+		drawParameter(_name.c_str(), [this, layerId]()
 		{
-			if (ImGui::SliderInt(("##" + name).c_str(), &value, min, max))
+			if (ImGui::SliderInt(("##" + _name + std::to_string(layerId)).c_str(), &_value, _min, _max))
 			{
-				Application::Get().Update(flag);
+				Application::Get().Update(_flag);
 			}
 		}, _description);
 
@@ -129,13 +129,13 @@ public:
 		const std::string& desc = "")
 		: ParameterBase(name, type, flag, desc), _value(value) {};
 
-	void Display(float sliderSpeed = 0.1f) override
+	void Display(unsigned int layerId, float sliderSpeed = 0.1f) override
 	{
-		drawParameter(_name.c_str(), [&name = _name, &value = _value, &flag = _flag]()
+		drawParameter(_name.c_str(), [this, layerId]()
 		{
-			if (ImGui::Checkbox(name.c_str(), &value))
+			if (ImGui::Checkbox((_name + std::to_string(layerId)).c_str(), &_value))
 			{
-				Application::Get().Update(flag);
+				Application::Get().Update(_flag);
 			}
 		}, _description);
 	};
@@ -152,13 +152,13 @@ public:
 		const std::string& desc = "")
 		: ParameterBase(name, type, flag, desc), _value(value), _min(min), _max(max) {};
 
-	void Display(float sliderSpeed = 0.1f) override
+	void Display(unsigned int layerId, float sliderSpeed = 0.1f) override
 	{
-		drawParameter(_name.c_str(), [&name = _name, &value = _value, &min = _min, &max = _max, &flag = _flag]()
+		drawParameter(_name, [this, layerId]()
 		{
-			if (ImGui::SliderFloat3(("##" + name).c_str(), (float*)&(value), min, max))
+			if (ImGui::SliderFloat3(("##" + _name + std::to_string(layerId)).c_str(), (float*)&(_value), _min, _max))
 			{
-				Application::Get().Update(flag);
+				Application::Get().Update(_flag);
 			}
 		}, _description);
 	};

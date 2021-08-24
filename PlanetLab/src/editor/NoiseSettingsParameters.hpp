@@ -11,9 +11,9 @@ using ParametersMap = std::unordered_map < std::string, std::shared_ptr<Paramete
 class NoiseSettingsParameters
 {
 public:
-	NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSettings> noiseSettings);
+	NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSettings> noiseSettings, unsigned int id);
 
-	void display(float sliderSpedd = 0.1f);
+	void display(unsigned int layerId, float sliderSpedd = 0.1f);
 
 	void setLayerType(const Ceres::LayerType& layerType) { _layerType = layerType; }
 

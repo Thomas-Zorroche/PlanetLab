@@ -6,7 +6,7 @@ using namespace Ceres;
 namespace PlanetLab
 {
 
-NoiseSettingsParameters::NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSettings> noiseSettings)
+NoiseSettingsParameters::NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSettings> noiseSettings, unsigned int id)
 	: _layerType(noiseSettings->layerType),
 	// Must be sorted
 	_parametersNames{
@@ -53,13 +53,13 @@ const std::shared_ptr<PlanetLab::ParameterBase>& getParameterByName(const Planet
 	}
 }
 
-void NoiseSettingsParameters::display(float sliderSpeed)
+void NoiseSettingsParameters::display(unsigned int layerId, float sliderSpeed)
 {
 	for (const auto& name : _parametersNames)
 	{
 		auto parameter = getParameterByName(_parameters, name);
 		if (parameter && (parameter->GetType() == _layerType || parameter->GetType() == Ceres::LayerType::Simple))
-			parameter->Display(sliderSpeed);
+			parameter->Display(layerId, sliderSpeed);
 	}
 }
 
