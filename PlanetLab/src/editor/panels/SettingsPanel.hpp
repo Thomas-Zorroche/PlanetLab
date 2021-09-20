@@ -23,6 +23,8 @@ public:
 
 	int getNoiseLayersCount() const { return _uiNoiseLayers.size(); }
 
+	const UINoiseLayer& getLayer(unsigned int layerId) const { return _uiNoiseLayers[layerId]; }
+
 private:
 	void displayPlanetPanel();
 	void displayNoisePanel();

@@ -16,6 +16,8 @@ public:
 
 	bool draw(unsigned int selectedLayerId);
 
+	const std::string& getName() const { return _name; }
+
 
 private:
 	std::shared_ptr<Ceres::NoiseLayer> _noiseLayer;

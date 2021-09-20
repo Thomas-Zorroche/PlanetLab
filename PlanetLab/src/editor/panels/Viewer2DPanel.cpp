@@ -52,10 +52,14 @@ void Viewer2DPanel::draw()
 
 		const unsigned int& layerId = Editor::Get().getSelectedLayerId();
 		if (Editor::Get().hasNoiseLayer())
-			ImGui::Text(("Noise Layer " + std::to_string(layerId)).c_str());
+		{
+			const std::string& name = Editor::Get().getLayerSelectedName();
+			ImGui::Text(name.c_str());
+		}
 		else
+		{
 			ImGui::Text("No Layer Selected");
-
+		}
 
 		// Image Texture
 		ImGui::SetCursorPosX((ImGui::GetWindowWidth() - _textureSize.x) * 0.5f);

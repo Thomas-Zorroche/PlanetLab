@@ -91,6 +91,9 @@ public:
 
 	unsigned int getSelectedLayerId() const { return _selectedLayerId; }
 	void setSelectedLayerId(unsigned int id) { _selectedLayerId = id; _viewer2DPanel.updateTexture(); }
+
+	const std::string& getLayerSelectedName() const { return _settingsPanel.getLayer(_selectedLayerId).getName(); }
+	
 	bool hasNoiseLayer() const { return _settingsPanel.getNoiseLayersCount(); }
 
 private:
