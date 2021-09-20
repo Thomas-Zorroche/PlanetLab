@@ -94,6 +94,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
     ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
 
+    if (!Editor::Get().canUseShortcuts())
+        return;
+
     if (key == (int)KeyCode::S && action == GLFW_PRESS)
     {
         if (Input::IsKeyPressed(KeyCode::CTRL))

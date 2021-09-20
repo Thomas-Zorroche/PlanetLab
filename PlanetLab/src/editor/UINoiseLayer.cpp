@@ -5,6 +5,7 @@
 
 #include "editor/Application.hpp"
 #include "editor/Parameter.hpp"
+#include "Editor.hpp"
 
 #include "Ceres/noise/NoiseLayer.hpp"
 
@@ -35,9 +36,22 @@ bool UINoiseLayer::draw(unsigned int selectedLayerId)
         _open = _open ? false : true;
     }
     ImGui::SameLine();
-    ImGui::InputText(("##" + std::to_string(_id)).c_str(), (char*)_name.c_str(), _name.capacity() + 1);
 
-
+    // Input Text for layer name
+    // Prevent to use shortcuts for input text
+    {
+        ImGui::InputText(("##" + std::to_string(_id)).c_str(), (char*)_name.c_str(), _name.capacity() + 1);
+        
+        if (ImGui::IsItemFocused())
+        {
+            Editor::Get().setInputTextFocused(std::to_string(_id));
+        }
+        else if (Editor::Get().isInputTextFocused(std::to_string(_id)))
+        {
+            Editor::Get().setInputTextFocused("");
+        }
+    }
+    
     if (_open)
     {
         drawParameter("", [this]()

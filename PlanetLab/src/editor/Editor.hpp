@@ -96,6 +96,11 @@ public:
 	
 	bool hasNoiseLayer() const { return _settingsPanel.getNoiseLayersCount(); }
 
+	bool isInputTextFocused(std::string id) const { return id == _idInputTextFocused; }
+	void setInputTextFocused(std::string id) { _idInputTextFocused = id; }
+
+	bool canUseShortcuts() const { return _idInputTextFocused == ""; }
+
 private:
 	Editor() = default;
 	~Editor() = default;
@@ -141,6 +146,10 @@ private:
 	std::unique_ptr<EditorSettings> _editorSettings = std::make_unique<EditorSettings>();
 
 	unsigned int _selectedLayerId = 0;
+
+	std::string _idInputTextFocused = "";
+
+	bool _canUseShortcurts = true;
 };
 
 
