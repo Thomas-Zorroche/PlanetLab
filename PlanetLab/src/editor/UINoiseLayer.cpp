@@ -1,4 +1,4 @@
-﻿#include "UINoiseLayer.hpp"
+#include "UINoiseLayer.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_groupPanel.hpp"
@@ -9,6 +9,7 @@
 
 #include "Ceres/noise/NoiseLayer.hpp"
 
+#include "imgui/IconsMaterialDesignIcons.h"
 
 namespace PlanetLab
 {
@@ -23,6 +24,29 @@ UINoiseLayer::UINoiseLayer(std::shared_ptr<Ceres::NoiseLayer> noiseLayer,
     _noiseSettingsParameters(noiseLayer->getNoiseSettings(), _id)
 {
 }
+
+template <typename UIFonction>
+static void drawIconButton(const std::string& label, const std::string& desc, bool state, UIFonction uiFonction)
+{
+    ImGui::PushStyleColor(ImGuiCol_Text, state ? ImVec4{ 1, 1, 1, 1 } : ImVec4{ 1, 1, 1, 0.65 });
+    ImGui::PushStyleColor(ImGuiCol_Button, state ? ImVec4{ 0.149, 0.509, 0.415, 1.0f } : ImVec4{ 1, 1, 1, 0.2 });
+    if (ImGui::Button(label.c_str()))
+    {
+        uiFonction();
+    }
+    ImGui::PopStyleColor(2);
+
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(desc.c_str());
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+}
+
+
 
 bool UINoiseLayer::draw(unsigned int selectedLayerId)
 {
@@ -54,30 +78,31 @@ bool UINoiseLayer::draw(unsigned int selectedLayerId)
     
     if (_open)
     {
-        drawParameter("", [this]()
+        ImGui::SameLine();
+
+        drawIconButton(getIconLabel(ICON_MDI_EYE), "Enabled", _noiseLayer->isEnabled(), [this]()
         {
-            if (ImGui::Checkbox(("Enabled##" + std::to_string(_id)).c_str(), &_noiseLayer->isEnabled()))
-            {
-                Application::Get().Update(Ceres::ObserverFlag::MESH);
-            }
+            _noiseLayer->toggleIsEnabled();
+            Application::Get().Update(Ceres::ObserverFlag::MESH);
         });
 
-        drawParameter("", [this]()
+        ImGui::SameLine();
+
+        drawIconButton(getIconLabel(ICON_MDI_INVERT_COLORS), "Invert", _noiseLayer->isInverted(), [this]()
         {
-            if (ImGui::Checkbox(("Invert##" + std::to_string(_id)).c_str(), &_noiseLayer->isInverted()))
-            {
-                Application::Get().Update(Ceres::ObserverFlag::MESH);
-            }
+            _noiseLayer->toggleIsInverted();
+            Application::Get().Update(Ceres::ObserverFlag::MESH);
         });
 
-        drawParameter("", [this]()
+        ImGui::SameLine();
+
+        drawIconButton(getIconLabel(ICON_MDI_CIRCLE), "Isolate", _noiseLayer->isIsolated(), [this]()
         {
-            if (ImGui::Checkbox(("Isolate##" + std::to_string(_id)).c_str(), &_noiseLayer->isIsolated()))
-            {
-                _planet->getShapeGenerator()->setIsolatedLayerIndex(_noiseLayer->isIsolated() ? _id : -1);
-                Application::Get().Update(Ceres::ObserverFlag::MESH);
-            }
+            _noiseLayer->toggleIsIsolated();
+            _planet->getShapeGenerator()->setIsolatedLayerIndex(_noiseLayer->isIsolated() ? _id : -1);
+            Application::Get().Update(Ceres::ObserverFlag::MESH);
         });
+
 
         drawParameter("Layer Type", [this]()
         {
@@ -107,6 +132,11 @@ bool UINoiseLayer::draw(unsigned int selectedLayerId)
     ImGui::PopStyleVar();
 
     return clicked;
+}
+
+std::string UINoiseLayer::getIconLabel(const char* icon)
+{
+    return std::string(icon) + "##" + std::to_string(_id);
 }
 
 

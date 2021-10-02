@@ -10,6 +10,9 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "imgui/imgui_color_gradient.h"
+#include "imgui/IconsMaterialDesignIcons.h"
+
+#include <imgui/MaterialDesign.inl>
 
 #include "io/IOManager.hpp"
 
@@ -49,9 +52,22 @@ void Editor::init(Window& window)
     // Setup Theme
     _editorSettings->setDarkThemeMode();
 
-    // Setup fonts
-    io.Fonts->AddFontFromFileTTF("res/fonts/OpenSans/OpenSans-Bold.ttf", 18.0f);
-    io.FontDefault = io.Fonts->AddFontFromFileTTF("res/fonts/OpenSans/OpenSans-Regular.ttf", 18.0f);
+    // Setup fonts                                                                                    // Font Indices
+    io.Fonts->AddFontFromFileTTF("res/fonts/OpenSans/OpenSans-Bold.ttf", 18.0f);                      // 0 
+    io.FontDefault = io.Fonts->AddFontFromFileTTF("res/fonts/OpenSans/OpenSans-Regular.ttf", 18.0f);  // 1
+
+
+    // Icons Font
+    static const ImWchar icons_ranges[] = { ICON_MIN_MDI, ICON_MAX_MDI, 0 };
+    ImFontConfig icons_config;
+    icons_config.MergeMode = true;
+    icons_config.PixelSnapH = true;
+    icons_config.GlyphOffset.y = 1.0f;
+    icons_config.OversampleH = icons_config.OversampleV = 1;
+    icons_config.PixelSnapH = true;
+    icons_config.SizePixels = 18.f;
+
+    io.Fonts->AddFontFromMemoryCompressedTTF(MaterialDesign_compressed_data, MaterialDesign_compressed_size, 16, &icons_config, icons_ranges);
 
     ImGuiStyle& style = ImGui::GetStyle();
     style.FrameRounding = 4.0f;

@@ -18,6 +18,8 @@ public:
 
 	const std::string& getName() const { return _name; }
 
+private:
+	std::string getIconLabel(const char* icon);
 
 private:
 	std::shared_ptr<Ceres::NoiseLayer> _noiseLayer;

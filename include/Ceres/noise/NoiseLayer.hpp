@@ -40,13 +40,13 @@ public:
 	int getId() const { return _id; }
 	
 	bool isEnabled() const { return _enabled; }
-	bool& isEnabled() { return _enabled; }
+	void toggleIsEnabled() { _enabled = !_enabled; }
 
 	bool isInverted() const { return _invert; }
-	bool& isInverted() { return _invert; }
+	void toggleIsInverted() { _invert = !_invert; }
 
 	bool isIsolated() const { return _isolated; }
-	bool& isIsolated() { return _isolated; }
+	void toggleIsIsolated() { _isolated = !_isolated; }
 
 	bool firstLayerUsedAsMask() const { return _useFirstLayerAsMask; }
 	bool& firstLayerUsedAsMask() { return _useFirstLayerAsMask; }
