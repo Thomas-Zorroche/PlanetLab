@@ -88,6 +88,9 @@ public:
 	void unbindFbo() { _viewer3DPanel.unbindFbo(); }
 
 	bool isViewer3DHovered() const { return _viewer3DPanel.isViewer3DHovered(); }
+	bool isViewer2DHovered() const { return _viewer2DPanel.isViewer2DHovered(); }
+
+	void viewer2DZoom(float zoomValue) { _viewer2DPanel.zoom(zoomValue); }
 
 	unsigned int getSelectedLayerId() const { return _selectedLayerId; }
 	void setSelectedLayerId(unsigned int id) { _selectedLayerId = id; _viewer2DPanel.updateTexture(); }

@@ -3,6 +3,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_groupPanel.hpp"
 #include "imgui/imgui_internal.h"
+#include "imgui/IconsMaterialDesignIcons.h"
 
 #include "editor/Application.hpp"
 #include "editor/Parameter.hpp"
@@ -10,7 +11,6 @@
 
 #include "Ceres/noise/NoiseLayer.hpp"
 
-#include "imgui/IconsMaterialDesignIcons.h"
 
 namespace PlanetLab
 {
@@ -46,7 +46,6 @@ static void drawIconButton(const std::string& label, const std::string& desc, bo
         ImGui::EndTooltip();
     }
 }
-
 
 
 bool UINoiseLayer::draw(unsigned int selectedLayerId)

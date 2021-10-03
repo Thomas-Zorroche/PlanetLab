@@ -73,6 +73,12 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos)
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
+    if (Editor::Get().isViewer2DHovered())
+    {
+        Editor::Get().viewer2DZoom(yoffset < 0 ? -0.25 : 0.25);
+        return;
+    }
+
     ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 
     if (!Editor::Get().isViewer3DHovered())
@@ -162,5 +168,5 @@ void window_size_callback(GLFWwindow* window, int width, int height)
 }
 
 
-}   // ns editor
+}   // ns PlanetLab
 

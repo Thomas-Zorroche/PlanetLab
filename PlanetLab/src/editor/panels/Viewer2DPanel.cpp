@@ -27,22 +27,16 @@ void Viewer2DPanel::draw()
 		drawParameter("Texture Size", [this]()
 		{
 			static int textureSizeId = 0;
-			if (ImGui::Combo("##Texture Size", &(int&)textureSizeId, "256\0 512\0\0"))
+			if (ImGui::Combo("##Texture Size", &(int&)textureSizeId, "128\0 256\0\0"))
 			{
 				switch (textureSizeId)
 				{
 				case 0:
-					_textureSize = ImVec2(256, 256);
+					_textureSize = ImVec2(128, 128);
 					break;
 				case 1:
-					_textureSize = ImVec2(512, 512);
+					_textureSize = ImVec2(256, 256);
 					break;
-				//case 2:
-				//	_textureSize = ImVec2(1024, 1024);
-				//	break;
-				//case 3:
-				//	_textureSize = ImVec2(2048, 2048);
-				//	break;
 				}
 				updateTexture();
 			}
@@ -61,10 +55,26 @@ void Viewer2DPanel::draw()
 			ImGui::Text("No Layer Selected");
 		}
 
+		ImGui::Text("Zoom x%f", _zoom);
+
+		ImGui::Separator();
+
 		// Image Texture
-		ImGui::SetCursorPosX((ImGui::GetWindowWidth() - _textureSize.x) * 0.5f);
-		ImGui::SetCursorPosY((ImGui::GetWindowHeight() - _textureSize.y) * 0.5f);
-		ImGui::Image(Editor::Get().hasNoiseLayer() ? (ImTextureID)_textureId : (ImTextureID)layerId, _textureSize, ImVec2(0, 1), ImVec2(1, 0));
+		ImGuiWindowFlags child_flags = ImGuiWindowFlags_HorizontalScrollbar;
+		if (ImGui::BeginChild("Img", ImVec2(0, 0), false, child_flags))
+		{
+			_viewer2DHovered = ImGui::IsWindowHovered();
+
+			ImGui::SetCursorPosX((ImGui::GetWindowWidth() - (_textureSize.x * _zoom)) * 0.5f);
+			ImGui::SetCursorPosY((ImGui::GetWindowHeight() - (_textureSize.y * _zoom)) * 0.5f);
+			ImGui::Image(
+				Editor::Get().hasNoiseLayer() ? (ImTextureID)_textureId : (ImTextureID)layerId, 
+				ImVec2(_textureSize.x * _zoom, _textureSize.y * _zoom), 
+				ImVec2(0, 1), 
+				ImVec2(1, 0)
+			);
+		}
+		ImGui::EndChild();
 	}
 	ImGui::End();
 }
@@ -84,6 +94,8 @@ void Viewer2DPanel::generateTexture()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, _textureSize.x, _textureSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	PLANETLAB_INFO("Creating Viewer2D texture: ({}, {})", _textureSize.x, _textureSize.y);
 }
 
 void Viewer2DPanel::updateTexture()
@@ -96,7 +108,6 @@ void Viewer2DPanel::updateTexture()
 	if (!_planet->getShapeGenerator()->getNoiseLayer(0))
 		return;
 
-	PLANETLAB_INFO("Updating Viewer2D texture.");
 
 	localBuffer.clear();
 	auto& noiseLayer = _planet->getShapeGenerator()->getNoiseLayer(Editor::Get().getSelectedLayerId());
@@ -111,6 +122,8 @@ void Viewer2DPanel::updateTexture()
 		}
 	}
 
+	PLANETLAB_INFO("Updating Viewer2D texture: ({}, {})", _textureSize.x, _textureSize.y);
+
 	glBindTexture(GL_TEXTURE_2D, _textureId);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, _textureSize.x, _textureSize.y, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, localBuffer.data());
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -124,18 +137,17 @@ void Viewer2DPanel::drawUpdateModeItem()
 		ImGui::Combo("##Update Mode", &(int&)updateMode, "Auto\0On Release\0On Generate\0\0");
 	}, "When do viewer2D updates have to be executed:\n * Auto: directly after user changes\n * On Release: after user release click on any parameter\n * On Generate: after click on generate button.");
 
-	drawParameter("", [this]()
+	if (_updateMode == UpdateMode::OnGenerate)
 	{
-		if (_updateMode == UpdateMode::OnGenerate)
-		{
-			if (ImGui::Button("Generate"))
+		drawParameter("", [this]()
 			{
-				_readyToGenerate = true;
-				updateTexture();
-			}
-		}
-		ImGui::Separator();
-	});
+				if (ImGui::Button("Generate"))
+				{
+					_readyToGenerate = true;
+					updateTexture();
+				}
+			});
+	}
 }
 
 

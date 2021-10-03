@@ -26,6 +26,13 @@ public:
 
 	void drawUpdateModeItem();
 
+	bool isViewer2DHovered() const { return _viewer2DHovered; }
+
+	void zoom(float zoom) 
+	{ 
+		_zoom += zoom; 
+		if (_zoom < 0.1) _zoom = 0.1;
+	}
 
 private:
 	std::shared_ptr<Ceres::Planet> _planet;
@@ -38,6 +45,10 @@ private:
 	UpdateMode _updateMode = UpdateMode::OnGenerate;
 
 	bool _readyToGenerate = false;
+
+	bool _viewer2DHovered = false;
+
+	float _zoom = 1.0f;
 };
 
 }
