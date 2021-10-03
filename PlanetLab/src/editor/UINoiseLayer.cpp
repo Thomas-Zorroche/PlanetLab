@@ -2,6 +2,7 @@
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_groupPanel.hpp"
+#include "imgui/imgui_internal.h"
 
 #include "editor/Application.hpp"
 #include "editor/Parameter.hpp"
@@ -50,22 +51,23 @@ static void drawIconButton(const std::string& label, const std::string& desc, bo
 
 bool UINoiseLayer::draw(unsigned int selectedLayerId)
 {
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-
     BeginGroupPanel("");
-    
-    ImGui::Text("> ");
+
+    ImGui::Text(_open ? ICON_MDI_CHEVRON_DOWN : ICON_MDI_CHEVRON_RIGHT);
+
     if (ImGui::IsItemClicked())
     {
-        _open = _open ? false : true;
+        _open = !_open;
     }
     ImGui::SameLine();
 
     // Input Text for layer name
-    // Prevent to use shortcuts for input text
     {
+        ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.45);
         ImGui::InputText(("##" + std::to_string(_id)).c_str(), (char*)_name.c_str(), _name.capacity() + 1);
-        
+        ImGui::PopItemWidth();
+
+        // Prevent to use shortcuts for input text
         if (ImGui::IsItemFocused())
         {
             Editor::Get().setInputTextFocused(std::to_string(_id));
@@ -76,33 +78,45 @@ bool UINoiseLayer::draw(unsigned int selectedLayerId)
         }
     }
     
+    ImGui::SameLine();
+
+    drawIconButton(getIconLabel(ICON_MDI_EYE), "Enabled", _noiseLayer->isEnabled(), [this]()
+    {
+        _noiseLayer->toggleIsEnabled();
+        Application::Get().Update(Ceres::ObserverFlag::MESH);
+    });
+
+    ImGui::SameLine();
+
+    drawIconButton(getIconLabel(ICON_MDI_INVERT_COLORS), "Invert", _noiseLayer->isInverted(), [this]()
+    {
+        _noiseLayer->toggleIsInverted();
+        Application::Get().Update(Ceres::ObserverFlag::MESH);
+    });
+
+    ImGui::SameLine();
+
+    drawIconButton(getIconLabel(ICON_MDI_CIRCLE), "Isolate", _noiseLayer->isIsolated(), [this]()
+    {
+        _noiseLayer->toggleIsIsolated();
+        _planet->getShapeGenerator()->setIsolatedLayerIndex(_noiseLayer->isIsolated() ? _id : -1);
+        Application::Get().Update(Ceres::ObserverFlag::MESH);
+    });
+        
+    ImGui::SameLine();
+
+    drawIconButton(getIconLabel(ICON_MDI_LOCK), "Locked", _locked, [this]()
+    {
+        _locked = !_locked;
+    });
+
     if (_open)
     {
-        ImGui::SameLine();
-
-        drawIconButton(getIconLabel(ICON_MDI_EYE), "Enabled", _noiseLayer->isEnabled(), [this]()
+        if (_locked)
         {
-            _noiseLayer->toggleIsEnabled();
-            Application::Get().Update(Ceres::ObserverFlag::MESH);
-        });
-
-        ImGui::SameLine();
-
-        drawIconButton(getIconLabel(ICON_MDI_INVERT_COLORS), "Invert", _noiseLayer->isInverted(), [this]()
-        {
-            _noiseLayer->toggleIsInverted();
-            Application::Get().Update(Ceres::ObserverFlag::MESH);
-        });
-
-        ImGui::SameLine();
-
-        drawIconButton(getIconLabel(ICON_MDI_CIRCLE), "Isolate", _noiseLayer->isIsolated(), [this]()
-        {
-            _noiseLayer->toggleIsIsolated();
-            _planet->getShapeGenerator()->setIsolatedLayerIndex(_noiseLayer->isIsolated() ? _id : -1);
-            Application::Get().Update(Ceres::ObserverFlag::MESH);
-        });
-
+            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+        }
 
         drawParameter("Layer Type", [this]()
         {
@@ -125,11 +139,16 @@ bool UINoiseLayer::draw(unsigned int selectedLayerId)
 
         // Display layer noise settings
         _noiseSettingsParameters.display(_id, _sliderSpeed);
+
+        if (_locked)
+        {
+            ImGui::PopItemFlag();
+            ImGui::PopStyleVar();
+        }
     }
 
     bool clicked = EndGroupPanel(selectedLayerId == _id);
 
-    ImGui::PopStyleVar();
 
     return clicked;
 }
