@@ -1,9 +1,9 @@
 #include "Planet.hpp"
 
-#include "noise/NoiseFilter.hpp"
-#include "noise/SimpleNoiseFilter.hpp"
+#include "noise/NoiseLayer.hpp"
+#include "noise/SimpleNoiseLayer.hpp"
 #include "noise/NoiseSettings.hpp"
-#include "noise/NoiseFilterFactory.hpp"
+#include "noise/NoiseLayerFactory.hpp"
 
 #include "engine/opengl/Mesh.hpp"
 
@@ -13,9 +13,8 @@ namespace Ceres
 Planet::Planet(int resolution, bool visible)
 	: _resolution(resolution),
 	_visible(visible),
-	_shapeSettings(std::make_shared<ShapeSettings>(1.0f /* radius */)),
 	_colorSettings(std::make_shared<ColorSettings>()),
-	_shapeGenerator(std::make_shared<ShapeGenerator>(_shapeSettings)),
+	_shapeGenerator(std::make_shared<ShapeGenerator>()),
 	_terrainFaces{ 
 		TerrainFace(_shapeGenerator, resolution, glm::vec3( 0,  1,  0)), // UP
 		TerrainFace(_shapeGenerator, resolution, glm::vec3( 0, -1,  0)), // DOWN
@@ -114,7 +113,7 @@ void Planet::update(ObserverFlag flag)
 				face.updateResolution(_resolution);
 			}
 
-			EMIT_ResolutionChanged(_resolution);
+			emitResolutionChanged(_resolution);
 			break;
 		}
 		case ObserverFlag::COLOR:
@@ -125,39 +124,37 @@ void Planet::update(ObserverFlag flag)
 		case ObserverFlag::MESH:
 		{
 			generateMesh();
+			emitMeshChanged();
 			break;
 		}
 		case ObserverFlag::FACERENDERMASK:
 		{
-			EMIT_ResolutionChanged(_resolution);
+			emitResolutionChanged(_resolution);
 			break;
 		}
 	}
 }
 
-void Planet::addNoiseLayer(unsigned int count)
+std::shared_ptr<NoiseLayer> Planet::addNoiseLayer(unsigned int count)
 {
+	std::shared_ptr<NoiseLayer> layer = nullptr;
 	for (size_t i = 0; i < count; i++)
 	{
-		auto layer = std::make_shared<NoiseLayer>();
-		_shapeSettings->addLayer(layer);
-		_shapeGenerator->addFilter(NoiseFilterFactory::createNoiseFilter(layer->getNoiseSettings()));
+		layer = NoiseLayerFactory::createNoiseLayer(_shapeGenerator->getNoiseLayers().size());
+		_shapeGenerator->addLayer(layer);
 	}
+	return layer;
 }
 
 void Planet::removeLastNoiseLayer()
 {
-	_shapeSettings->removeLastLayer();
-	_shapeGenerator->removeLastFilter();
+	_shapeGenerator->removeLastLayer();
 }
 
 void Planet::reset()
 {
-	// Remove all noise settings layers
-	_shapeSettings->removeAllLayers();
-
-	// Remove all noise filters (noise alogrithm)
-	_shapeGenerator->removeAllFilters();
+	// Remove all noise layers
+	_shapeGenerator->removeAllLayers();
 
 	// Remove colors
 	_colorSettings->reset();
@@ -182,9 +179,9 @@ void Planet::generateRandomPlanet()
 	std::default_random_engine generator(seed);
 
 	// Reseed
-	for (std::size_t i = 0; i < _shapeGenerator->getNoiseFilters().size(); i++)
+	for (std::size_t i = 0; i < _shapeGenerator->getNoiseLayers().size(); i++)
 	{
-		_shapeGenerator->getNoiseFilter(i)->reseed(seed);
+		_shapeGenerator->getNoiseLayer(i)->reseed(seed);
 	}
 
 	// Colors
@@ -215,6 +212,11 @@ int Planet::getFacesCount() const
 void Planet::emitResolutionChanged(int resolution)
 {
 	_planetSubject.updateResolution(_resolution);
+}
+
+void Planet::emitMeshChanged()
+{
+	_planetSubject.updateMesh();
 }
 
 } // ns Ceres

@@ -2,3 +2,5 @@ build*
 bin*
 
 docs/doxygen*
+
+.vscode/

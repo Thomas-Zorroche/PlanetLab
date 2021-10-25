@@ -19,4 +19,9 @@ void UiObserver::updateResolution(int newResolution)
     Editor::Get().onResolutionUpdate(newResolution);
 }
 
+void UiObserver::updateMesh()
+{
+    Editor::Get().onMeshUpdate();
+}
+
 }

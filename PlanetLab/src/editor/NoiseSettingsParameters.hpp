@@ -11,19 +11,19 @@ using ParametersMap = std::unordered_map < std::string, std::shared_ptr<Paramete
 class NoiseSettingsParameters
 {
 public:
-	NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSettings> noiseSettings);
+	NoiseSettingsParameters(std::shared_ptr<Ceres::NoiseSettings> noiseSettings, unsigned int id);
 
-	void display(float sliderSpedd = 0.1f);
+	void display(unsigned int layerId, float sliderSpedd = 0.1f);
 
-	void setFilterType(const Ceres::FilterType& filterType) { _filterType = filterType; }
+	void setLayerType(const Ceres::LayerType& layerType) { _layerType = layerType; }
 
 private:
 	friend const std::shared_ptr<ParameterBase>& getParameterByName(const ParametersMap& parameters, const std::string& name);
 
 private:
-	Ceres::FilterType _filterType = Ceres::FilterType::Simple;
+	Ceres::LayerType _layerType = Ceres::LayerType::Simple;
 
-	ParametersMap _parameters;
+	ParametersMap _parameters = {};
 
 	std::vector<std::string> _parametersNames; // liste triee
 };

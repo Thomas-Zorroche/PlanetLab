@@ -1,5 +1,4 @@
 #include "editor/Application.hpp"
-#include "editor/EditorSettings.hpp"
 
 #include "engine/ResourceManager.hpp"
 #include "engine/Renderer.hpp"
@@ -46,18 +45,19 @@ void mainloop(Window& windowObject)
         deltaTime = currentFrame - Application::Get().GetLastFrameDuration();
         Application::Get().SetLastFrameDuration(currentFrame);
 
-        // View Matrix
         Renderer::Get().ComputeViewMatrix();
-
         Application::Get().ClearColor();
+
+        // UI
+        Editor::Get().draw(window);
 
         // Render scene here
         Editor::Get().bindFbo();
-        scene.Draw(Editor::Get().viewportHeight());
+        scene.Draw();
         Editor::Get().unbindFbo();
 
         // Render UI
-        Editor::Get().draw(window);
+        Editor::Get().render();
 
         if (Application::Get().GetUpdateMode() == UpdateMode::Auto || Application::Get().IsReadyToGenerate())
         {

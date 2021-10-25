@@ -4,22 +4,22 @@
 namespace Ceres
 {
 
-/// Type of noise filters. Determine which algorithm will be used to evaluate noise
-enum class FilterType
+/// Type of noise layesr. Determine which algorithm will be used to evaluate noise
+enum class LayerType
 {
 	Simple =0,
 	Rigid
 };
 
 /**
- * @brief Contains all noise settings used by the noise filter to evaluate noise value 
+ * @brief Contains all noise settings used by the noise layer to evaluate noise value 
  */
 struct NoiseSettings
 {
-	enum FilterType filterType = FilterType::Simple;
+	enum LayerType layerType = LayerType::Simple;
 
 	// ============================================
-	// Simple filter type settings
+	// Simple noise type settings
 	// ============================================
 
 	float strength = 1.0f;
@@ -30,7 +30,7 @@ struct NoiseSettings
 
 	glm::vec3 center = glm::vec3(0, 0, 0);
 
-	int layersCount = 1;
+	int iterations = 1;
 
 	/// Amplitude will be half with each layer
 	float persistence = 0.5f; 
@@ -39,7 +39,7 @@ struct NoiseSettings
 
 
 	// ============================================
-	// Rigid filter type settings
+	// Rigid noise type settings
 	// ============================================
 
 	float weightMultiplier = 0.5;

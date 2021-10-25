@@ -5,8 +5,6 @@
 
 #include "Log.hpp"
 
-#include "editor/EditorSettings.hpp"
-
 #include "engine/Window.hpp"
 #include "engine/Scene.hpp"
 #include "engine/Color.hpp"

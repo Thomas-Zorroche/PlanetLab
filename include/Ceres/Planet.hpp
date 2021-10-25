@@ -3,7 +3,6 @@
 #include "TerrainFace.hpp"
 #include "engine/StaticMesh.hpp"
 
-#include "ShapeSettings.hpp"
 #include "ColorSettings.hpp"
 #include "ShapeGenerator.hpp"
 
@@ -49,9 +48,6 @@ public:
 
 	// Accessors
 
-	const std::shared_ptr<ShapeSettings>& getShapeSettings() const { return _shapeSettings; }
-	std::shared_ptr<ShapeSettings> getShapeSettings() { return _shapeSettings; }
-
 	const std::shared_ptr<ColorSettings>& getColorSettings() const { return _colorSettings; }
 	std::shared_ptr<ColorSettings> getColorSettings() { return _colorSettings; }
 
@@ -90,9 +86,9 @@ public:
 	void rotate(const glm::vec3& angles);
 	/// Change randomly ONLY seed and colors
 	void generateRandomPlanet();
-	/// Add noise layer and filter
-	void addNoiseLayer(unsigned int count = 1);
-	/// Remove last noise layer and filter
+	/// Add noise layer. Return last noise layer added
+	std::shared_ptr<NoiseLayer> addNoiseLayer(unsigned int count = 1);
+	/// Remove last noise layer
 	void removeLastNoiseLayer();
 
 private:
@@ -105,26 +101,20 @@ private:
 	/// Send colors settings uniforms and max elevation value
 	void sendUniforms();
 
-/*
-* Signals
-* Do not use it. Use EMIT keyword.
-*/
 private:
 	void emitResolutionChanged(int resolution);
+	void emitMeshChanged();
 
 
 private:
 	/// Resolution fo planet, amount of subdivisions per face
-	int _resolution;
+	int _resolution = 64;
 
 	/// Whether to draw the planet (surface + wireframe)
-	bool _visible;
+	bool _visible = true;
 
 	/// Whether to draw the surface
 	bool _hideSurface = false;
-
-	/// Contains radius and noise settings
-	std::shared_ptr<ShapeSettings> _shapeSettings;
 
 	/// Contains ocean and landmass colors 
 	std::shared_ptr<ColorSettings> _colorSettings;
@@ -148,7 +138,7 @@ private:
 	PlanetSubject _planetSubject;
 
 	/// Planet's spin 
-	float _rotationSpeed = 0.05f;
+	float _rotationSpeed = 0.02f;
 
 	/// Whether to scale on loading
 	bool _scaleOnLoading = false;
@@ -159,7 +149,5 @@ private:
 	/// Speed of scale loading animation 
 	float _scaleLoadingSpeed = 0.02f;
 };
-
-#define EMIT_ResolutionChanged(resolution) emitResolutionChanged(resolution)
 
 } // ns Ceres

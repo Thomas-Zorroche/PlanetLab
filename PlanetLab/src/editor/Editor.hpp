@@ -5,15 +5,17 @@
 #include "glm/glm.hpp"
 #include "engine/Color.hpp"
 #include <GLFW/glfw3.h>
-#include "engine/SpriteSheet.hpp"
 #include "engine/opengl/Texture.h"
 #include "engine/ResourceManager.hpp"
+#include "editor/EditorSettings.hpp"
 
 #include "UiObserver.hpp"
 
 #include "Ceres/Planet.hpp"
 
-#include "editor/NoiseSettingsParameters.h"
+#include "editor/panels/SettingsPanel.hpp"
+#include "editor/panels/Viewer3DPanel.hpp"
+#include "editor/panels/Viewer2DPanel.hpp"
 
 
 namespace Ceres
@@ -30,13 +32,6 @@ class Camera;
 class Application;
 
 
-
-struct MeshStatistics
-{
-	std::string verticesCount = "";
-	std::string facesCount = "";
-	std::string trianglesCount= "";
-};
 
 /// Parameters of futur action after ask for saves before open / new file
 struct SaveBeforeCloseParams
@@ -65,29 +60,49 @@ public:
 
 	void init(Window& window);
 	void draw(GLFWwindow* window);
+	void render();
 	void free();
 
-	void bindFbo();
-	void unbindFbo();
+	const std::unique_ptr<EditorSettings>& getEditorSettings() { return _editorSettings; }
 
-	std::unique_ptr<EditorSettings>& getEditorSettings() { return _editorSettings; }
-
-	float viewportWidth() const { return _viewportWidth; }
-	float viewportHeight() const { return _viewportHeight; }
+	float viewportWidth() const { return  _viewer3DPanel.getViewportWidth(); }
+	float viewportHeight() const { return _viewer3DPanel.getViewportHeight(); }
 
 	void saveFile();
 	void openFile(const std::string& filePath);
 	void newFile();
 
-	void setLowSliderSpeed() { _sliderSpeed = 0.001; }
-	void setDefaultSliderSpeed() { _sliderSpeed = 0.08; }
+	void setLowSliderSpeed() { _settingsPanel.setSliderSpeed(0.001); }
+	void setDefaultSliderSpeed() { _settingsPanel.setSliderSpeed(0.08); }
 	
 	void toggleDisplaySettings();
 	void toggleDisplayLog();
+	void toggleDisplayViewer2D();
 
 	void onResolutionUpdate(int resolution);
+	void onMeshUpdate();
 
 	void setWindowSize(int width, int height);
+
+	void bindFbo() { _viewer3DPanel.bindFbo(); }
+	void unbindFbo() { _viewer3DPanel.unbindFbo(); }
+
+	bool isViewer3DHovered() const { return _viewer3DPanel.isViewer3DHovered(); }
+	bool isViewer2DHovered() const { return _viewer2DPanel.isViewer2DHovered(); }
+
+	void viewer2DZoom(float zoomValue) { _viewer2DPanel.zoom(zoomValue); }
+
+	unsigned int getSelectedLayerId() const { return _selectedLayerId; }
+	void setSelectedLayerId(unsigned int id) { _selectedLayerId = id; _viewer2DPanel.updateTexture(); }
+
+	const std::string& getLayerSelectedName() const { return _settingsPanel.getLayer(_selectedLayerId).getName(); }
+	
+	bool hasNoiseLayer() const { return _settingsPanel.getNoiseLayersCount(); }
+
+	bool isInputTextFocused(std::string id) const { return id == _idInputTextFocused; }
+	void setInputTextFocused(std::string id) { _idInputTextFocused = id; }
+
+	bool canUseShortcuts() const { return _idInputTextFocused == ""; }
 
 private:
 	Editor() = default;
@@ -97,56 +112,48 @@ private:
 	// 	   Display Panel Functions
 	// ========================================================
 	void displayMenuBar(GLFWwindow* window);
-	void displaySettings();
-	void displayViewport();
 	void displayLog();
 	bool displayLaunchScreen();
 	void displaySaveAsPopup();
 	void displaySaveBeforeClosePopup();
-	
-	void drawUpdateModeItem();
-	
-	void updateNoiseLayersCount(int noiseLayersCountUpdated);
 
-	void updateStatistics();
 
 private:
-	Framebuffer _fbo = Framebuffer();
-
-	std::unique_ptr<EditorSettings> _editorSettings = std::make_unique<EditorSettings>();
-
 	bool _displaySaveAsPopup = false;
 	SaveBeforeCloseParams _saveBeforeCloseParams;
 
 	bool _settingsOpen = true;
 	bool _logOpen = true;
+	bool _viewer2DOpen = false;
 	bool _dockspaceOpen = true;
 	bool _launchScreenOpen = true;
 
 	char _bufferSaveLocation[20];
-
-	float _sliderSpeed = 0.08;
 
 	std::shared_ptr<Ceres::Planet> _planet = nullptr;
 
 	float _WIDTH = 1920.0f;
 	float _HEIGHT = 1080.0f;
 
-	float _viewportWidth = 0.7 * _WIDTH;
-	float _viewportHeight = _HEIGHT;
-	float _settingsWidth = _WIDTH - _viewportWidth;
 
-	MeshStatistics _statistics;
+	float _settingsWidth = 200.0f;
 
 	std::unique_ptr<UiObserver> _observer = nullptr;
 
-	std::vector<NoiseSettingsParameters> _noiseSettingsParameters;
-
-	SpriteSheet _loadingWheel = SpriteSheet("res/img/LoadingSheet.png", 31);
 	Texture _launchScreen = ResourceManager::Get().LoadTexture("res/img/launch_screen_0_8.png");
 
+	SettingsPanel _settingsPanel;
+	Viewer3DPanel _viewer3DPanel;
+	Viewer2DPanel _viewer2DPanel;
+
+	std::unique_ptr<EditorSettings> _editorSettings = std::make_unique<EditorSettings>();
+
+	unsigned int _selectedLayerId = 0;
+
+	std::string _idInputTextFocused = "";
+
+	bool _canUseShortcurts = true;
 };
 
-void prettyPrintNumber(int number, std::string& str);
 
 }	

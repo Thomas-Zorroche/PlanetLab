@@ -18,6 +18,8 @@ public:
 
     virtual void updateResolution(int newResolution) override;
 
+    virtual void updateMesh() override;
+
 
 
 private:

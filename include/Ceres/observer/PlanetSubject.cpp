@@ -28,6 +28,16 @@ void PlanetSubject::updateResolution(int newResolution)
     }
 }
 
+void PlanetSubject::updateMesh()
+{
+    std::list<IObserver*>::iterator iterator = _observers.begin();
+    while (iterator != _observers.end())
+    {
+        (*iterator)->updateMesh();
+        ++iterator;
+    }
+}
+
 
 
 }
